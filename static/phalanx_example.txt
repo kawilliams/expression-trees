@@ -1,0 +1,9 @@
+(   (   (   (/phylanx/argument#0#filepath/0#7) /phylanx/file_read_csv#0/0#8,
+            /phylanx/argument#1#row_start/0#9,
+            /phylanx/argument#2#row_stop/0#10,
+            /phylanx/argument#3#col_start/0#11,
+            /phylanx/argument#4#col_stop/0#12
+        ) /phylanx/slice#0/0#13
+    ) /phylanx/define-function#0#read_x/0#1,
+    /phylanx/function#0#read_x/0#15
+) /phylanx/block#0/0#16;
