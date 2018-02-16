@@ -87,7 +87,7 @@ and open the template in the editor.
 
 <!-- Copyright 2016 Mike Bostock https://d3js.org -->
 <script src="//d3js.org/d3.v4.min.js"></script>
-<script src="d3-tip.js"></script>
+<script src="../static/d3-tip.js"></script>
 
 <!-- https://bl.ocks.org/d3noob/43a860bc0024792f8803bba8ca0d5ecd -->
 <script>
@@ -129,8 +129,8 @@ var treemap = d3.tree().size([height, width]);
 var treemat = [1];
 
 d3.queue()
-        .defer(d3.text, "kate_output_slack.txt")
-        .defer(d3.csv, "breast_cancer_prim_perf_counter_data.csv")
+        .defer(d3.text, "../static/tree_format.txt") //the more complicated example
+        .defer(d3.csv, "../static/breast_cancer_prim_perf_counter_data.csv")
         .await(analyze);
 
 function analyze(error, treeformat, perfdata) {
