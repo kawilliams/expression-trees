@@ -1,10 +1,4 @@
 <!DOCTYPE html>
-<!--
-To change this license header, choose License Headers in Project Properties.
-To change this template file, choose Tools | Templates
-and open the template in the editor.
--->
-<!DOCTYPE html>
 <head>
 <title>Reingold-Tilford Tree</title>
         <meta charset="UTF-8">
@@ -12,6 +6,9 @@ and open the template in the editor.
         <link rel="shortcut icon" href="#"/>
 
 <style>
+p { 
+  font: 12px sans-serif;
+}
 
 .node {
   cursor: pointer;
@@ -20,11 +17,11 @@ and open the template in the editor.
 .node circle {
   fill: #fff;
   stroke: steelblue;
-  stroke-width: 1.5px;
+  stroke-width: 2px;
 }
 
 .node text {
-  font: 12px sans-serif;
+  font: 9px sans-serif;
 }
 
 .link {
@@ -61,19 +58,23 @@ and open the template in the editor.
       top: 100%;
       left: 0;
     }
+#key {
+    position: absolute;
+    text-align: left;
+    padding: 2px;
+    font: 12px sans-serif;
+    background: lightsteelblue;
+    border: 0px;
+    border-radius: 8px;
+    display: inline-block;
+    white-space: nowrap;
+}
 
-/*div.node_tooltip {
-  position: absolute;
-  text-align: center;
-  width: 60px;
-  height: 70px;
-  padding: 2px;
-  font: 12px sans-serif;
-  background: lightsteelblue;
-  border: 0px;
-  border-radius: 8px;
-  pointer-events: none;
-}*/
+#legend {
+    width: 150px;
+    height: 150px;
+    position: absolute;
+}
 
 </style>
 </head>
@@ -82,6 +83,11 @@ and open the template in the editor.
 
 <p><a href="{{ url_for('rects') }}">Indented Rectangles Tree</a> (<a href="https://bl.ocks.org/mbostock/1093025#index.html">original</a>)</p>
         </div>
+    <div id="key">
+        <p> triangles have children, circles no children </p>
+        <p> dashed: direct, solid: not <- ? </p>
+
+    </div>
 <!-- Copyright 2011 Jason Davies https://github.com/jasondavies/newick.js -->
 <script>function parseNewick(a){for(var e=[],r={},s=a.split(/\s*(;|\(|\)|,|:)\s*/),t=0;t<s.length;t++){var n=s[t];switch(n){case"(":var c={};r.branchset=[c],e.push(r),r=c;break;case",":var c={};e[e.length-1].branchset.push(c),r=c;break;case")":r=e.pop();break;case":":break;default:var h=s[t-1];")"==h||"("==h||","==h?r.name=n:":"==h&&(r.length=parseFloat(n))}}return r}</script>
 
@@ -96,26 +102,31 @@ var margin = {top: 20, right: 90, bottom: 30, left: 90},
     width = 960 - margin.left - margin.right,
     height = 500 - margin.top - margin.bottom;
 
-//div = d3.select("body").append("div")
-//        .attr("class", "node_tooltip")
-//        .style("opacity", 0);
-
 /* http://bl.ocks.org/davegotz/bd54b56723c154d25eedde6504d30ad7 */
 var tool_tip = d3.tip()
       .attr("class", "d3-tip")
       .offset([-8, 0])
-      .html(function(d){
-		//console.log(d);
-            return "<p>Primitive instance: " + d.data.name + "</p>"+
+      .html(function(d){ //katy
+          var formatTime = d3.format(".9f");
+          if (d.id === 1) {
+              return "<p>Function: " + d.data.name + "</p>";
+          }
+          if (d._perfdata.count > 0) {
+              return "<p>Primitive instance: " + d.data.name.substring(9) + "</p>"+
                     "<p>Count: " + d._perfdata.count + "</p>" +
-                    "<p>Time: " + d._perfdata.time + "</p>" +
+                    "<p>Average time: " + formatTime(d._perfdata.avg_time) + " sec</p>";
+          } else if (d._perfdata.direct_count > 0) {
+              return "<p>Primitive instance: " + d.data.name.substring(9) + "</p>" +
                     "<p>Direct count: " + d._perfdata.direct_count + "</p>" +
-                    "<p>Direct time: " + d._perfdata.direct_time + "</p>";
+                    "<p>Average direct time: " + formatTime(d._perfdata.avg_direct_time) + " sec</p>";
+          } else {
+              return "<p>Primitive instance: " + d.data.name.substring(9) + "</p>";
+          }
         });
 
 var svg = d3.select("body").append("svg")
     .attr("width", width + margin.right + margin.left)
-    .attr("height", (height+100) + margin.top + margin.bottom)
+    .attr("height", height + margin.top + margin.bottom)
   .append("g")
     .attr("transform", "translate("
           + margin.left + "," + margin.top + ")");
@@ -148,19 +159,20 @@ function analyze(error, treeformat, perfdata) {
     domainTimes = [];
     prim_inst = [];
     perfdata.map(function(d){
-        var sumTimes = (+d.time) + (+d.direct_time);
-        if (sumTimes > 0) {
-            domainTimes.push((+d.time) + (+d.direct_time));
+        var avgTime = ((+d.time) + (+d.direct_time))/(d.count + d.direct_count);
+        if (avgTime > 0) {
+            domainTimes.push(avgTime * 1.e-9);
         }
         
         prim_inst.push(d.primitive_instance);
     });
-//console.log(prim_inst);
-    colorTimeScale = d3.scaleLog() //went with log scale
+    var colors = ["#edf8fb", "#b2e2e2", "#66c2a4", "#2ca25f", "#006d2c"];
+    colorTimeScale = d3.scaleQuantize()
                 .domain(d3.extent(domainTimes))
-                .range(["#deebf7", "#9ecae1", "#3182bd"]);
-    //console.log(perfdata);
+                .range(colors);
+   
     update(root, perfdata);
+    addLegend(d3.extent(domainTimes), colors);
     count = 1; //count the root
     countNodes(root);
 }
@@ -173,6 +185,61 @@ function collapse(d) {
   }
 }
 
+function addLegend(domainTimes, colors) {
+    var formatPercent = d3.format(".0%"),
+    formatNumber = d3.format(".0f");
+
+//var threshold = d3.scaleThreshold()
+//    .domain([0.11, 0.22, 0.33, 0.50])
+//    .range(["#6e7c5a", "#a0b28f", "#d8b8b3", "#b45554", "#760000"]);
+//gotta get the domain values for each color
+var domainVals = [colorTimeScale.invertExtent(colors[0])[0]];
+var greatestVal = colorTimeScale.invertExtent(colors[colors.length-1])[1];
+for (var i=0; i<colors.length; i++){
+    domainVals.push(colorTimeScale.invertExtent(colors[i])[1]);
+}
+
+var x = d3.scaleLinear()
+    .domain([0, greatestVal])
+    .range([0, 200]);
+
+var xAxis = d3.axisBottom(x)
+    .tickSize(13)
+    .tickValues(domainVals);
+    //.tickFormat(function(d) { return d === 0.5 ? formatPercent(d) : formatNumber(100 * d); });
+
+var g = d3.select("#key").append("svg")
+    .attr("width", 50 + margin.right + margin.left)
+    .attr("height", 15 + margin.bottom)
+  .append("g")
+    .attr("transform", "translate(16,17)")
+          //+ margin.left + "," + margin.top + ")")
+          .call(xAxis);
+
+g.select(".domain")
+    .remove();
+
+g.selectAll("rect")
+  .data(colorTimeScale.range().map(function(color) {
+    var d = colorTimeScale.invertExtent(color);
+    if (d[0] == null) d[0] = x.domain()[0];
+    if (d[1] == null) d[1] = x.domain()[1];
+    return d;
+  }))
+  .enter().insert("rect", ".tick")
+    .attr("height", 8)
+    .attr("x", function(d) { return x(d[0]); })
+    .attr("width", function(d) { return x(d[1]) - x(d[0]); })
+    .attr("fill", function(d) { return colorTimeScale(d[0]); });
+
+g.append("text")
+    .attr("fill", "#000")
+    .attr("font-weight", "bold")
+    .attr("text-anchor", "start")
+    .attr("y", -6)
+    .text("Average time per instance");   
+}
+	
 // Count the number of nodes at each level
 function countNodes(node) {
     if(node.children){
@@ -197,7 +264,6 @@ function update(source, perfdata) {
   // Compute the new tree layout.
   var nodes = tree.descendants(),
       links = tree.descendants().slice(1);
-  //katy
   var maxDepth=0; 
   nodes.forEach(function(d){
       if (d.depth > maxDepth){ 
@@ -205,7 +271,7 @@ function update(source, perfdata) {
       } 
   });
 
-  // Normalize for fixed-depth. katy
+  // Normalize for fixed-depth. 
   nodes.forEach(function(d){ 
       depthY = width / maxDepth;
       d.y = d.depth * depthY;
@@ -217,10 +283,13 @@ function update(source, perfdata) {
   var node = svg.selectAll('g.node')
       .data(nodes, function(d) {
           var nodename = d.data.name;
-	//console.log(nodename);
-	//console.log(perfdata);
-//console.log(prim_inst);
-          d._perfdata = perfdata[prim_inst.indexOf(nodename)];
+          // Change time to time-per-instance //katy
+          if (prim_inst.indexOf(nodename) >= 0) {
+            node_perfdata = perfdata[prim_inst.indexOf(nodename)];    
+            node_perfdata.avg_time = (node_perfdata.time / node_perfdata.count) * 1.e-9; //katy nanos are SMALL
+            node_perfdata.avg_direct_time = (node_perfdata.direct_time / node_perfdata.direct_count) * 1.e-9;
+            d._perfdata = perfdata[prim_inst.indexOf(nodename)];  
+          }
           return d.id || (d.id = ++i); 
           });
 
@@ -230,40 +299,42 @@ function update(source, perfdata) {
       .attr("transform", function(d) {
         return "translate(" + source.y0 + "," + source.x0 + ")";
     })
-    .on('click', click) //katy
-    .on("mouseover", tool_tip.show
-//        function(d) {
-//        var nodename = d.data.name;
-//        div.transition()
-//        .duration(100)
-//        .style("opacity", 0.9);
-//        div.html(function(d){
-//            var myperfdata = perfdata[prim_inst.indexOf(nodename)];
-//            return "<p>Primitive instance: " + myperfdata.primitive_instance + "</p>" +
-//                    "<p>Count: " + myperfdata.count + "</p>" +
-//                    "<p>Time: " + myperfdata.time + "</p>" +
-//                    "<p>Direct count: " + myperfdata.direct_count + "</p>" +
-//                    "<p>Direct time: " + myperfdata.direct_time + "</p>";
-//        })
-//            .style("left", (d3.event.pageX) + "px")
-//            .style("top", (d3.event.pageY - 28) + "px");
-//    }
-            )
-    .on("mouseout", tool_tip.hide
-//        function(d) {
-//        div.transition()
-//        .duration(300)
-//        .style("opacity", 0);
-//    }
-            );
+    .on('click', click) 
+    .on("mouseenter", tool_tip.show)
+    .on("mouseout", tool_tip.hide); //katy
 
-  // Add Circle for the nodes
-  nodeEnter.append('circle')
-      .attr('class', 'node')
-      .attr('r', 1e-6)
-      .style("fill", function(d) {
-          return d._children ? "lightsteelblue" : "#fff";
-      });
+//Create circles if no children, triangles if has children
+var symbol = d3.symbol().size([150]);
+nodeEnter.append("path")
+        .attr("class", "node")
+        .attr("d", symbol.type(function(d){
+            if (d.children) {
+                return d3.symbolTriangle;
+            } else {
+                return d3.symbolCircle;
+            }
+        }))
+        .attr('transform', "rotate(-90)")
+        .attr("stroke-dasharray", function(d){ //stroke solid/dashed by direct or not
+          if (d._perfdata) {
+              return (d._perfdata.avg_direct_time > 0) ? "3, 3" : "0"; 
+          }
+          return "0";
+        })
+        .style("stroke", "black")
+        .style("fill", function(d) { //katy
+        if (d._perfdata) { //color circle by time-per-instance
+            if (d._perfdata.avg_time > 0) {
+                return colorTimeScale(d._perfdata.avg_time);
+            }
+            else if (d._perfdata.avg_direct_time > 0) {
+                return colorTimeScale(d._perfdata.avg_direct_time);
+            }
+            return "#fff";
+        }
+        return "#fff";
+    });
+
 // Add labels for the nodes
   nodeEnter.append('text')
       .attr("dy", ".35em")
@@ -275,7 +346,7 @@ function update(source, perfdata) {
       })
       .text(function(d) { 
           if (!d.children) {
-          return d.data.name; 
+          return d.data.name.substring(9); //get rid of "phylanx/" prefix
           } else {
 	  return "";
 	  }
@@ -294,8 +365,16 @@ function update(source, perfdata) {
   // Update the node attributes and style
   nodeUpdate.select('circle.node')
     .attr('r', 10)
-    .style("fill", function(d) {
-        return d._children ? "lightsteelblue" : "#fff";
+    .style("fill", function(d) { //katy 
+        if (d._perfdata) { //color circle by time-per-instance
+            if (d._perfdata.avg_time > 0) {
+                return colorTimeScale(d._perfdata.avg_time);
+            }
+            else if (d._perfdata.avg_direct_time > 0) {
+                return colorTimeScale(d._perfdata.avg_direct_time);
+            }
+        }
+	  return "#fff"; //katy?
     })
     .attr('cursor', 'pointer');
 
