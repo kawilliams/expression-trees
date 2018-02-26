@@ -83,6 +83,11 @@ p {
 
 <p><a href="{{ url_for('rects') }}">Indented Rectangles Tree</a> (<a href="https://bl.ocks.org/mbostock/1093025#index.html">original</a>)</p>
         </div>
+    <div id="key">
+        <p> triangles have children, circles no children </p>
+        <p> dashed: direct, solid: not <- ? </p>
+
+    </div>
 <!-- Copyright 2011 Jason Davies https://github.com/jasondavies/newick.js -->
 <script>function parseNewick(a){for(var e=[],r={},s=a.split(/\s*(;|\(|\)|,|:)\s*/),t=0;t<s.length;t++){var n=s[t];switch(n){case"(":var c={};r.branchset=[c],e.push(r),r=c;break;case",":var c={};e[e.length-1].branchset.push(c),r=c;break;case")":r=e.pop();break;case":":break;default:var h=s[t-1];")"==h||"("==h||","==h?r.name=n:":"==h&&(r.length=parseFloat(n))}}return r}</script>
 
