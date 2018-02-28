@@ -8,8 +8,7 @@ APP = Flask(__name__)
 
 @APP.route('/')
 def index(perfdata=None, treeformat=None):
-    """ Displays the index page accessible at '/'
-    """
+    """   Displays the index page accessible at '/'    """
     script = sys.argv[0]
     for filename in sys.argv[1:]:
         if (".csv" in filename):
