@@ -15,7 +15,7 @@ def index(perfdata=None, treeformat=None):
             perfdata = str(filename)
         if (".txt" in filename):
             treeformat = str(filename)
-    return render_template('indented_rects.html', perfdata=perfdata, treeformat=treeformat) #render_template('index.html')
+    return render_template('rectangles.html', perfdata=perfdata, treeformat=treeformat) #render_template('index.html')
 
 @APP.route('/rects')
 def rects(perfdata=None, treeformat=None):
@@ -25,7 +25,7 @@ def rects(perfdata=None, treeformat=None):
             perfdata = str(filename)
         if (".txt" in filename):
             treeformat = str(filename)
-    return render_template('indented_rects.html', perfdata=perfdata, treeformat=treeformat)
+    return render_template('rectangles.html', perfdata=perfdata, treeformat=treeformat)
 
 @APP.route('/rt_tree')
 def rt_tree(perfdata=None, treeformat=None):
