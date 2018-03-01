@@ -1,4 +1,8 @@
 <!DOCTYPE html>
+<!--
+Katy worked on 3/1
+-->
+<!DOCTYPE html>
 <head>
 <title>Reingold-Tilford Tree</title>
         <meta charset="UTF-8">
@@ -6,29 +10,29 @@
         <link rel="shortcut icon" href="#"/>
 
 <style>
-p { 
-  font: 12px sans-serif;
-}
 
-.node {
-  cursor: pointer;
-}
+    p {
+        font: 12px sans-serif;
+    }
+    .node {
+      cursor: pointer;
+    }
 
-.node circle {
-  fill: #fff;
-  stroke: steelblue;
-  stroke-width: 2px;
-}
+    .node circle {
+      fill: #fff;
+      stroke: steelblue;
+      stroke-width: 2px; /*1.5px; katy - may need to adjust so eyes can see pattern*/
+    }
 
-.node text {
-  font: 9px sans-serif;
-}
+    .node text {
+      font: 9px sans-serif;
+    }
 
-.link {
-  fill: none;
-  stroke: #ccc;
-  stroke-width: 2px;
-}
+    .link {
+      fill: none;
+      stroke: #ccc;
+      stroke-width: 2px;
+    }
 
     .d3-tip {
       line-height: 1;
@@ -50,6 +54,7 @@ p {
       content: "\25BC";
       position: absolute;
       text-align: center;
+      font: 12px sans-serif;
     }
  
     /* Style northward tooltips specifically */
@@ -58,6 +63,7 @@ p {
       top: 100%;
       left: 0;
     }
+
 #key {
     position: absolute;
     text-align: left;
@@ -79,15 +85,18 @@ p {
 </style>
 </head>
 <body>
-<div><p>d3 Reingold-Tilford Tree (<a href="http://bl.ocks.org/d3noob/8375092">original</a>) </a>
+    <div><p>d3 Reingold-Tilford Tree (<a href="http://bl.ocks.org/d3noob/8375092">original</a>)
 
-<p><a href="{{ url_for('rects') }}">Indented Rectangles Tree</a> (<a href="https://bl.ocks.org/mbostock/1093025#index.html">original</a>)</p>
-        </div>
+    <p><a href="{{ url_for('rects') }}">Indented Rectangles Tree</a> (<a href="https://bl.ocks.org/mbostock/1093025#index.html">original</a>)</p>
+    <p><a href="{{ url_for('icicle') }}">Icicle plot</a> (<a href="https://bl.ocks.org/tophtucker/a35c0f4f32400755a6a9b976be834ab3">original</a>)</p>
+    </div>
+    
     <div id="key">
-        <p> Triangle: node has children. Circle: no children </p>
-        <p> Dashed border: direct (synchronous). Solid: normal (asynchronous).</p>
+        <p> triangles have children, circles no children </p>
+        <p> dashed: synchronous (direct), solid: asynchronous (normal) </p>
 
     </div>
+    
 <!-- Copyright 2011 Jason Davies https://github.com/jasondavies/newick.js -->
 <script>function parseNewick(a){for(var e=[],r={},s=a.split(/\s*(;|\(|\)|,|:)\s*/),t=0;t<s.length;t++){var n=s[t];switch(n){case"(":var c={};r.branchset=[c],e.push(r),r=c;break;case",":var c={};e[e.length-1].branchset.push(c),r=c;break;case")":r=e.pop();break;case":":break;default:var h=s[t-1];")"==h||"("==h||","==h?r.name=n:":"==h&&(r.length=parseFloat(n))}}return r}</script>
 
@@ -114,11 +123,11 @@ var tool_tip = d3.tip()
           if (d._perfdata.count > 0) {
               return "<p>Primitive instance: " + d.data.name.substring(9) + "</p>"+
                     "<p>Count: " + d._perfdata.count + "</p>" +
-                    "<p>Average time: " + formatTime(d._perfdata.avg_time) + " sec</p>";
+                    "<p>Average time: " + prettyprintTime(d._perfdata.avg_time) + " </p>";
           } else if (d._perfdata.direct_count > 0) {
               return "<p>Primitive instance: " + d.data.name.substring(9) + "</p>" +
                     "<p>Direct count: " + d._perfdata.direct_count + "</p>" +
-                    "<p>Average direct time: " + formatTime(d._perfdata.avg_direct_time) + " sec</p>";
+                    "<p>Average direct time: " + prettyprintTime(d._perfdata.avg_direct_time) + " </p>";
           } else {
               return "<p>Primitive instance: " + d.data.name.substring(9) + "</p>";
           }
@@ -142,11 +151,11 @@ var treemat = [1];
 
 d3.queue()
         .defer(d3.text, "{{ treeformat }}")
-        .defer(d3.csv, "{{ perfdata }}"  )//"../static/breast_cancer_prim_perf_counter_data.csv")
+        .defer(d3.csv, "{{ perfdata }}")
         .await(analyze);
 
 function analyze(error, treeformat, perfdata) {
-    //if (error) throw error;
+    if (error) throw error;
     // Assigns parent, children, height, depth
     root = d3.hierarchy(parseNewick(treeformat), function(d) { return d.branchset; });
     root.x0 = height / 2;
@@ -167,10 +176,10 @@ function analyze(error, treeformat, perfdata) {
         prim_inst.push(d.primitive_instance);
     });
     var colors = ["#edf8fb", "#b2e2e2", "#66c2a4", "#2ca25f", "#006d2c"];
-    colorTimeScale = d3.scaleQuantize()
-                .domain(d3.extent(domainTimes))
+    colorTimeScale = d3.scaleQuantize() //went with log scale
+                .domain(d3.extent(domainTimes)) //need to put scale on graph
                 .range(colors);
-   
+    
     update(root, perfdata);
     addLegend(d3.extent(domainTimes), colors);
     count = 1; //count the root
@@ -239,7 +248,7 @@ g.append("text")
     .attr("y", -6)
     .text("Average time per instance");   
 }
-	
+
 // Count the number of nodes at each level
 function countNodes(node) {
     if(node.children){
@@ -298,14 +307,28 @@ function update(source, perfdata) {
       .attr('class', 'node')
       .attr("transform", function(d) {
         return "translate(" + source.y0 + "," + source.x0 + ")";
-    })
+    })  
     .on('click', click) 
+    //.on("mousemove", tool_tip.hide) 
     .on("mouseenter", tool_tip.show)
-    .on("mouseout", tool_tip.hide); //katy
+    .on("mouseout", tool_tip.hide);
 
-//Create circles if no children, triangles if has children
+  // Add Circle for the nodes
+//  nodeEnter.append('circle')
+//      .attr('class', 'node')
+//      .attr('r', 10)
+//      .style("stroke", function(d){ //stroke color by direct or not
+//          if (d._perfdata) {
+//              return (d._perfdata.avg_direct_time > 0) ? "red" : "purple"; 
+//          }
+//      });
+
+// Add Triangle for nodes when collapsed and have children
+//katy
+
 var symbol = d3.symbol().size([150]);
-nodeEnter.append("path")
+nodeEnter
+        .append("path")
         .attr("class", "node")
         .attr("d", symbol.type(function(d){
             if (d.children) {
@@ -335,6 +358,7 @@ nodeEnter.append("path")
         return "#fff";
     });
 
+
 // Add labels for the nodes
   nodeEnter.append('text')
       .attr("dy", ".35em")
@@ -346,15 +370,15 @@ nodeEnter.append("path")
       })
       .text(function(d) { 
           if (!d.children) {
-          return d.data.name.substring(9); //get rid of "phylanx/" prefix
+            return d.data.name.substring(9); 
           } else {
-	  return "";
-	  }
+              return "";
+          }
       });
 
   // UPDATE
   var nodeUpdate = nodeEnter.merge(node);
-
+  
   // Transition to the proper position for the node
   nodeUpdate.transition()
     .duration(duration)
@@ -365,7 +389,7 @@ nodeEnter.append("path")
   // Update the node attributes and style
   nodeUpdate.select('circle.node')
     .attr('r', 10)
-    .style("fill", function(d) { //katy 
+    .style("fill", function(d) { //katy
         if (d._perfdata) { //color circle by time-per-instance
             if (d._perfdata.avg_time > 0) {
                 return colorTimeScale(d._perfdata.avg_time);
@@ -374,10 +398,10 @@ nodeEnter.append("path")
                 return colorTimeScale(d._perfdata.avg_direct_time);
             }
         }
-	  return "#fff"; //katy?
+        //return "#fff";
+        //return d._children ? "lightsteelblue" : "#fff";
     })
     .attr('cursor', 'pointer');
-
 
   // Remove any exiting nodes
   var nodeExit = node.exit().transition()
@@ -439,7 +463,7 @@ nodeEnter.append("path")
               ${(s.y + d.y) / 2} ${d.x},
               ${d.y} ${d.x}`;
 
-    return path
+    return path;
   }
 
   // Toggle children on click.
@@ -454,5 +478,24 @@ nodeEnter.append("path")
     update(d, perfdata);
   }
 } 
+
+function prettyprintTime(time) {
+    var exp = -Math.floor( Math.log(time) / Math.log(10));
+  
+    if ((exp >= 0) && (exp <= 3)) {
+        return (time * 1000).toFixed(4) + " ms"; //millisecond
+    } 
+    else if ((exp > 3) && (exp <= 6)) {
+        return (time * 1000000).toFixed(4)  + " us"; //microsecond
+    }
+    else if ((exp > 6) && (exp <= 9)){
+        return (time * 1000000000).toFixed(4)  + " ns"; //nanosecond
+    }
+    else if ((exp > 9) && (exp <= 12)) {
+        return (time * 1000000000000).toFixed(4)  + " ps"; //picosecond
+    }
+    return time + " s";
+    
+}
 </script>
            

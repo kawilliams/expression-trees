@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html>
+    <head>
+        <title>Rectangle Tree</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="shortcut icon" href="#"/>
+        <style>
+        div {  /* katy remove for Jupyter version*/
+            margin: 10px;
+            padding: 10px;
+        }
+
+        body { /* katy remove for Jupyter version*/
+            font: 10px;
+          margin: 0;
+        }
+        .node rect {
+          cursor: pointer;
+          fill: #fff;
+          fill-opacity: 0.5;
+          stroke: #3182bd;
+          stroke-width: 1.5px;
+        }
+
+        .recttext {
+          font: 12px Courier; /*10px sans-serif;*/
+          pointer-events: none;
+        }
+
+        .link {
+          fill: none;
+          stroke: #9ecae1;
+          stroke-width: 1.5px;
+        }
+
+
+        </style>
+    </head>
+    <body>
+        <!-- https://bl.ocks.org/mbostock/1093025#index.html -->
+        <div>d3 rectangles tree 
+        <p><a href="{{ url_for('rects') }}">Rectangles tree</a> (<a href="https://bl.ocks.org/mbostock/1093025#index.html">original</a>)</p>
+            <p><a href="{{ url_for('rt_tree') }}">Reingold-Tilford tree</a> (original)</p>
+            <p><a href="{{ url_for('icicle') }}">Icicle tree</a> (<a href="https://bl.ocks.org/mbostock/1005873">original</a>)</p>
+        </div>
+        <!-- Copyright 2011 Jason Davies https://github.com/jasondavies/newick.js -->
+        <script>function parseNewick(a){for(var e=[],r={},s=a.split(/\s*(;|\(|\)|,|:)\s*/),t=0;t<s.length;t++){var n=s[t];switch(n){case"(":var c={};r.branchset=[c],e.push(r),r=c;break;case",":var c={};e[e.length-1].branchset.push(c),r=c;break;case")":r=e.pop();break;case":":break;default:var h=s[t-1];")"==h||"("==h||","==h?r.name=n:":"==h&&(r.length=parseFloat(n))}}return r}</script>
+        <!-- Copyright 2016 Mike Bostock https://d3js.org -->
+        <script src="https://d3js.org/d3.v4.min.js"></script>
+        <script>
+var margin = {top: 30, right: 20, bottom: 30, left: 20},
+    width = 960, //960
+    barHeight = 30, //20,
+    barWidth = (width - margin.left - margin.right) *.4; //* 0.8; katy
+
+var i = 0,
+    duration = 400,
+    root;
+
+var diagonal = d3.linkHorizontal()
+    .x(function(d) { return d.y; })
+    .y(function(d) { return d.x; });
+
+var svg = d3.select("body").append("svg")
+    .attr("width", width) // + margin.left + margin.right)
+  .append("g")
+    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+d3.queue()
+        .defer(d3.text, "{{ treeformat }}")
+        .defer(d3.csv, "{{ perfdata }}")
+        .await(analyze);
+
+function analyze(error, treeformat, perfdata) {
+    if (error) throw error;
+    //Tree structure data
+    root = d3.hierarchy(parseNewick(treeformat), function(d){return d.branchset;});
+    root.x0 = 0;
+    root.y0 = 0;
+    
+    //Performance data -- need to associate w/tree. For now O(n) searching for corr. node
+    
+    domainTimes = [];
+    // hard coded for now
+    prim_inst = []; //map between primitive name and the location of it in the csv
+    perfdata.map(function(d) {
+        var sumTimes = (+d.time) + (+d.direct_time);
+        if (sumTimes > 0) {
+            domainTimes.push((+d.time) + (+d.direct_time));
+        }
+        
+        prim_inst.push(d.primitive_instance);
+    });
+
+    update(root, perfdata);
+    
+}
+
+    
+function update(source, perfdata) {
+    
+  // Compute the flattened node list.
+  var nodes = root.descendants();
+  totalHeight = root.height;
+  var height = Math.max(500, nodes.length * barHeight + margin.top + margin.bottom);
+
+  d3.select("svg").transition()
+      .duration(duration)
+      .attr("height", height);
+
+  d3.select(self.frameElement).transition()
+      .duration(duration)
+      .style("height", height + "px");
+
+  // Compute the "layout". TODO https://github.com/d3/d3-hierarchy/issues/67
+  var index = -1;
+  root.eachBefore(function(n) {
+    n.x = ++index * barHeight; 
+    n.y = n.depth * 30;//katy 20;
+  });
+
+  function color(d){
+      //katy HALP plz help
+        var colorTimeScale = d3.scaleLog() //went with log scale
+                .domain(d3.extent(domainTimes))
+                .range(["#deebf7", "#3182bd"]);
+//        var match = prim_inst.indexOf(d.data.name);
+//        if (match >= 0) {
+//            var sumTimes = (+perfdata[match].time) + (+perfdata[match].direct_time);
+//            return colorTimeScale(sumTimes);
+//        }
+    return colorTimeScale(100000000);
+  }
+  // Update the nodes…
+  var node = svg.selectAll(".node")
+    .data(nodes, function(d) { return d.id || (d.id = ++i); });
+   
+  // Determine the minimum width of the bars and the svg //katy
+  var maxNameLen = 0;
+  var maxDepth = 0;
+  svg.selectAll(".node")
+          .data(nodes, function(d){ 
+              if (d.data.name.length > maxNameLen){ 
+                  maxNameLen = d.data.name.length;
+                } 
+              if (d.depth > maxDepth){ 
+                  maxDepth = d.depth;
+                } 
+  });
+  
+  if (barWidth > (maxNameLen * 3)) { barWidth = maxNameLen * 7.5;}
+  if (width > (barWidth + (maxDepth * 30))) { width = (barWidth + (maxDepth * 10));} 
+  
+  var nodeEnter = node.enter().append("g")
+      .attr("class", "node")
+      .attr("transform", function(d) { return "translate(" + source.y0 + "," + source.x0 + ")"; })
+      .style("opacity", 0);
+  
+  // Enter any new nodes at the parent's previous position.
+  nodeEnter.append("rect")
+      .attr("y", -barHeight / 2)
+      .attr("height", barHeight)
+      .attr("width", barWidth)
+      .style("fill", color)
+      .on("click", click);
+
+  nodeEnter.append("text")
+          .attr("class", "recttext")
+      .attr("dy", 3.5)
+      .attr("dx", 5.5)
+      .text(function(d) { return d.data.name; });
+
+  // Transition nodes to their new position.
+  nodeEnter.transition()
+      .duration(duration)
+      .attr("transform", function(d) { return "translate(" + d.y + "," + d.x + ")"; })
+      .style("opacity", 1);
+
+  node.transition()
+      .duration(duration)
+      .attr("transform", function(d) { return "translate(" + d.y + "," + d.x + ")"; })
+      .style("opacity", 1)
+    .select("rect")
+      .style("fill", color);
+
+  // Transition exiting nodes to the parent's new position.
+  node.exit().transition()
+      .duration(duration)
+      .attr("transform", function(d) { return "translate(" + source.y + "," + source.x + ")"; })
+      .style("opacity", 0)
+      .remove();
+
+  // Update the links…
+  var link = svg.selectAll(".link")
+    .data(root.links(), function(d) { return d.target.id; });
+
+  // Enter any new links at the parent's previous position.
+  link.enter().insert("path", "g")
+      .attr("class", "link")
+      .attr("d", function(d) {
+        var o = {x: source.x0, y: source.y0};
+        return diagonal({source: o, target: o});
+      })
+    .transition()
+      .duration(duration)
+      .attr("d", diagonal);
+
+  // Transition links to their new position.
+  link.transition()
+      .duration(duration)
+      .attr("d", diagonal);
+
+  // Transition exiting nodes to the parent's new position.
+  link.exit().transition()
+      .duration(duration)
+      .attr("d", function(d) {
+        var o = {x: source.x, y: source.y};
+        return diagonal({source: o, target: o});
+      })
+      .remove();
+
+  // Stash the old positions for transition.
+  root.each(function(d) {
+    d.x0 = d.x;
+    d.y0 = d.y;
+  });
+  
+
+}
+
+// Toggle children on click.
+function click(d) {
+  if (d.children) {
+    d._children = d.children;
+    d.children = null;
+  } else {
+    d.children = d._children;
+    d._children = null;
+  }
+  update(d);
+}
+
+
+//function filter(d, param) {
+//    //Collapse nodes with some threshold
+//}
+
+function prettyprintTime(time) {
+    var exp = -Math.floor( Math.log(time) / Math.log(10));
+  
+    if ((exp >= 0) && (exp <= 3)) {
+        return (time * 1000).toFixed(4) + " ms"; //millisecond
+    } 
+    else if ((exp > 3) && (exp <= 6)) {
+        return (time * 1000000).toFixed(4)  + " us"; //microsecond
+    }
+    else if ((exp > 6) && (exp <= 9)){
+        return (time * 1000000000).toFixed(4)  + " ns"; //nanosecond
+    }
+    else if ((exp > 9) && (exp <= 12)) {
+        return (time * 1000000000000).toFixed(4)  + " ps"; //picosecond
+    }
+    return time + " s";
+    
+}
+ 
+        </script>
+    </body>
+</html>
