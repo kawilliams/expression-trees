@@ -7,10 +7,6 @@ Reingold-Tilford tree:
 Icicle plot:
 ![Image of icicle](icicle.png)
 
-Rectangle tree (not using):
-![Image of rects](rects.png)
-
-
 # To use
 You will need Flask installed in order to host the web pages for the visualizations. 
 
