@@ -170,7 +170,7 @@ function update(root, perfdata) {
             else if (d._perfdata.avg_direct_time > 0) {
                 return colorTimeScale(d._perfdata.avg_direct_time);
             }
-            return "grey";
+            return colorTimeScale(0);
         }
         return "grey";
         }) //katy depth or height?
