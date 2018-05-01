@@ -1,0 +1,732 @@
+<!DOCTYPE html>
+<!--
+Adapted for tree.py 5/1
+-->
+<head>
+<title>Slider Reingold-Tilford Tree</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="shortcut icon" href="#"/>
+
+<style>
+
+    p {
+        font: 12px sans-serif;
+    }
+    .node {
+      cursor: pointer;
+    }
+
+    .node circle {
+      fill: #fff;
+      stroke: steelblue;
+      stroke-width: 2px; /*1.5px; katy - may need to adjust so eyes can see pattern*/
+    }
+
+    .node text {
+      font: 10px sans-serif;
+    }
+
+    .link {
+      fill: none;
+      stroke: #ccc;
+      stroke-width: 2px;
+    }
+
+    .d3-tip {
+      line-height: 1;
+      padding: 6px;
+      background: rgba(0, 0, 0, 0.8);
+      color: #fff;
+      border-radius: 4px;
+      font-size: 12px;
+    }
+ 
+    /* Creates a small triangle extender for the tooltip */
+    .d3-tip:after {
+      box-sizing: border-box;
+      display: inline;
+      font-size: 10px;
+      width: 100%;
+      line-height: 1;
+      color: rgba(0, 0, 0, 0.8);
+      content: "\25BC";
+      position: absolute;
+      text-align: center;
+      font: 12px sans-serif;
+    }
+ 
+    /* Style northward tooltips specifically */
+    .d3-tip.n:after {
+      margin: -2px 0 0 0;
+      top: 100%;
+      left: 0;
+    }
+
+    .ticks {
+  font: 10px sans-serif;
+}
+
+.track,
+.track-inset,
+.track-overlay {
+  stroke-linecap: round;
+}
+
+.track {
+  stroke: #000;
+  stroke-opacity: 0.3;
+  stroke-width: 10px;
+}
+
+.track-inset {
+  stroke: #ddd;
+  stroke-width: 8px;
+}
+
+.track-overlay {
+  pointer-events: stroke;
+  stroke-width: 50px;
+  stroke: transparent;
+  cursor: crosshair;
+}
+
+.handle {
+  fill: #fff;
+  stroke: #000;
+  stroke-opacity: 0.5;
+  stroke-width: 1.25px;
+}
+    
+    
+#shapekey {
+    position: absolute;
+    text-align: left;
+    padding: 2px;
+    font: 12px sans-serif;
+    background: lightsteelblue;
+    border: 0px;
+    border-radius: 8px;
+    display: inline-block;
+    white-space: nowrap;
+}
+#navigate {
+    display: inline-block;
+    background: lightsteelblue;
+    padding: 2px;
+    border-radius: 8px
+}
+
+#legend {
+    width: 300px;
+    height: 100px;
+    /*position: absolute;*/
+    display: inline-block;
+}
+
+.node-line-key {
+    height: 10px;
+    width: 20px;
+}
+.node-shape-triangle {
+    height: 15px;
+    width: 20px;
+}
+.node-shape-circle {
+    height: 12px;
+    width: 20px;
+}
+
+
+</style>
+</head>
+<body>
+<!--    <div id="navigate">
+        <p>Navigation</p>
+            <p>Slider d3 Reingold-Tilford Tree (<a href="http://bl.ocks.org/d3noob/8375092">original</a>)
+            <p><a href="reingold_tilford.html">d3 Reingold-Tilford Tree</a> (<a href="http://bl.ocks.org/d3noob/8375092">original</a>)
+            <p><a href="rectangles.html">Rectangles tree</a> (<a href="https://bl.ocks.org/mbostock/1093025#index.html">original</a>)</p>
+            <p><a href="icicle.html">Icicle tree</a> (<a href="https://bl.ocks.org/tophtucker/a35c0f4f32400755a6a9b976be834ab3">original</a>)</p>
+    </div>-->
+    <div id="shapekey">
+        <p>Node key</p>
+        <p><svg class="node-shape-triangle"></svg> node has children</p>
+        <p><svg class="node-shape-circle"></svg> circles node has no children </p>
+        <p><svg class="node-line-key"><path d="M 2 5 L 18 5" stroke-dasharray = "3,3" stroke="black"/></svg> synchronous (direct)</p>
+        <p><svg class="node-line-key"><path d="M 2 5 L 18 5" stroke="black"/></svg> asynchronous (normal)</p>
+        <p><svg class="node-line-key"><path d="M 2 5 L 18 5" stroke-dasharray="3,1" stroke="black"/></svg> undecided</p>
+    </div>
+    <div id="legend"></div>
+    <div id="vis"></div>
+<!-- Copyright 2011 Jason Davies https://github.com/jasondavies/newick.js -->
+<script>function parseNewick(a){for(var e=[],r={},s=a.split(/\s*(;|\(|\)|,|:)\s*/),t=0;t<s.length;t++){var n=s[t];switch(n){case"(":var c={};r.branchset=[c],e.push(r),r=c;break;case",":var c={};e[e.length-1].branchset.push(c),r=c;break;case")":r=e.pop();break;case":":break;default:var h=s[t-1];")"==h||"("==h||","==h?r.name=n:":"==h&&(r.length=parseFloat(n))}}return r}</script>
+
+<!-- Copyright 2016 Mike Bostock https://d3js.org -->
+<script src="//d3js.org/d3.v4.min.js"></script>
+<script src="../static/d3-tip.js"></script>
+
+<!-- https://bl.ocks.org/d3noob/43a860bc0024792f8803bba8ca0d5ecd -->
+<script>
+    var symbol = d3.symbol().size([100]);
+    
+    d3.selectAll(".node-shape-triangle").insert("g")
+            .selectAll("path").data(["triangle"]).enter()
+            .append("path")
+            .attr("d", symbol.type(function(d) {
+                return d3.symbolTriangle;
+            }))
+            .attr("transform", "rotate(-90)")
+            .attr("transform", "translate(10,9)")
+            .style("stroke", "black")
+            .style("fill", "white");
+    d3.selectAll(".node-shape-circle").insert("g")
+            .selectAll("path").data(["circle"]).enter()
+            .append("path")
+            .attr("d", symbol.type(function(d) {
+                return d3.symbolCircle;
+            }))
+            .attr("transform", "translate(10,6)")
+            .style("stroke", "black")
+            .style("fill", "white");
+    
+// Set the dimensions and margins of the diagram
+var margin = {top: 20, right: 90, bottom: 30, left: 90},
+    width = 860 - margin.left - margin.right,
+    height = 600 - margin.top - margin.bottom;
+
+/* http://bl.ocks.org/davegotz/bd54b56723c154d25eedde6504d30ad7 */
+var tool_tip = d3.tip()
+      .attr("class", "d3-tip")
+      .offset([-8, 0])
+      .html(function(d){ //katy
+      
+          if (d.id === 1) {
+              return "<p>Function: " + d.data.name + "</p>";
+          }
+          if (d._perfdata.eval_direct === 0) { // 0 async
+              return "<p>Primitive instance: " + d._perfdata.display_name + "</p>"+
+                    "<p>Count: " + d._perfdata.count + "</p>" +
+                    "<p>Total time: " + prettyprintTime(d._perfdata.time) + " </p>" +
+                    "<p>Exclusive time: " + prettyprintTime(d._perfdata.exclusiveTime) + " </p>";
+          } else if (d._perfdata.eval_direct === 1) { // 1 direct
+              return "<p>Primitive instance: " + d._perfdata.display_name + "</p>" +
+                    "<p>Count: " + d._perfdata.count + "</p>" +
+                    "<p>Total time: " + prettyprintTime(d._perfdata.time) + " </p>" +
+                    "<p>Exclusive time: " + prettyprintTime(d._perfdata.exclusiveTime) + " </p>";
+          } else if (d._perfdata.eval_direct === -1) { // -1 undecided
+              return "<p>Primitive instance: " + d._perfdata.display_name + "</p>" +
+                    "<p>Count: " + d._perfdata.count + "</p>" +
+                    "<p>Total time: " + prettyprintTime(d._perfdata.time) + " </p>" +
+                    "<p>Exclusive time: " + prettyprintTime(d._perfdata.exclusiveTime) + " </p>" +
+                    "<p>Evaluation style (direct or async) determined at runtime.</p>"; 
+          } else {
+              return "<p>Primitive instance: " + d._perfdata.display_name + "</p>" +
+                      "<p>Total time: " + prettyprintTime(d._perfdata.time) + " </p>" +
+                    "<p>Exclusive time: " + prettyprintTime(d._perfdata.exclusiveTime) + " </p>";
+          }
+        });
+
+var svg = d3.select("#vis").append("svg")
+    .attr("width", width + margin.right + margin.left)
+    .attr("height", height + margin.top + margin.bottom)
+  .append("g")
+    .attr("transform", "translate("
+          + margin.left + "," + margin.top + ")");
+  var i = 0,
+    duration = 750,
+    root;
+svg.call(tool_tip);
+
+// declares a tree layout and assigns the size
+var treemap = d3.tree().size([(height-margin.bottom), width]);
+
+var treemat = [1];
+
+d3.queue()
+//        .defer(d3.text, "20180406_flag_tree.txt")
+//        .defer(d3.csv, "20180406_flag_perfdata.csv")
+        // .defer(d3.text, "20180501_tree.txt")
+        // .defer(d3.csv, "20180501_perf.csv")
+        .defer(d3.text, "{{ treeformat }}")
+        .defer(d3.csv, "{{ perfdata }}")
+        .await(analyze);
+
+function analyze(error, treeformat, perfdata) {
+    if (error) throw error;
+    // Assigns parent, children, height, depth
+    root = d3.hierarchy(parseNewick(treeformat), function(d) { return d.branchset; });
+    root.x0 = height / 2;
+    root.y0 = 0;
+    // Collapse after the second level
+    //root.children.forEach(collapse); //katy
+    
+    // Collecting the performance times
+    domainTimes = [];
+    prim_inst = [];
+    perfdata.map(function(d){
+//        var avgTime = (+d.time)/(+d.count); //kttime
+//        if (avgTime > 0) {
+//            domainTimes.push(avgTime); //katy check times * 1.e-9);
+//        }
+        domainTimes.push(+d.time); //kttime
+        prim_inst.push(d.primitive_instance);
+    });
+    //console.log(d3.extent(domainTimes));
+
+    var colors = ["#edf8fb", "#b2e2e2", "#66c2a4", "#2ca25f", "#006d2c"]; //green
+    //var colors = ["#eff3ff", "#bdd7e7", "#6baed6", "#3182bd", "#08519c"];  //blue
+    colorTimeScale = d3.scaleQuantize() //went with log scale
+                .domain(d3.extent(domainTimes)) //domainTimes //kttime [0,10088524656]
+                .range(colors);
+    console.log("DomainTimes ", d3.extent(domainTimes));
+    //gotta get the domain values for each color
+    domainVals = [colorTimeScale.invertExtent(colors[0])[0]];
+    greatestVal = colorTimeScale.invertExtent(colors[colors.length-1])[1];
+    for (var i=0; i<colors.length; i++){
+        domainVals.push(colorTimeScale.invertExtent(colors[i])[1]);
+    }
+    
+      // ****************** Slider section **************************
+threshold =  0;
+
+slider_x = d3.scaleLinear()
+             .domain([0,d3.extent(domainTimes)[1]]) //katy greatestVal
+             .range([0, 500])
+             .clamp(true);
+slider = svg.append("g")
+             .attr("class", "slider")
+             .attr("transform", "translate(" + (-10) + ","+(0+ height)+ ")");
+slider.append("line")
+     .attr("class", "track")
+     .attr("x1", slider_x.range()[0])
+     .attr("x2", slider_x.range()[1])
+     .select(function() { return this.parentNode.appendChild(this.cloneNode(true)); })
+     .attr("class", "track-inset")
+     .select(function() { return this.parentNode.appendChild(this.cloneNode(true)); })
+     .attr("class", "track-overlay")
+     .call(d3.drag()
+         .on("start.interrupt", function() { slider.interrupt(); })
+         .on("start drag", function() { 
+             //closeNodes(slider_x.invert(d3.event.x));
+             update(root, perfdata, slider_x.invert(d3.event.x));
+     }));
+     
+     
+sliderText = slider.insert("g")
+        .attr("class", "slider-val")
+        .attr("transform", "translate(550, "+(4)+")")
+        .selectAll("text")
+        .data([0]).enter()
+        .append("text")
+        .attr("font-family", "sans-serif")
+        .attr("x", 0)
+        .attr("text-anchor", "middle")
+        .text("0");
+
+slider.insert("g", ".track-overlay")
+     .attr("class", "ticks")
+     .attr("transform", "translate(0," + 18 + ")")
+     .selectAll("text")
+     .data(slider_x.ticks(10))
+     .enter().append("text")
+     .attr("x", slider_x)
+     .attr("text-anchor", "middle")
+     .text(function(d) { return prettyprintTime(d); });
+     
+handle = slider.insert("circle", ".track-overlay")
+         .attr("class", "handle")
+         .attr("r", 9);
+
+    update(root, perfdata, threshold);
+    
+    addLegend(domainVals, greatestVal, colors);
+    
+    count = 1; //count the root
+    countNodes(root);
+}
+
+// Collapse the node and all it's children
+function collapse(d) {
+  
+  if(d.children) {
+    d._children = d.children;
+    d._children.forEach(collapse);
+    d.children = null;
+  }
+}
+
+
+
+function addLegend(domainVals, greatestVal, colors) {
+
+    var x = d3.scaleLinear()
+        .domain([0, greatestVal])
+        .range([0, 300]);
+
+    var xAxis = d3.axisBottom(x)
+        .tickSize(13)
+        .tickValues(domainVals)
+        .tickFormat(function(d) { return prettyprintTime(d); }); // === 0.5 ? formatPercent(d) : formatNumber(100 * d); });
+
+   
+    var g = d3.select("#legend").append("svg")
+        .attr("width", 600 + margin.right + margin.left)
+        .attr("height", 45 + margin.bottom)
+      .append("g")
+        .attr("transform", "translate(250,50)")
+              //+ margin.left + "," + margin.top + ")")
+              .call(xAxis);
+
+    g.select(".domain")
+        .remove();
+    
+    g.selectAll("rect")
+      .data(colorTimeScale.range().map(function(color) {
+        var d = colorTimeScale.invertExtent(color);
+        if (d[0] == null) d[0] = x.domain()[0];
+        if (d[1] == null) d[1] = x.domain()[1];
+        return d;
+      }))
+      .enter().insert("rect", ".tick")
+        .attr("height", 8)
+        .attr("x", function(d) { return x(d[0]); })
+        .attr("width", function(d) { return x(d[1]) - x(d[0]); })
+        .attr("fill", function(d) { return colorTimeScale(d[0]); });
+
+    g.append("text")
+        .attr("fill", "#000")
+        .attr("font-weight", "bold")
+        .attr("text-anchor", "start")
+        .attr("y", -6)
+        .text("Average time per instance");   
+    
+}
+
+// Count the number of nodes at each level
+function countNodes(node) {
+    if(node.children){
+        for(var i=0; i<node.children.length; i++) {
+            if (node.children[i].children){
+                count++;
+                countNodes(node.children[i]);
+            }
+            else {
+                count++;
+            }
+        }
+    }
+}
+
+function update(source, perfdata, threshold) {
+  
+  handle.attr("cx", slider_x(threshold));
+  sliderText.text(prettyprintTime(threshold))
+          .attr("font-family", "sans-serif")
+          .attr("font-size", "15px");
+  // Assigns the x and y position for the nodes
+  var tree = treemap(root);
+
+  // Compute the new tree layout.
+  var nodes = tree.descendants(),
+      links = tree.descendants().slice(1);
+  var maxDepth=0; 
+  nodes.forEach(function(d){
+      if (d.depth > maxDepth){ 
+        maxDepth = d.depth;
+      } 
+  });
+
+  // Normalize for fixed-depth. 
+  nodes.forEach(function(d){ 
+      depthY = width / maxDepth;
+      d.y = d.depth * depthY;
+  }); //was 180. Made dependent on # of levels and width
+
+
+  // ****************** Nodes section ***************************
+
+  // Update the nodes...
+  var node = svg.selectAll('g.node')
+      .data(nodes, function(d) {
+          var nodename = d.data.name;
+          // Change time to time-per-instance //katy
+          if (prim_inst.indexOf(nodename) >= 0) {
+            node_perfdata = perfdata[prim_inst.indexOf(nodename)]; 
+            
+            node_perfdata.eval_direct = +node_perfdata.eval_direct; //how the node was run (async/sync/unk)
+            node_perfdata.avg_time = node_perfdata.time ; //kttime (node_perfdata.time / node_perfdata.count); // * 1.e-9; //katy nanos are SMALL
+            if (+node_perfdata.count === 0) node_perfdata.avg_time = node_perfdata.time;
+            if (!node_perfdata.avg_time) node_perfdata.avg_time = 0;
+            d._perfdata = perfdata[prim_inst.indexOf(nodename)];  
+            d._perfdata.save_display_name = d._perfdata.display_name;
+          }
+          return d.id || (d.id = ++i); 
+          });
+ //Add exclusive time after all children nodes have been created
+ node.data(nodes, function(d){
+     d.childrenTime = 0;
+     if (d.children) {
+         for (child of d.children) {
+             d.childrenTime += +(child._perfdata.avg_time);
+         }
+     }
+     if (d._perfdata) {
+         d._perfdata.exclusiveTime = d._perfdata.avg_time - d.childrenTime;
+         //console.log(d, d._perfdata.exclusiveTime);
+         //Katy
+     }
+ });
+ 
+ node.each(function(d){
+     
+     if (d._perfdata) {
+         //Closing nodes below threshold
+         if ((d._perfdata.avg_time < threshold) && (d.children)) { //katy
+             console.log(threshold);
+              if (d.children) {
+                d._children = d.children;
+                d.children = null;
+                
+              } else {
+                d.children = d._children;
+                d._children = null;
+              }
+         }
+         //Reopening nodes above threshold
+//         else if (//(d._perfdata.avg_time >= threshold) && 
+//                 (d.children === null) && 
+//                 (d._children)) { 
+//             d.children = d._children;
+//             d._children = null;
+//         }
+     }
+ });
+ 
+        // Enter any new modes at the parent's previous position.
+  var nodeEnter = node.enter().append('g')
+      .attr('class', 'node')
+      .attr("transform", function(d) {
+        return "translate(" + source.y0 + "," + source.x0 + ")";
+    })  
+    .on('click', click) 
+    .on("mouseenter", tool_tip.show)
+    .on("mouseout", tool_tip.hide);
+
+  // Add Circle for the nodes
+//  nodeEnter.append('circle')
+//      .attr('class', 'node')
+//      .attr('r', 10)
+//      .style("stroke", function(d){ //stroke color by direct or not
+//          if (d._perfdata) {
+//              return (d._perfdata.avg_direct_time > 0) ? "red" : "purple"; 
+//          }
+//      });
+
+// Add Triangle for nodes when collapsed and have children
+//katy
+
+    //hard coded the correct time katy
+    //orig
+    //"/phylanx/call-function$2$lra/2$33$5","call-function/lra(33, 5)",1,377929,-1
+    // new
+    //"/phylanx/call-function$2$lra/2$33$5","call-function/lra(33, 5)",1,377929000,-1
+    var symbol = d3.symbol().size([150]);
+    nodeEnter
+        .append("path")
+        .attr("class", "node plain-circle")
+        .attr("d", symbol.type(function(d){
+//            return d3.symbolCircle;
+            if (d.children) {
+                return d3.symbolTriangle;
+            } else {
+                return d3.symbolCircle;
+            }
+        }))
+        .attr('transform', "rotate(-90)")
+        .attr("stroke-dasharray", function(d){ //stroke solid/dashed by direct or not
+          if (d._perfdata) {
+              if (d._perfdata.eval_direct === 1) {
+                  return "3, 3"; 
+              } else if (d._perfdata.eval_direct == -1) {
+                  return "3,1";
+              } else { return "0"; }
+          }
+          return "0";
+        })
+        .style("stroke", "black")
+        .style("fill", function(d) { //katy
+        if (d._perfdata) { //color circle by time-per-instance
+//            if (d._perfdata.avg_time > 0) {
+//                return colorTimeScale(d._perfdata.avg_time);
+//            }
+            if (d._perfdata.exclusiveTime > 0) {
+                return colorTimeScale(d._perfdata.exclusiveTime);
+            } else if (d._perfdata.exclusiveTime < 0) {
+                return "magenta";
+            }
+            return "#fff";
+        }
+        return "#fff";
+        });
+        
+//    nodeEnter.append("path").attr("class", "node hidden-tree")
+//        .attr("d", symbol.type(d3.symbolTriangle))
+//        .attr("transform", "rotate(-90)")
+//        .attr("stroke-dasharray", function(d){ if (d.perfdata){ 
+//                return (d._perfdata.eval_direct === 1) ? "3,3":"0";
+//        } return "0";
+//        }).style("stroke", "black")
+//                .style("fill", "magenta")
+//                .style("display", "none");
+        
+
+
+// Add labels for the nodes
+  nodeEnter.append('text')
+      .attr("dy", ".35em")
+      .attr("x", function(d) {
+          return d.children || d._children ? -13 : 13;
+      })
+      .attr("text-anchor", function(d) {
+          return d.children || d._children ? "end" : "start";
+      })
+      .text(function(d) { 
+          if (!d.children) {
+            return d._perfdata.display_name; 
+          } else {
+              return "";
+          }
+      });
+
+  // UPDATE
+  var nodeUpdate = nodeEnter.merge(node);
+  
+  // Transition to the proper position for the node
+  nodeUpdate.transition()
+    .duration(duration)
+    .attr("transform", function(d) { 
+        return "translate(" + d.y + "," + d.x + ")";
+     });
+
+  // Update the node attributes and style
+  nodeUpdate.select('circle.node')
+    .attr('r', 10)
+    .style("fill", function(d) { //katy
+        if (d._perfdata) { //color circle by time-per-instance
+            if (d._perfdata.avg_time > 0) {
+                return colorTimeScale(d._perfdata.avg_time);
+            }
+        }
+    })
+    .attr('cursor', 'pointer');
+
+  // Remove any exiting nodes
+  var nodeExit = node.exit().transition()
+      .duration(duration)
+      .attr("transform", function(d) {
+          return "translate(" + source.y + "," + source.x + ")";
+      })
+      .remove();
+
+  // On exit reduce the node circles size to 0
+  nodeExit.select('circle')
+    .attr('r', 1e-6);
+
+  // On exit reduce the opacity of text labels
+  nodeExit.select('text')
+    .style('fill-opacity', 1e-6);
+    
+
+  // ****************** links section ***************************
+
+  // Update the links...
+  var link = svg.selectAll('path.link')
+      .data(links, function(d) { return d.id; });
+
+  // Enter any new links at the parent's previous position.
+  var linkEnter = link.enter().insert('path', "g")
+      .attr("class", "link")
+      .attr('d', function(d){
+        var o = {x: source.x0, y: source.y0};
+        return diagonal(o, o);
+      });
+// UPDATE
+  var linkUpdate = linkEnter.merge(link);
+
+  // Transition back to the parent element position
+  linkUpdate.transition()
+      .duration(duration)
+      .attr('d', function(d){ return diagonal(d, d.parent); });
+
+  // Remove any exiting links
+  var linkExit = link.exit().transition()
+      .duration(duration)
+      .attr('d', function(d) {
+        var o = {x: source.x, y: source.y};
+        return diagonal(o, o);
+      })
+      .remove();
+
+  // Store the old positions for transition.
+  nodes.forEach(function(d){
+    d.x0 = d.x;
+    d.y0 = d.y;
+  });
+  
+
+
+  //  addSlider(domainVals, greatestVal); //katy working-ish
+  // Creates a curved (diagonal) path from parent to the child nodes
+  function diagonal(s, d) {
+
+    path = `M ${s.y} ${s.x}
+            C ${(s.y + d.y) / 2} ${s.x}
+              ${(s.y + d.y) / 2} ${d.x}
+              ${d.y} ${d.x}`;
+
+    return path;
+  }
+
+  // Toggle children on click.
+  function click(d) { //so children aren't behaving
+    if (d.children) {
+        d._children = d.children;
+        d.children = null;
+            
+      } else {
+        d.children = d._children;
+        d._children = null;
+      }
+    update(d, perfdata, threshold);
+  }
+} 
+
+
+function prettyprintTime(time) {
+    //converting nanoseconds to nice-looking times
+    timeInSeconds = time * 1e-9;
+    var exp = -Math.floor( Math.log(timeInSeconds) / Math.log(10))+1;
+
+    if (timeInSeconds > 1) { //second
+        return (timeInSeconds).toFixed(2) + " s";
+    }
+    else if (exp == 1) {
+        return (timeInSeconds).toFixed(2) + " s"; //millisecond
+    }
+    else if ((exp > 1) && (exp <= 4)) {
+        return (timeInSeconds * 1000).toFixed(2) + " ms"; //millisecond
+    } 
+    else if ((exp > 4) && (exp <= 7)) {
+        return (timeInSeconds * 1000000).toFixed(2)  + " us"; //microsecond
+    }
+    else if ((exp > 7) && (exp <= 10)){
+        return (timeInSeconds * 1000000000).toFixed(2)  + " ns"; //nanosecond
+    }
+    else if ((exp > 10) && (exp <= 13)) {
+        return (timeInSeconds * 1000000000000).toFixed(2)  + " ps"; //picosecond
+    }
+    return timeInSeconds + " s";
+    
+}
+</script>
+           

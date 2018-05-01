@@ -37,6 +37,16 @@ def rt_tree(perfdata=None, treeformat=None):
 	    treeformat = str(filename)
     return render_template('reingold_tilford.html', perfdata=perfdata, treeformat=treeformat)
 
+@APP.route('/rt_tree2')
+def rt_tree2(perfdata=None, treeformat=None):
+    script = sys.argv[0]
+    for filename in sys.argv[1:]:
+        if (".csv" in filename):
+            perfdata = str(filename)
+        if (".txt" in filename):
+            treeformat = str(filename)
+    return render_template('reingold_2.html', perfdata=perfdata, treeformat=treeformat)
+
 @APP.route('/icicle')
 def icicle(perfdata=None, treeformat=None):
     script = sys.argv[0]
