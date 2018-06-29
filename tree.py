@@ -47,6 +47,19 @@ def rt_tree2(perfdata=None, treeformat=None):
             treeformat = str(filename)
     return render_template('reingold_2.html', perfdata=perfdata, treeformat=treeformat)
 
+@APP.route('/codeview')
+def codeview(perfdata=None, treeformat=None, physlfile=None):
+    script = sys.argv[0]
+    for filename in sys.argv[1:]:
+        if (".csv" in filename):
+            perfdata = str(filename)
+        if (".txt" in filename):
+            treeformat = str(filename)
+	if (".physl" in filename):
+	    physlfile = str(filename)
+    return render_template('codeview.html', perfdata=perfdata, treeformat=treeformat, physlfile=physlfile)
+
+
 @APP.route('/icicle')
 def icicle(perfdata=None, treeformat=None):
     script = sys.argv[0]
