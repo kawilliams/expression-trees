@@ -7,7 +7,7 @@ APP = Flask(__name__)
 
 
 @APP.route('/')
-def index(perfdata=None, treeformat=None):
+def index(perfdata=None, treeformat=None, codedata=None):
     """   Displays the index page accessible at '/'    """
     script = sys.argv[0]
     for filename in sys.argv[1:]:
@@ -15,7 +15,10 @@ def index(perfdata=None, treeformat=None):
             perfdata = str(filename)
         if (".txt" in filename):
             treeformat = str(filename)
-    return render_template('rectangles.html', perfdata=perfdata, treeformat=treeformat) #render_template('index.html')
+	if (".cpp" in filename):
+ 	    codedata = str(filename)
+    return render_template('rectangles.html', perfdata=perfdata, treeformat=treeformat, codedata=codedata) 
+#render_template('index.html')
 
 @APP.route('/rects')
 def rects(perfdata=None, treeformat=None):
@@ -38,14 +41,16 @@ def rt_tree(perfdata=None, treeformat=None):
     return render_template('reingold_tilford.html', perfdata=perfdata, treeformat=treeformat)
 
 @APP.route('/rt_tree2')
-def rt_tree2(perfdata=None, treeformat=None):
+def rt_tree2(perfdata=None, treeformat=None, codedata=None):
     script = sys.argv[0]
     for filename in sys.argv[1:]:
         if (".csv" in filename):
             perfdata = str(filename)
         if (".txt" in filename):
             treeformat = str(filename)
-    return render_template('reingold_2.html', perfdata=perfdata, treeformat=treeformat)
+	if (".cpp" in filename):
+	    codedata = str(filename)
+    return render_template('reingoldCV.html', perfdata=perfdata, treeformat=treeformat, codedata=codedata)
 
 @APP.route('/codeview')
 def codeview(perfdata=None, treeformat=None, physlfile=None):

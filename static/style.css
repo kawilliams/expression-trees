@@ -105,18 +105,27 @@ padding: 2px;
 border-radius: 8px
 }
 #code-view {
-    position: absolute;
-    left: 880px; /*180px; when codeview was top & left*/
+    /*Working before Skyping Kate*/
+    position: fixed;
+    top: 10px;
+    right: 5px;
+/*    left: 880px; 180px; when codeview was top & left*/
+
 /*    width: 500px;*/
 /*    height: 80px;*/
-    padding: 0 0 25 0;
+    padding: 10px;
     border-radius: 8px;
     border: 0px;
     background: #eff3f8;
-    
+    overflow-y: scroll;
+    max-width: 610px; /*540px; <-- doesn't interfere w/tree, 650 is ~80 cols'*/
+    font-family: monospace;
+    font-size: 12px;
+    whitespace: pre;
 }
-#code-view p { 
+#code-view pre { 
     margin-bottom: -12px;
+    word-wrap: break-word;
 }
 
 #legend {
