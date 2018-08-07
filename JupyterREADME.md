@@ -6,7 +6,7 @@ This package `py_d3` has a lot of quirks so lots of patience is required when ex
 
 **Running**
 
-To run the notebook with the d3 library loadedd, each cell must be executed one by one. If you get the error "d3 is not loaded yet", but you've already run the first cell `%load_ext py_d3`, run that cell again. This is a known "quirk".
+To load the notebook, enter `jupyter-notebook d3_Reingold_Tilford_tree.ipynb`. To run the notebook with the d3 library loaded, each cell must be executed one by one. If you get the error "d3 is not loaded yet", but you've already run the first cell `%load_ext py_d3`, run that cell again. This is a known "quirk".
 
 **Errors**
 1. If you see
