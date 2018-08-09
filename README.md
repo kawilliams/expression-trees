@@ -25,6 +25,7 @@ Once the run is completed, open `myOutputFile`. The tree information is under "T
 The performance data is titled "Primitive Performance Counter Data in CSV". Copy everything from the column names (`primitive_instance` .. `eval_direct`) until the final row. Paste this csv data into file and save the file as a `.csv` file (e.g. "perf_dat.csv"). All other information in the output is unnecessary for the visualization.
 
 Commit HPX: 5171fb3
+
 Commit Phylanx: 60d9099
 
 
