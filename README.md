@@ -14,6 +14,15 @@ This Flask application follows the typical format with a Python file that establ
 
 To use, first save the Newick-formatted tree into a text file and the performance data into a csv. Be sure that the column headers ("count", "time", etc.) are the first line of the csv. Put the text file and csv file into the `static` folder. Also copy the algorithm `.cpp` file into the `static` folder. To run the program, enter `python tree.py static/myperformancedata.csv static/mynewicktree.txt static/myalg_csv_instrumented.cpp` into the command line. 
 
+# To gather the data for the tree
+To run the ALS example and store the output, from I use:
+srun -n 1 ./als_csv_instrumented --data_csv=MovieLens.csv -i -t2 > myOutputFile
+
+Once the run is completed, open "myOutputFile". The tree information is under "Tree information for function __ ". It's Newick-formatted so there should be an abundance of parentheses. Copy from the start of the parentheses to the end, signaled by the function name and a semicolon. Paste this tree into a plain text file and save the file as a `.txt` file (e.g. "tree.txt").
+
+The performance data is titled "Primitive Performance Counter Data in CSV". Copy everything from the column names until the final row. Paste this csv data into file and save the file as a `.csv` file (e.g. "perf_dat.csv"). All other information in the output is unnecessary for the visualization.
+
+
 # ALS Example
 In `static` are the test files that I used. The performance data is stored in `20180713_als_perfdata.csv`. The tree structure is stored in `20180713_als_tree.txt`. The algorithm file is `als_csv_instrumented.cpp`. The full command: `python tree.py static/20180713_als_tree.txt static/20180713_als_perfdata.csv static/als_csv_instrumented.cpp`. If things run properly, you should see 
 ```
@@ -25,6 +34,7 @@ In `static` are the test files that I used. The performance data is stored in `2
 and see the tree by clicking `Reingold-Tilford tree` at the top of the page at http://0.0.0.0:8001/.
 
 # Known issues
+
 
 
 
