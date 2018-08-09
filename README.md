@@ -17,7 +17,7 @@ To use, first save the Newick-formatted tree into a text file and the performanc
 # To gather the performance data and tree format
 First I moved the dataset `MovieLens.csv` to `phylanx/build/bin`. Then I ran the following:
 ```
-srun -n 1 ./als_csv_instrumented --data_csv=MovieLens.csv -i -t2 > output20180519
+srun -n 1 ./als_csv_instrumented --data_csv=MovieLens.csv -i -t2 > myOutputFile
 ```
 
 Once the run is completed, open `myOutputFile`. The tree information is under "Tree information for function: __ " (in this case, "Tree information for function: als"). It's Newick-formatted so there should be an abundance of parentheses. Copy from the start of the parentheses to the end, signaled by the function name and a semicolon. Paste this tree into a plain text file and save the file as a `.txt` file (e.g. "tree.txt"). Ignore the graph data labeled `graph "als" {`.
