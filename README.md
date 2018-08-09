@@ -4,8 +4,6 @@ Generating d3 expression tree visualizations with Newick-formatted trees.
 Reingold-Tilford tree:
 ![Image of rt_tree](codeview.png)
 
-Icicle plot:
-![Image of icicle](icicle.png)
 
 # To use
 You will need [Flask](http://flask.pocoo.org/) installed in order to host the web pages for the visualizations. 
@@ -40,7 +38,7 @@ In `static` are the test files that I used. The performance data is stored in `2
 and see the tree by clicking `Reingold-Tilford tree` at the top of the page at http://0.0.0.0:8001/.
 
 # Known issues
-
+When running the code via http://0.0.0.0:8001/, clicking Reingold-Tilford tree does not display the correct tree (although it should). If the nodes of the tree are green triangles and not purple circles, go to http://0.0.0.0:8001/rt_tree2.
 
 
 
