@@ -12,6 +12,8 @@ This Flask application follows the typical format with a Python file that establ
 
 To use, first save the Newick-formatted tree into a text file and the performance data into a csv. Be sure that the column headers ("count", "time", etc.) are the first line of the csv. Put the text file and csv file into the `static` folder. Also copy the algorithm `.cpp` file into the `static` folder. To run the program, enter `python tree.py static/myperformancedata.csv static/mynewicktree.txt static/myalg_csv_instrumented.cpp` into the command line. 
 
+Note: `tree.py` is compatible with both Python 2 and 3.
+
 # To gather the performance data and tree format
 First I moved the dataset `MovieLens.csv` to `phylanx/build/bin`. Then I ran the following:
 ```
