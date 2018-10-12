@@ -1,0 +1,266 @@
+#tree-vis {
+/*    overflow-y: scroll !important;
+    overflow-x: scroll !important;*/
+    visibility: hidden;
+}
+
+body {
+  overflow-y: scroll !important;
+  overflow-x: scroll !important;
+}
+
+p {
+font: 12px sans-serif !important;
+}
+.node {
+cursor: pointer !important;
+}
+
+.node circle {
+fill: #fff !important;
+stroke: steelblue !important;
+stroke-width: 2px !important; /*1.5px; katy - may need to adjust so eyes can see pattern*/
+}
+
+.node text {
+font: 10px sans-serif !important;
+}
+
+.link {
+fill: none !important;
+stroke: #ccc !important;
+stroke-width: 2px !important;
+}
+
+.d3-tip {
+line-height: 1 !important;
+padding: 6px !important;
+background: rgba(0, 0, 0, 0.8) !important;
+color: #fff !important;
+border-radius: 4px !important;
+font-size: 12px !important;
+}
+
+/* Creates a small triangle extender for the tooltip */
+.d3-tip:after {
+box-sizing: border-box !important;
+display: inline !important;
+font-size: 10px !important;
+width: 100% !important;
+line-height: 1 !important;
+color: rgba(0, 0, 0, 0.8) !important;
+content: "\25BC" !important;
+position: absolute !important;
+text-align: center !important;
+font: 12px sans-serif !important;
+}
+
+/* Style northward tooltips specifically */
+.d3-tip.n:after {
+margin: -2px 0 0 0 !important;
+top: 100% !important;
+left: 0 !important;
+}
+
+/* Kate */
+.d3-tip-s {
+  line-height: 1 !important;
+  padding: 10px !important;
+  background: rgba(0, 0, 0, 0.8) !important;
+  color: #fff !important;
+  border-radius: 2px !important;
+}
+/* Kate: Creates a small triangle extender for the tooltip */
+.d3-tip-s:before {
+  box-sizing: border-box !important;
+  display: inline-block !important;
+  font-size: 10px !important;
+  width: 100% !important;
+  line-height: 1 !important;
+  color: rgba(0, 0, 0, 0.8) !important;
+  content: "\25B2" !important;
+  top: -300px !important;
+  position: absolute !important;
+  text-align: center !important;
+}
+/* Kate: Style southward tooltips differently */
+.d3-tip-s.n:before {
+  margin: -1px 0 0 0 !important;
+  top: -7px !important;
+  left: 0 !important;
+}
+
+.ticks {
+font: 10px sans-serif !important;
+}
+
+.track,
+.track-inset,
+.track-overlay {
+stroke-linecap: round !important;
+}
+
+.track {
+stroke: #000 !important;
+stroke-opacity: 0.3 !important;
+stroke-width: 10px !important;
+}
+
+.track-inset {
+stroke: #ddd !important;
+stroke-width: 8px !important;
+}
+
+.track-overlay {
+pointer-events: stroke !important;
+stroke-width: 50px !important;
+stroke: transparent !important;
+cursor: crosshair !important;
+}
+
+.handle {
+fill: #fff !important;
+stroke: #000 !important;
+stroke-opacity: 0.5 !important;
+stroke-width: 1.25px !important;
+}
+
+
+#shapekey {
+position: absolute !important;
+text-align: left !important;
+padding: 2px !important;
+font: 12px sans-serif !important;
+background: lightsteelblue !important;
+border: 0px !important;
+border-radius: 8px !important;
+display: inline-block !important;
+white-space: nowrap !important;
+}
+#navigate {
+display: inline-block !important;
+background: lightsteelblue !important;
+padding: 2px !important;
+border-radius: 8px
+}
+
+.collapsible {
+  position: fixed !important;
+  top: 150px !important;
+  right: 5px !important;
+  z-index: 10 !important;
+  background-color: #305289 !important;
+  color: #ffffff !important;
+  cursor: pointer !important;
+  padding: 5px !important;
+  width: 628px !important;
+  border: 0px !important;
+  border-radius: 4px !important;
+  text-align: left !important;
+  outline: none !important;
+  font-size: 15px !important;
+  visibility: hidden;
+}
+.collapsible:hover {
+  background-color: #ccc !important;
+}
+.active {
+  background-color: #305289 !important;
+}
+
+#code-view {
+    /*Working before Skyping Kate*/
+    position: fixed !important;
+    top: 150px !important;
+    right: 5px !important;
+/*    left: 880px; 180px; when codeview was top & left*/
+
+/*    width: 500px;*/
+/*    height: 80px;*/
+    padding: 10px !important;
+    border-radius: 8px !important;
+    border: 0px !important;
+    background: #eff3f8 !important;
+    overflow-y: scroll !important;
+    max-width: 610px !important; /*540px !important; <-- doesn't interfere w/tree, 650 is ~80 cols'*/
+    font-family: monospace !important;
+    font-size: 12px !important;
+    whitespace: pre !important;
+    visibility: hidden;
+}
+#code-view pre { 
+    margin-bottom: -12px !important;
+    word-wrap: break-word !important;
+}
+
+#legend {
+position: absolute !important;
+}
+
+.node-line-key {
+height: 10px !important;
+width: 20px !important;
+}
+.node-shape-triangle {
+height: 15px !important;
+width: 20px !important;
+}
+.node-shape-circle {
+height: 12px !important;
+width: 20px !important;
+}
+
+/* Slider from w3 schools */
+/* The switch - the box around the slider */
+.toggleswitch {
+position: relative !important;
+display: inline-block !important;
+width: 60px !important;
+height: 34px !important;
+}
+
+/* Hide default HTML checkbox */
+.toggleswitch input {display:none !important}
+
+/* The slider */
+.slider {
+position: absolute !important;
+cursor: pointer !important;
+top: 0 !important;
+left: 0 !important;
+right: 0 !important;
+bottom: 0 !important;
+background-color: #ccc !important;
+-webkit-transition: .4s !important;
+transition: .4s !important;
+}
+
+.slider:before {
+position: absolute !important;
+content: "" !important;
+height: 26px !important;
+width: 26px !important;
+left: 4px !important;
+bottom: 4px !important;
+background-color: white !important;
+-webkit-transition: .4s !important;
+transition: .4s !important;
+}
+
+input+ .slider {
+background-color: #54278f !important; /* dark blue */
+}
+
+input:checked + .slider {
+background-color: #006d2c !important; /* dark green */
+}
+
+input:focus + .slider {
+box-shadow: 0 0 1px #006d2c !important;
+}
+
+input:checked + .slider:before {
+-webkit-transform: translateX(26px) !important;
+-ms-transform: translateX(26px) !important;
+transform: translateX(26px) !important;
+}

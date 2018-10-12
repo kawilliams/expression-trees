@@ -1,0 +1,259 @@
+#tree-vis {
+    overflow-y: scroll;
+    overflow-x: scroll;
+    visibility: hidden;
+}
+
+p {
+font: 12px sans-serif;
+}
+.node {
+cursor: pointer;
+}
+
+.node circle {
+fill: #fff;
+stroke: steelblue;
+stroke-width: 2px; /*1.5px; katy - may need to adjust so eyes can see pattern*/
+}
+
+.node text {
+font: 10px sans-serif;
+}
+
+.link {
+fill: none;
+stroke: #ccc;
+stroke-width: 2px;
+}
+
+.d3-tip {
+line-height: 1;
+padding: 6px;
+background: rgba(0, 0, 0, 0.8);
+color: #fff;
+border-radius: 4px;
+font-size: 12px;
+}
+
+/* Creates a small triangle extender for the tooltip */
+.d3-tip:after {
+box-sizing: border-box;
+display: inline;
+font-size: 10px;
+width: 100%;
+line-height: 1;
+color: rgba(0, 0, 0, 0.8);
+content: "\25BC";
+position: absolute;
+text-align: center;
+font: 12px sans-serif;
+}
+
+/* Style northward tooltips specifically */
+.d3-tip.n:after {
+margin: -2px 0 0 0;
+top: 100%;
+left: 0;
+}
+
+/* Kate */
+.d3-tip-s {
+  line-height: 1;
+  padding: 10px;
+  background: rgba(0, 0, 0, 0.8);
+  color: #fff;
+  border-radius: 2px;
+}
+/* Kate: Creates a small triangle extender for the tooltip */
+.d3-tip-s:before {
+  box-sizing: border-box;
+  display: inline-block;
+  font-size: 10px;
+  width: 100%;
+  line-height: 1;
+  color: rgba(0, 0, 0, 0.8);
+  content: "\25B2";
+  top: -245px;
+  position: absolute;
+  text-align: center;
+}
+/* Kate: Style southward tooltips differently */
+.d3-tip-s.n:before {
+  margin: -1px 0 0 0;
+  top: -7px;
+  left: 0;
+}
+
+.ticks {
+font: 10px sans-serif;
+}
+
+.track,
+.track-inset,
+.track-overlay {
+stroke-linecap: round;
+}
+
+.track {
+stroke: #000;
+stroke-opacity: 0.3;
+stroke-width: 10px;
+}
+
+.track-inset {
+stroke: #ddd;
+stroke-width: 8px;
+}
+
+.track-overlay {
+pointer-events: stroke;
+stroke-width: 50px;
+stroke: transparent;
+cursor: crosshair;
+}
+
+.handle {
+fill: #fff;
+stroke: #000;
+stroke-opacity: 0.5;
+stroke-width: 1.25px;
+}
+
+
+#shapekey {
+position: absolute;
+text-align: left;
+padding: 2px;
+font: 12px sans-serif;
+background: lightsteelblue;
+border: 0px;
+border-radius: 8px;
+display: inline-block;
+white-space: nowrap;
+}
+#navigate {
+display: inline-block;
+background: lightsteelblue;
+padding: 2px;
+border-radius: 8px
+}
+
+.collapsible {
+  position: fixed;
+  top: 10px;
+  right: 5px;
+  z-index: 10;
+  background-color: #305289;
+  color: #ffffff;
+  cursor: pointer;
+  padding: 5px;
+  width: 628px;
+  border: 0px;
+  border-radius: 4px;
+  text-align: left;
+  outline: none;
+  font-size: 15px;
+}
+.collapsible:hover {
+  background-color: #ccc;
+}
+.active {
+  background-color: #305289;
+}
+
+#code-view {
+    /*Working before Skyping Kate*/
+    position: fixed;
+    top: 10px;
+    right: 5px;
+/*    left: 880px; 180px; when codeview was top & left*/
+
+/*    width: 500px;*/
+/*    height: 80px;*/
+    padding: 10px;
+    border-radius: 8px;
+    border: 0px;
+    background: #eff3f8;
+    overflow-y: scroll;
+    max-width: 610px; /*540px; <-- doesn't interfere w/tree, 650 is ~80 cols'*/
+    font-family: monospace;
+    font-size: 12px;
+    whitespace: pre;
+}
+#code-view pre { 
+    margin-bottom: -12px;
+    word-wrap: break-word;
+}
+
+#legend {
+position: absolute;
+}
+
+.node-line-key {
+height: 10px;
+width: 20px;
+}
+.node-shape-triangle {
+height: 15px;
+width: 20px;
+}
+.node-shape-circle {
+height: 12px;
+width: 20px;
+}
+
+/* Slider from w3 schools */
+/* The switch - the box around the slider */
+.toggleswitch {
+position: relative;
+display: inline-block;
+width: 60px;
+height: 34px;
+}
+
+/* Hide default HTML checkbox */
+.toggleswitch input {display:none;}
+
+/* The slider */
+.slider {
+position: absolute;
+cursor: pointer;
+top: 0;
+left: 0;
+right: 0;
+bottom: 0;
+background-color: #ccc;
+-webkit-transition: .4s;
+transition: .4s;
+}
+
+.slider:before {
+position: absolute;
+content: "";
+height: 26px;
+width: 26px;
+left: 4px;
+bottom: 4px;
+background-color: white;
+-webkit-transition: .4s;
+transition: .4s;
+}
+
+input+ .slider {
+background-color: #54278f; /* dark blue */
+}
+
+input:checked + .slider {
+background-color: #006d2c; /* dark green */
+}
+
+input:focus + .slider {
+box-shadow: 0 0 1px #006d2c;
+}
+
+input:checked + .slider:before {
+-webkit-transform: translateX(26px);
+-ms-transform: translateX(26px);
+transform: translateX(26px);
+}
