@@ -39,8 +39,8 @@ class Interface(Magics):
         # Set up the object to map inout files to what javascript expects
         argList = '<script> var argList = []; var elementTop = null; var cell_idx = -1;</script>'
         display(HTML(argList))
-        noScroll = """IPython.OutputArea.prototype._should_scroll = function(lines) {return false;}"""
-        display(Javascript(noScroll))
+        #noScroll = """IPython.OutputArea.prototype._should_scroll = function(lines) {return false;}"""
+        #display(Javascript(noScroll))
         for i in range(1, len(args), 1):
             if("." in args[i]):
                 try:
