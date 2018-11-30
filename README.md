@@ -2,7 +2,7 @@
 Generating d3 expression tree visualizations with Newick-formatted trees.
 
 Reingold-Tilford tree:
-![Image of rt_tree](codeview.png)
+![Image of rt_tree](images/codeview.png)
 
 
 # To use
