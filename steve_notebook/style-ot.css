@@ -32,65 +32,8 @@ stroke: #ccc !important;
 stroke-width: 2px !important;
 }
 
-.d3-tip {
-line-height: 1 !important;
-padding: 6px !important;
-background: rgba(0, 0, 0, 0.8) !important;
-color: #fff !important;
-border-radius: 4px !important;
-font-size: 12px !important;
-}
-
-/* Creates a small triangle extender for the tooltip */
-.d3-tip:after {
-box-sizing: border-box !important;
-display: inline !important;
-font-size: 10px !important;
-width: 100% !important;
-line-height: 1 !important;
-color: rgba(0, 0, 0, 0.8) !important;
-content: "\25BC" !important;
-position: absolute !important;
-text-align: center !important;
-font: 12px sans-serif !important;
-}
-
-/* Style northward tooltips specifically */
-.d3-tip.n:after {
-margin: -2px 0 0 0 !important;
-top: 100% !important;
-left: 0 !important;
-}
-
-/* Kate */
-.d3-tip-s {
-  line-height: 1 !important;
-  padding: 10px !important;
-  background: rgba(0, 0, 0, 0.8) !important;
-  color: #fff !important;
-  border-radius: 2px !important;
-}
-/* Kate: Creates a small triangle extender for the tooltip */
-.d3-tip-s:before {
-  box-sizing: border-box !important;
-  display: inline-block !important;
-  font-size: 10px !important;
-  width: 100% !important;
-  line-height: 1 !important;
-  color: rgba(0, 0, 0, 0.8) !important;
-  content: "\25B2" !important;
-  top: -300px !important;
-  position: absolute !important;
-  text-align: center !important;
-}
-/* Kate: Style southward tooltips differently */
-.d3-tip-s.n:before {
-  margin: -1px 0 0 0 !important;
-  top: -7px !important;
-  left: 0 !important;
-}
-
-.ticks {
+/* Slider section --unused */
+/*.ticks {
 font: 10px sans-serif !important;
 }
 
@@ -124,10 +67,10 @@ stroke: #000 !important;
 stroke-opacity: 0.5 !important;
 stroke-width: 1.25px !important;
 }
-
+*/
 
 #shapekey {
-position: absolute !important;
+/*position: absolute !important;*/
 text-align: left !important;
 padding: 2px !important;
 font: 12px sans-serif !important;
@@ -194,7 +137,8 @@ border-radius: 8px
 }
 
 #legend {
-position: absolute !important;
+position: inline-block !important; /*position: absolute*/
+    font: 12px sans-serif !important;
 }
 
 .node-line-key {
@@ -213,16 +157,17 @@ width: 20px !important;
 /* Slider from w3 schools */
 /* The switch - the box around the slider */
 .toggleswitch {
-position: relative !important;
-display: inline-block !important;
-width: 60px !important;
-height: 34px !important;
+    position: relative !important;
+    display: inline-block !important;
+    width: 48px !important;
+    height: 28px !important;
+    
 }
 
 /* Hide default HTML checkbox */
 .toggleswitch input {display:none !important}
 
-/* The slider */
+/* The toggleswitch slider */
 .slider {
 position: absolute !important;
 cursor: pointer !important;
@@ -238,8 +183,8 @@ transition: .4s !important;
 .slider:before {
 position: absolute !important;
 content: "" !important;
-height: 26px !important;
-width: 26px !important;
+height: 20px !important;
+width: 20px !important;
 left: 4px !important;
 bottom: 4px !important;
 background-color: white !important;
@@ -260,7 +205,7 @@ box-shadow: 0 0 1px #006d2c !important;
 }
 
 input:checked + .slider:before {
--webkit-transform: translateX(26px) !important;
--ms-transform: translateX(26px) !important;
-transform: translateX(26px) !important;
+-webkit-transform: translateX(20px) !important;
+-ms-transform: translateX(20px) !important;
+transform: translateX(20px) !important;
 }
