@@ -982,9 +982,9 @@ function downloadTree() {
             
         }
         function makePhyslCodeArray() {
-            physlArray = [];
-            physlText = d3.txt("data/als_csv_instrumented.cpp");//document.getElementById("py-src").value;
-            physlArray = physlText.split('\n'); //figure out PhySL format style later
+            physlArray = ["show code here"];
+            //physlText = d3.txt("data/als_csv_instrumented.cpp");//document.getElementById("py-src").value;
+            //physlArray = physlText.split('\n'); //figure out PhySL format style later
             
             return physlArray;
         }
