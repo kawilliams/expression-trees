@@ -31,7 +31,7 @@ class Interface(Magics):
     def loadVisualization(self, line):
         # Get command line args for loading the vis
         args = line.split(" ")
-        print(args)
+        #print(args)
         name = args[0]
         javascriptFile = open(args[1]).read()
         #self.codeMap[name] = javascriptFile
@@ -40,18 +40,19 @@ class Interface(Magics):
         argList = '<script> var argList = []; var elementTop = null; var cell_idx = -1</script>'
         display(HTML(argList))
         for i in range(2, len(args), 1):
-            if("." in args[i]):
+            if("%" in args[i]):
+                args[i] = self.shell.user_ns[args[i][1:]]
+            if(isinstance(args[i], str) and "." in args[i]):
                 if("." in args[i] and args[i].split(".")[1] in self.inputType.keys()):
                     display(HTML("<script src=" + args[i] + " type=" + self.inputType[args[i].split(".")[1]] +"></script>"))
                 if(args[i].split(".")[1] == "html" or args[i].split(".")[1] == "css"):
                     fileVal = open(args[i]).read()
                     display(HTML(fileVal))
-            if("\"" in args[i]):
-                args[i] = args[i].replace("\"", "\\\"")
-            if("\n" in args[i]):
-                display(Javascript('argList.push("' + repr(args[i]).replace("'", "") + '")'))
-            else:
-                display(Javascript('argList.push("' + str(args[i]) + '")'))
+            if(isinstance(args[i], str) and "\"" in args[i]): 
+               args[i] = args[i].replace("\"", "\\\"")
+            if(isinstance(args[i], str) and "\n" in args[i]):
+                args[i] = args[i].replace("\n", "\\n")
+            display(Javascript('argList.push("' + str(args[i]) + '")'))
             
         # Get curent cell id
         self.codeMap[name] = javascriptFile

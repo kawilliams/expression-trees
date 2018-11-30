@@ -342,10 +342,13 @@ function woo(){console.log("HEYHO");}
                 //treevis.empty();
             }
             //if (textfile && csvfile) {	
-            d3.queue()
-                  .defer(d3.text,"data/2018-09-25-tree.txt")//textfile)
-                  .defer(d3.csv, "data/2018-09-25-performance.csv")//csvfile)
-                  .await(analyze);
+            // d3.queue()
+            //       .defer(d3.text,"data/treeformat.txt")//textfile)
+            //       .defer(d3.csv, "data/performance.csv")//csvfile)
+            //       .await(analyze);
+            textfile = argList[1];
+            csvfile = d3.csvParse(argList[0]);
+            console.log(argList[0], argList[1], argList[2]); //csvfile, textfile);
                   $('#shapekey').css('visibility', 'visible');
                   $('#legend').css('visibility', 'visible');
                   //$('#code-view').css('visibility', 'visible');
@@ -354,16 +357,18 @@ function woo(){console.log("HEYHO");}
             //} else {
             //    alert("Data for " + datadate + " does not exist.");
             //}
+		analyze(textfile, csvfile);
         }
-        function analyze(error, treeformat, perfdata) {
+        function analyze(treeformat, perfdata) {
             //if (error) throw error;
-            if (error) alert("Data for " + datadate + " does not exist.");
-            treeExists = true;
+            //if (error) alert("Data for " + datadate + " does not exist.");
+            
+	    treeExists = true;
             // Assigns parent, children, height, depth
             treeformat = parseNewick(treeformat);
             root = d3.hierarchy(treeformat, function(d){ return d.branchset;});
             fullRoot = d3.hierarchy(treeformat, function(d){ return d.branchset;});
-            
+            console.log("root: ", root);
             // Count maxmimum depth of tree and maximum width
             count = 1; //count the root
             widestLevel = 0;
@@ -384,7 +389,8 @@ function woo(){console.log("HEYHO");}
         //        }
                 domainTimes.push(+d.time); //kttime
                 domainTimesIn.push(+d.time); //kttime
-                prim_inst.push(d.primitive_instance);
+                prim_inst.push(d.primitive_instance); 
+                console.log("primitive_instance adding:", d.primitive_instance);
             });
             
             colorsGr = ["#edf8fb", "#b2e2e2", "#66c2a4", "#2ca25f", "#006d2c"]; //green
@@ -400,7 +406,7 @@ function woo(){console.log("HEYHO");}
             }
             
             timetype = "INCLUSIVE";
-              // ****************** Slider section **************************
+              
         threshold =  0;
 
             update(root, fullRoot, perfdata, threshold, timetype, false);
@@ -576,6 +582,8 @@ function woo(){console.log("HEYHO");}
                 
                   var nodename = d.data.name;
                   // Change time to time-per-instance //katy
+                  console.log("Matching the nodes: d.data.name, prim_inst ");
+                  console.log("                  ", d.data.name, prim_inst);
                   if (prim_inst.indexOf(nodename) >= 0) {
                       //Necessary for tooltip
                     node_perfdata = perfdata[prim_inst.indexOf(nodename)]; 
@@ -596,7 +604,8 @@ function woo(){console.log("HEYHO");}
              if (d.children) {
                  for (child of d.children) {
                      //d.childrenTime += +(child._perfdata.time); //sum children
-                     if (child._perfdata.time > d.childrenTime) {
+                     console.log("***** ", d);
+			               if ((child._perfdata) && (child._perfdata.time > d.childrenTime)) { //katy 11/9
                          d.childrenTime = child._perfdata.time;
                      }
                  }
@@ -655,38 +664,42 @@ function woo(){console.log("HEYHO");}
         //         }
              }
          });*/
-              cv = d3.select("#code-view");
-              cv.selectAll("pre")
-                  .data(codeArray)
-                  .enter().append("pre")
-                  .attr("class", function(d,i){
-                      if (d.includes("char const* const als_explicit")) { //file sensitive
-                      offset = i;
-                  }
-                      return "line " + i;
-                  })
-                  .text(function(d){ 
-                      if (!d) {
-                          return "\n";
-                      }
-                      return d; 
-                  })
-                  .style("font-family", "monospace")
-                  .style("margin", "2px 0px 0px 0px");
-              var coll = document.getElementsByClassName("collapsible");
-              var i;
-              for (i=0; i<coll.length; i++) {
-                  coll[i].addEventListener("click", function(){
-                      this.classList.toggle("active");
-                      var content = this.nextElementSibling;
-                      if (content.style.display === "block") {
-                          content.style.display = "none";
-                      } 
-                      else {
-                          content.style.display = "block";
-                      }
-                  });
-              }
+
+         //Code view section start
+              // cv = d3.select("#code-view");
+              // cv.selectAll("pre")
+              //     .data(codeArray)
+              //     .enter().append("pre")
+              //     .attr("class", function(d,i){
+              //         if (d.includes("char const* const als_explicit")) { //file sensitive
+              //         offset = i;
+              //     }
+              //         return "line " + i;
+              //     })
+              //     .text(function(d){ 
+              //         if (!d) {
+              //             return "\n";
+              //         }
+              //         return d; 
+              //     })
+              //     .style("font-family", "monospace")
+              //     .style("margin", "2px 0px 0px 0px");
+              // var coll = document.getElementsByClassName("collapsible");
+              // var i;
+              // for (i=0; i<coll.length; i++) {
+              //     coll[i].addEventListener("click", function(){
+              //         this.classList.toggle("active");
+              //         var content = this.nextElementSibling;
+              //         if (content.style.display === "block") {
+              //             content.style.display = "none";
+              //         } 
+              //         else {
+              //             content.style.display = "block";
+              //         }
+              //     });
+              // }
+          // Code view section end
+
                 // Enter any new modes at the parent's previous position.
           var nodeEnter = node.enter().append('g')
               .attr('class', 'node')
@@ -867,7 +880,7 @@ function woo(){console.log("HEYHO");}
               })
               .text(function(d) { 
                   if (!d.children) {
-                    return d._perfdata.display_name;              
+                    if (d._perfdata) return d._perfdata.display_name;  //katy 11/9            
                   } else {
                       return "";
                   }
@@ -1178,7 +1191,7 @@ function woo(){console.log("HEYHO");}
                             //updateLegend(domainValsEx, greatestValEx, timetype);
                             return colorInTimeScale(d._perfdata.inclusiveTime);
                         }
-                    } else { return "black"; }
+                    } else { console.log("black node : ", d );return "black"; }
                 });
                 
             (timetype === "EXCLUSIVE") ? x.domain([0,greatestValEx]) : x.domain([0,greatestValIn]); 
@@ -1208,10 +1221,12 @@ function woo(){console.log("HEYHO");}
         }
         function makeCodeArray(physlfile) {
             codeArray = [];
-            d3.text(physlfile, function(data){
-                codeArray = data.split('\n');
-            });  
+            // d3.text(physlfile, function(data){
+            //     codeArray = data.split('\n');
+            // });  
             
+            codeText = argList[2];
+            codeArray = codeText.split('\n');
             return codeArray;
         }
         function getImportantTypeName(perfdata) {
@@ -1236,7 +1251,7 @@ function woo(){console.log("HEYHO");}
         
         
         // START OF CODE
-        console.log("HERE");
+        console.log("HERE -- KATY");
         var symbol = d3.symbol().size([100]);
         d3.selectAll(".node-shape-triangle").insert("g")
                 .selectAll("path").data(["triangle"]).enter()
@@ -1358,7 +1373,7 @@ function woo(){console.log("HEYHO");}
                     }
                 });
         //codeData = makeCodeArray("als2.physl");
-        codeArray = makeCodeArray("data/als_csv_instrumented.cpp");
+        //codeArray = makeCodeArray("data/als_csv_instrumented.cpp");
         treeExists = false;
         HTMLElement.prototype.empty = function() {
             while (this.firstChild) {

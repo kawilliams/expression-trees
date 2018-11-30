@@ -1,12 +1,12 @@
 function woo(){console.log("HEYHO");}
 
 (function(element) {
-    
+        
     function parseNewick(a){for(var e=[],r={},s=a.split(/\s*(;|\(|\)|,|:)\s*/),t=0;t<s.length;t++){var n=s[t];switch(n){case"(":var c={};r.branchset=[c],e.push(r),r=c;break;case",":var c={};e[e.length-1].branchset.push(c),r=c;break;case")":r=e.pop();break;case":":break;default:var h=s[t-1];")"==h||"("==h||","==h?r.name=n:":"==h&&(r.length=parseFloat(n))}}return r}
     
     //require(['d3', 'vue', 'd3tip'], function(d3, Vue, d3tip)
     require(['d3', 'vue'], function(d3, Vue) {
-        
+        console.log(argList);    
         // d3.tip
         // Copyright (c) 2013 Justin Palmer
         // ES6 / D3 v4 Adaption Copyright (c) 2016 Constantin Gavrilete

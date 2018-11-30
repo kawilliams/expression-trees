@@ -342,10 +342,13 @@ function woo(){console.log("HEYHO");}
                 //treevis.empty();
             }
             //if (textfile && csvfile) {	
-            d3.queue()
-                  .defer(d3.text,"data/treeformat.txt")//textfile)
-                  .defer(d3.csv, "data/performance.csv")//csvfile)
-                  .await(analyze);
+            // d3.queue()
+            //       .defer(d3.text,"data/treeformat.txt")//textfile)
+            //       .defer(d3.csv, "data/performance.csv")//csvfile)
+            //       .await(analyze);
+            textfile = argList[1];
+            csvfile = argList[0];
+            console.log(argList[0], argList[1], argList[2]); //csvfile, textfile);
                   $('#shapekey').css('visibility', 'visible');
                   $('#legend').css('visibility', 'visible');
                   //$('#code-view').css('visibility', 'visible');
@@ -354,11 +357,13 @@ function woo(){console.log("HEYHO");}
             //} else {
             //    alert("Data for " + datadate + " does not exist.");
             //}
+		analyze(textfile, csvfile);
         }
-        function analyze(error, treeformat, perfdata) {
+        function analyze(treeformat, perfdata) {
             //if (error) throw error;
-            if (error) alert("Data for " + datadate + " does not exist.");
-            treeExists = true;
+            //if (error) alert("Data for " + datadate + " does not exist.");
+            perfdata = d3.csvParse(perfdata);
+	    treeExists = true;
             // Assigns parent, children, height, depth
             treeformat = parseNewick(treeformat);
             root = d3.hierarchy(treeformat, function(d){ return d.branchset;});
@@ -596,7 +601,8 @@ function woo(){console.log("HEYHO");}
              if (d.children) {
                  for (child of d.children) {
                      //d.childrenTime += +(child._perfdata.time); //sum children
-                     if (child._perfdata.time > d.childrenTime) {
+                     console.log("***** ", d._perfdata);
+			if (child._perfdata.time > d.childrenTime) {
                          d.childrenTime = child._perfdata.time;
                      }
                  }
