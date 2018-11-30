@@ -8,8 +8,8 @@ function woo(){console.log("HEYHO");}
         
         // Katy's functions
         woo = function callEverything() {
-            textfile = document.getElementById("py-tree").value; //"data/"+datadate + "-tree.txt";
-            csvfile = d3.csvParse(document.getElementById("py-csv").value);//"data/"+datadate + "-performance.csv";
+            textfile = "data/2018-09-25-tree.txt";document.getElementById("py-tree").value; //
+            csvfile = d3.csvParse("data/2018-09-25-performance.csv"); //d3.csvParse(document.getElementById("py-csv").value);//
             //console.log(textfile, csvfile);
             if (treeExists) {
                 var codeview = document.getElementById("code-view");
@@ -983,7 +983,7 @@ function downloadTree() {
         }
         function makePhyslCodeArray() {
             physlArray = [];
-            physlText = document.getElementById("py-src").value;
+            physlText = d3.txt("data/als_csv_instrumented.cpp");//document.getElementById("py-src").value;
             physlArray = physlText.split('\n'); //figure out PhySL format style later
             
             return physlArray;
