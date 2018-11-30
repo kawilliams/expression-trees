@@ -9,7 +9,7 @@ file:///Users/katywilliams/GitHub/expression-trees/upload_textarea.html
 ```
 The input fields are text areas, instead of file uploads (I was running into issues when I tried to load and use multiple files at the same time). Copy and paste what would be the contents of the files into the corresponding fields (paste the tree format into the corresponding box, the comma-separated performance data into the correct box, and whatever code you want to view into the code view box). Don't worry that the text boxes appear to be one column tall - if you click and drag the little hash marks in the corner, you can expand the box (but that isn't necessary for the copy-pasting). See the image below for an idea of what to expect.
 
-![Image of Traveler tree](textarea.png)
+![Image of Traveler tree](images/textarea.png)
 
 The offline version has been tested and works in Chrome, Safari, and Firefox.
 

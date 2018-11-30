@@ -7,7 +7,7 @@
     <link rel="shortcut icon" href="#"/>
     <script src="static/d3.v4.min.js"></script>
     <script src="static/d3-tip.js"></script>
-    <link rel="stylesheet" href="styleUpload.css">
+    <link rel="stylesheet" href="static/styleUpload.css">
 <!--    <link rel="stylesheet" href="prism.css">  syntax highlighting 
     <script src="prism.js"></script> syntax highlighting -->
     <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
@@ -19,10 +19,10 @@
           the tree format, the comma-separated performance data,
           and the code you want displayed in the code view.
       </p>
-      <p>Example tree format file: <a href="20180713_als_tree.txt">20180713_als_tree.txt</a> Example performance data: <a href="20180713_als_perfdata.csv">20180713_als_perfdata.csv</a> Example code-view file: <a href="als_csv_instrumented.cpp">als_csv_instrumented.cpp</a></p>
-      <p>Tree format (Newick-format, txt): <textarea id="the-text-file-field" rows="1" cols="20"></textarea>
-      <p>Performance data (csv): <textarea id="the-csv-file-field" rows="1" cols="20"></textarea>
-      <p>Code for code-view (cpp): <textarea id="the-cpp-file-field" rows ="1" cols="20"></textarea>
+      <p>Example tree format file: <a href="static/20180713_als_tree.txt">20180713_als_tree.txt</a> Example performance data: <a href="static/20180713_als_perfdata.csv">20180713_als_perfdata.csv</a> Example code-view file: <a href="static/als_csv_instrumented.cpp">als_csv_instrumented.cpp</a></p>
+      <p>Tree format (Newick-format, txt): <textarea id="the-text-file-field" rows="2" cols="20"></textarea>
+      <p>Performance data (csv): <textarea id="the-csv-file-field" rows="2" cols="20"></textarea>
+      <p>Code for code-view (cpp): <textarea id="the-cpp-file-field" rows="2" cols="20"></textarea>
           <input type="submit" onclick="textAreaProcess()">
 <!--    <div id="data" class="large-8 columns">
         <p id="name"></p>
