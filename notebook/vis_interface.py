@@ -42,36 +42,19 @@ class Interface(Magics):
         #noScroll = """IPython.OutputArea.prototype._should_scroll = function(lines) {return false;}"""
         #display(Javascript(noScroll))
         for i in range(1, len(args), 1):
-#             #START JESSE
-            if("%" in args[i]):
-                #print(self.shell.user_ns[args[i][1:]])
-                args[i] = self.shell.user_ns[args[i][1:]]
-            if(isinstance(args[i], str) and "." in args[i]):
-                if("." in args[i] and args[i].split(".")[1] in self.inputType.keys()):
+            if("." in args[i]):
+                try:
                     display(HTML("<script src=" + args[i] + " type=" + self.inputType[args[i].split(".")[1]] +"></script>"))
+                except:
+                    print("Unknown file format")
                 if(args[i].split(".")[1] == "html" or args[i].split(".")[1] == "css"):
                     fileVal = open(args[i]).read()
-                    display(HTML(fileVal))
-            if(isinstance(args[i], str) and "\"" in args[i]):
-                args[i] = args[i].replace("\"", "\\\"")
-            if(isinstance(args[i], str) and "\n" in args[i]):
-                args[i] = args[i].replace("\n", "\\n")
+                    if(args[i].split(".")[1] == "html"):
+                        display(HTML(fileVal))
+                    elif(args[i].split(".")[1] == "css"):
+                        display(Javascript(fileVal))
             display(Javascript('argList.push("' + str(args[i]) + '")'))
-            #END JESSE
-            #Start Steve
-#             if("." in args[i]):
-#                 try:
-#                     display(HTML("<script src=" + args[i] + " type=" + self.inputType[args[i].split(".")[1]] +"></script>"))
-#                 except:
-#                     print("Unknown file format")
-#                 if(args[i].split(".")[1] == "html" or args[i].split(".")[1] == "css"):
-#                     fileVal = open(args[i]).read()
-#                     if(args[i].split(".")[1] == "html"):
-#                         display(HTML(fileVal))
-#                     elif(args[i].split(".")[1] == "css"):
-#                         display(Javascript(fileVal))
-#             display(Javascript('argList.push("' + str(args[i]) + '")'))
-            #End Steve
+            
         # Get curent cell id
         self.codeMap[name] = javascriptFile
         preRun = """
