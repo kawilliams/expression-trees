@@ -5,7 +5,8 @@ RUN git config --global user.name "Steven R. Brandt"
 RUN git clone --depth 1 https://github.com/kawilliams/expression-trees.git
 RUN git clone --depth 1 https://github.com/stellar-group/phylanx.git 
 WORKDIR /phylanx
-RUN mkdir -p /phylanx/build && cd /phylanx/build && cmake -DPHYLANX_WITH_TOOLS=On -DHPX_DIR=/usr/local/lib/cmake/HPX -Dblaze_DIR=/blaze/share/blaze/cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_C_COMPILER=clang -DPHYLANX_WITH_HIGHFIVE=On .. && make install && rm -fr /phylanx/build
+COPY compile.sh compile.sh
+RUN bash compile.sh
 
 EXPOSE 8789
 
