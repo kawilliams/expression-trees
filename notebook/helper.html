@@ -15,20 +15,22 @@
     <!--<label for="date">Select date:
     	<input type="date" id="selectedDate" placeholder="yyyy-mm-dd"/>-->
 <button type="button" onclick="woo()">Show tree</button>
+    
      <!--Choose from these dates (dummy data): 2018-06-25, 2018-07-13,or 2018-09-24
     </label>-->	
-    <br /><br />
+<!--     <br /><br /> -->
     <div id="shapekey">
-        <p>Node key</p>
-        <p><svg class="node-shape-triangle"></svg> subtree hidden </p>
-        <p><svg class="node-shape-circle"></svg>  no hidden subtree </p>
-        <p><svg class="node-line-key"><path d="M 2 5 L 18 5" stroke-dasharray = "3,3" stroke="black"/></svg> synchronous (direct)</p>
-        <p><svg class="node-line-key"><path d="M 2 5 L 18 5" stroke="black"/></svg> asynchronous (normal)</p>
-        <p><svg class="node-line-key"><path d="M 2 5 L 18 5" stroke-dasharray="3,1" stroke="black"/></svg> undecided</p>
-        <p>Inclusive <label class="toggleswitch"><input type="checkbox" id="myCheck" onclick="toggleSwitchAction()"><span class="slider"></span></label> Exclusive </p>
+        <p><!--<b>Node key</b> <br /> <br /></p><p>--> <svg class="node-shape-triangle"></svg> subtree hidden 
+            <svg class="node-shape-circle"></svg>  no hidden subtree <br /> <br />
+        <svg class="node-line-key"><path d="M 2 5 L 18 5" stroke-dasharray = "3,3" stroke="black"/></svg> synchronous (direct)
+        <svg class="node-line-key"><path d="M 2 5 L 18 5" stroke="black"/></svg> asynchronous (normal) 
+        <svg class="node-line-key"><path d="M 2 5 L 18 5" stroke-dasharray="3,1" stroke="black"/></svg> undecided
     </div>
+<!--     Inclusive <label class="toggleswitch"><input type="checkbox" id="myCheck" onclick="toggleSwitchAction()"><span class="slider"></span></label> Exclusive  -->
+    <div class="traveler-tooltip" style="position: fixed; bottom: 0; right: 0; width:300px; padding: 10px; background: black; color: white; font-size: 14px;">Hover over a node to see node information</div>
+    <div id="traveler-codeview" style="position: fixed; bottom: 0; left: 0; width:500px; padding: 10px; background: #eff3f8; color: black; font-size: 14px; font-family: Courier">Hover over a node to see the PhySL code that produced the node</div>
     <!--<button class="collapsible" id="collapsible">Hide Code View</button>-->
-    <div id="code-view" style="height: 500px; overflow:scroll;"><span v-html="rawHtml"></span></div>
-    <div id="legend"></div>
+<!--     <div id="code-view" style="height: 500px; overflow:scroll;"><span v-html="rawHtml"></span></div> -->
+    <div id="legend" style="visibility: hidden"><button type="button" id="downloadTree">Download tree (svg)</button>Inclusive <label class="toggleswitch"><input type="checkbox" id="myCheck"><span class="slider"></span></label> Exclusive </div>
     <div id="tree-vis"></div>
 </body>
