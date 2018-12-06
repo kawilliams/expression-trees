@@ -869,7 +869,7 @@ function downloadTree() {
     var svgEl = document.getElementsByClassName("main-svg")[1]; //hack
     var name = "latest-tree.svg";
     
-    console.log("Download ", svgEl);
+    console.log("Download ", svgEl, document.getElementsByClassName("main-svg"));
     var ContainerElements = ["svg","g"];
     var RelevantStyles = {"node":["cursor"],
         "circle":["fill", "stroke", "stroke-width"],
@@ -888,11 +888,8 @@ function downloadTree() {
 
                 var TagName = Child.tagName;
                 var ClassNames = Child.classList;
-                console.log("Tag name", TagName);
-                console.log("Class name", ClassNames);
                 
                 if (ClassNames.contains("link")) {
-                    console.log("might need to do stuff");
                     var StyleDef = window.getComputedStyle(OrigChildDat[cd]);
 
                     var StyleString = "";
