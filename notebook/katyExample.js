@@ -866,19 +866,21 @@ function woo(){console.log("HEYHO");}
         /* https://stackoverflow.com/questions/23218174/how-do-i-save-export-an-svg-file-after-creating-an-svg-with-d3-js-ie-safari-an */
         /* Add css: https://stackoverflow.com/questions/15181452/how-to-save-export-inline-svg-styled-with-css-from-browser-to-image-file/18006981 */
 function downloadTree() {
-    var svgEl = document.getElementsByClassName("main-svg")[1]; //hack
+    var svgEl = document.getElementsByClassName("main-svg");
     var name = "latest-tree.svg";
     
-    console.log("Download ", svgEl, document.getElementsByClassName("main-svg"));
     var ContainerElements = ["svg","g"];
     var RelevantStyles = {"node":["cursor"],
         "circle":["fill", "stroke", "stroke-width"],
         "text":["font"],
         "link":["fill", "stroke", "stroke-width"]
     };
-    read_Element(svgEl, svgEl);
-    export_StyledSVG(svgEl);
-
+    for (var i=0; i<svgEl.length; i++){
+        if (svgEl[i].children[0].childElementCount > 0) {
+            read_Element(svgEl[i], svgEl[i]);
+            export_StyledSVG(svgEl[i]);
+        }
+    }
         function read_Element(ParentNode, OrigData){
             var Children = ParentNode.childNodes;
             var OrigChildDat = OrigData.childNodes;     
