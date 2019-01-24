@@ -99,8 +99,8 @@ Katy worked on 3/1
 <script>function parseNewick(a){for(var e=[],r={},s=a.split(/\s*(;|\(|\)|,|:)\s*/),t=0;t<s.length;t++){var n=s[t];switch(n){case"(":var c={};r.branchset=[c],e.push(r),r=c;break;case",":var c={};e[e.length-1].branchset.push(c),r=c;break;case")":r=e.pop();break;case":":break;default:var h=s[t-1];")"==h||"("==h||","==h?r.name=n:":"==h&&(r.length=parseFloat(n))}}return r}</script>
 
 <!-- Copyright 2016 Mike Bostock https://d3js.org -->
-<script src="//d3js.org/d3.v4.min.js"></script>
-<script src="../static/d3-tip.js"></script>
+<script src="{{ url_for('static', filename='d3.v4.min.js') }}"></script>
+<script src="{{ url_for('static', filename='d3-tip.js') }}"></script>
 
 <!-- https://bl.ocks.org/d3noob/43a860bc0024792f8803bba8ca0d5ecd -->
 <script>

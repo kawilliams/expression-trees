@@ -60,7 +60,12 @@ and open the template in the editor.
     <body>
         <!-- https://bl.ocks.org/mbostock/c034d66572fd6bd6815a -->
         <div>
-            
+            <p>Files in use:</p>
+              <ul>
+                {% for file in files %}
+                <li>{{ file }}</li>
+                {% endfor %}
+              </ul>
             <p><a href="{{ url_for('rt_tree2') }}">Reingold-Tilford tree (one performance run)</a></p>
             <p><a href="{{ url_for('two_rt_trees') }}">Compare two Reingold-Tilford trees (two performance runs)</a></p>
         </div>

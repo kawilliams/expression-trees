@@ -9,15 +9,32 @@ APP = Flask(__name__)
 def index(perfdata=None, treeformat=None, codedata=None):
     """   Displays the index page accessible at '/'    """
     script = sys.argv[0]
+    firstCsv = True
+    firstTree = True
+    files = []
     for filename in sys.argv[1:]:
         if (".csv" in filename):
-            perfdata = str(filename)
+            if firstCsv:
+                perfdata1 = str(filename)
+                files.append(perfdata1)
+            else:
+                perfdata2 = str(filename)
+                files.append(perfdata2)
+            firstCsv = False
         if (".txt" in filename):
-            treeformat = str(filename)
-	if (".cpp" in filename):
- 	    codedata = str(filename)
+            if firstTree:
+                treeformat1 = str(filename)
+                files.append(treeformat1)
+            else:
+                treeformat2 = str(filename)
+                files.append(treeformat2)
+            firstTree = False
+    if (len(sys.argv[1]) == 3) or (len(sys.argv[1]) == 5):
+        codefile = str(sys.argv[1](len(sys.argv[1])-1))
+        files.append(codefile)
+
     #return render_template('rectangles.html', perfdata=perfdata, treeformat=treeformat, codedata=codedata) 
-    return render_template('index.html')
+    return render_template('index.html', files=files)
 
 
 @APP.route('/rt_tree')
@@ -36,10 +53,10 @@ def rt_tree2(perfdata=None, treeformat=None, codedata=None):
     for filename in sys.argv[1:]:
         if (".csv" in filename):
             perfdata = str(filename)
-        if (".txt" in filename):
+        elif ".txt" in filename:
             treeformat = str(filename)
-	if (".cpp" in filename):
-	    codedata = str(filename)
+	    
+	codedata = str(filename)
     return render_template('reingoldCV.html', perfdata=perfdata, treeformat=treeformat, codedata=codedata)
 
 @APP.route('/codeview')

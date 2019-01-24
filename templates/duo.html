@@ -7,11 +7,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="shortcut icon" href="#"/>
     <!-- Copyright 2016 Mike Bostock https://d3js.org -->
-    <script src="//d3js.org/d3.v4.min.js"></script>
-    <script src="../static/d3-tip.js"></script>
+<script src="{{ url_for('static', filename='d3.v4.min.js') }}"></script>
+<script src="{{ url_for('static', filename='d3-tip.js') }}"></script>
     <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
 <!--    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>-->
-    <link rel="stylesheet" href="{{ url_for('static', filename='styleUpload.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styleCV.css') }}">
    </head>
   <body>
 <!--      <h1>Load a File</h1>
@@ -94,10 +94,6 @@ var tool_tip = d3.tip()
       .attr("class", "d3-tip")
       .offset([-8, 0])
       .html(function(d){ 
-//          if (d.bigToolTip) {
-//              return "<p>Primitive instance: " + "code line" + "</p>" +
-//                    "<p>List of subnodes: " + "list list list of instances" + "</p>";
-//          }
           if (d.id === 1) {
               return "<p>Function: " + d.data.name + "</p>";
           }
@@ -424,6 +420,7 @@ function shortenBranches(d) {
                 d.children = null;
             }
         }
+        d.bigParent = true;
         return d.branchset; 
     
 }
