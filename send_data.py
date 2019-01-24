@@ -16,9 +16,18 @@ def index(perfdata=None, treeformat=None, codedata=None):
             treeformat = str(filename)
 	if (".cpp" in filename):
  	    codedata = str(filename)
-    #return render_template('rectangles.html', perfdata=perfdata, treeformat=treeformat, codedata=codedata) 
-    return render_template('index.html')
+    return render_template('rectangles.html', perfdata=perfdata, treeformat=treeformat, codedata=codedata) 
+#render_template('index.html')
 
+@APP.route('/rects')
+def rects(perfdata=None, treeformat=None):
+    script = sys.argv[0]
+    for filename in sys.argv[1:]:
+        if (".csv" in filename):
+            perfdata = str(filename)
+        if (".txt" in filename):
+            treeformat = str(filename)
+    return render_template('rectangles.html', perfdata=perfdata, treeformat=treeformat)
 
 @APP.route('/rt_tree')
 def rt_tree(perfdata=None, treeformat=None):
@@ -54,38 +63,25 @@ def codeview(perfdata=None, treeformat=None, physlfile=None):
 	    physlfile = str(filename)
     return render_template('codeview.html', perfdata=perfdata, treeformat=treeformat, physlfile=physlfile)
 
-@APP.route('/compare')
-def two_rt_trees(perfdata1=None, treeformat1=None, perfdata2=None, treeformat2=None, codefile=None):
+
+@APP.route('/icicle')
+def icicle(perfdata=None, treeformat=None):
     script = sys.argv[0]
-    firstCsv = True
-    firstTree = True
     for filename in sys.argv[1:]:
         if (".csv" in filename):
-            if firstCsv:
-                perfdata1 = str(filename)
-            else:
-                perfdata2 = str(filename)
-            firstCsv = False
+            perfdata = str(filename)
         if (".txt" in filename):
-            if firstTree:
-                treeformat1 = str(filename)
-            else:
-                treeformat2 = str(filename)
-            firstTree = False
-    if (".physl" or ".cpp" or ".txt" or ".c" in filename):
-        codefile = str(filename)
-    return render_template('duo.html', perfdata1=perfdata1, treeformat1=treeformat1, \
-        perfdata2=perfdata2, treeformat2=treeformat2, codefile=codefile)
-
+            treeformat = str(filename)
+    return render_template('icicle.html', perfdata=perfdata, treeformat=treeformat)
 
 def main():
-    # script = sys.argv[0]
-    # for filename in sys.argv[1:]:
-    #     if (".csv" in filename):
-	   #  perfdata = filename
-  	 #    print perfdata
-    #     if(".txt" in filename):
-  	 #    treeformat = filename
+    script = sys.argv[0]
+    for filename in sys.argv[1:]:
+        if (".csv" in filename):
+	    perfdata = filename
+  	    print perfdata
+        if(".txt" in filename):
+  	    treeformat = filename
           
 
     return
@@ -93,25 +89,3 @@ def main():
 if __name__ == '__main__':
     APP.debug=True
     APP.run('0.0.0.0', 8001)
-
-# @APP.route('/rects')
-# def rects(perfdata=None, treeformat=None):
-#     script = sys.argv[0]
-#     for filename in sys.argv[1:]:
-#         if (".csv" in filename):
-#             perfdata = str(filename)
-#         if (".txt" in filename):
-#             treeformat = str(filename)
-#     return render_template('rectangles.html', perfdata=perfdata, treeformat=treeformat)
-
-
-
-#    @APP.route('/icicle')
-# def icicle(perfdata=None, treeformat=None):
-#     script = sys.argv[0]
-#     for filename in sys.argv[1:]:
-#         if (".csv" in filename):
-#             perfdata = str(filename)
-#         if (".txt" in filename):
-#             treeformat = str(filename)
-#     return render_template('icicle.html', perfdata=perfdata, treeformat=treeformat)

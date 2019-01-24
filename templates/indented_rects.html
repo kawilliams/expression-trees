@@ -73,10 +73,10 @@ and open the template in the editor.
     </head>
     <body>
         <!-- https://bl.ocks.org/mbostock/1093025#index.html -->
-        <div>
+        <!-- <div>
 	<p>d3 Indented Rectangles Tree (<a href="https://bl.ocks.org/mbostock/1093025#index.html">original</a>) </p> 
 	<p><a href="{{ url_for('rt_tree') }}">Reingold-Tilford Tree</a> (<a href="http://bl.ocks.org/d3noob/8375092">original</a>) </a> </p>
-	</div>
+	</div> -->
         <!-- Copyright 2011 Jason Davies https://github.com/jasondavies/newick.js -->
         <script>function parseNewick(a){for(var e=[],r={},s=a.split(/\s*(;|\(|\)|,|:)\s*/),t=0;t<s.length;t++){var n=s[t];switch(n){case"(":var c={};r.branchset=[c],e.push(r),r=c;break;case",":var c={};e[e.length-1].branchset.push(c),r=c;break;case")":r=e.pop();break;case":":break;default:var h=s[t-1];")"==h||"("==h||","==h?r.name=n:":"==h&&(r.length=parseFloat(n))}}return r}</script>
         <!-- Copyright 2016 Mike Bostock https://d3js.org -->

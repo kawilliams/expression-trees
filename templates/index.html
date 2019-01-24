@@ -60,11 +60,9 @@ and open the template in the editor.
     <body>
         <!-- https://bl.ocks.org/mbostock/c034d66572fd6bd6815a -->
         <div>
-            <!--<p><a href="">Tree of Life</a> (<a href="https://bl.ocks.org/mbostock/c034d66572fd6bd6815a">original</a>)</p>-->
-            <p><a href="{{ url_for('rects') }}">Rectangles tree</a> (<a href="https://bl.ocks.org/mbostock/1093025#index.html">original</a>)</p>
-            <!--<p><a href="tidy_tree.html">tidy tree</a> (<a href="https://bl.ocks.org/mbostock/4339184">original</a>)</p>-->
-            <p><a href="{{ url_for('rt_tree') }}">Reingold-Tilford tree</a> (original)</p>
-            <p><a href="{{ url_for('icicle') }}">Icicle tree</a> (<a href="https://bl.ocks.org/mbostock/1005873">original</a>)</p>
+            
+            <p><a href="{{ url_for('rt_tree2') }}">Reingold-Tilford tree (one performance run)</a></p>
+            <p><a href="{{ url_for('two_rt_trees') }}">Compare two Reingold-Tilford trees (two performance runs)</a></p>
         </div>
         
     </body>
