@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Generated ALS Tree</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="shortcut icon" href="#"/>
+        <!-- Copyright 2016 Mike Bostock https://d3js.org -->
+        <script src="static/d3.v4.min.js"></script>
+        <script src="static/d3-tip.js"></script>
+        <script src="static/parseNewick.js"></script>
+        <link rel="stylesheet" href="static/style-ot.css">
+</head>
+<body>
+
+    <label for="date">Select date:
+    	<input type="date" id="selectedDate1" placeholder="yyyy-mm-dd"/>
+    </label>
+    <!-- <p>Select file to show in code-view: <input type="file" id="the-codeview-file-field"></p> -->
+    <button type="button" onclick="callEverything()">Submit</button>
+
+    <br /><br />
+    <div id="shapekey">
+        <p>Node key</p>
+        <p><svg class="node-shape-triangle"></svg> subtree hidden </p>
+        <p><svg class="node-shape-circle"></svg>  no hidden subtree </p>
+        <p><svg class="node-line-key"><path d="M 2 5 L 18 5" stroke-dasharray = "3,3" stroke="black"/></svg> synchronous (direct)</p>
+        <p><svg class="node-line-key"><path d="M 2 5 L 18 5" stroke="black"/></svg> asynchronous (normal)</p>
+        <p><svg class="node-line-key"><path d="M 2 5 L 18 5" stroke-dasharray="3,1" stroke="black"/></svg> undecided</p>
+        <p>Inclusive <label class="toggleswitch"><input type="checkbox" id="myCheck" onclick="toggleSwitchAction()"><span class="slider"></span></label> Exclusive </p>
+    </div>
+    <button class="collapsible" id="collapsible" onclick="closeCodeView()">Hide Code View</button>
+    <div id="code-view" style="height: 500px; overflow:scroll;"><span></span></div>
+    <div id="legend"></div>
+    <div id="tree-vis"></div>
+    <div id="main"></div>
+    <script>
+            var symbol = d3.symbol().size([100]);
+
+            d3.selectAll(".node-shape-triangle").insert("g")
+                    .selectAll("path").data(["triangle"]).enter()
+                    .append("path")
+                    .attr("d", symbol.type(function (d) {
+                        return d3.symbolTriangle;
+                    }))
+                    .attr("transform", "rotate(-90)")
+                    .attr("transform", "translate(10,9)")
+                    .style("stroke", "black")
+                    .style("fill", "white");
+            d3.selectAll(".node-shape-circle").insert("g")
+                    .selectAll("path").data(["circle"]).enter()
+                    .append("path")
+                    .attr("d", symbol.type(function (d) {
+                        return d3.symbolCircle;
+                    }))
+                    .attr("transform", "translate(10,6)")
+                    .style("stroke", "black")
+                    .style("fill", "white");
+            d3.selectAll(".node-shape-cross").insert("g")
+                    .selectAll("path").data(["cross"]).enter()
+                    .append("path")
+                    .attr("d", symbol.type(function (d) {
+                        return d3.symbolCross;
+                    }))
+                    .attr("transform", "translate(10,6)")
+                    .style("stroke", "black")
+                    .style("fill", "white");
+
+
+// Set the dimensions and margins of the diagram
+            var margin = {top: 50, right: 90, bottom: 30, left: 30},
+                    codeviewDim = {width: 500, height: 500},
+                    width = window.innerWidth - margin.left - margin.right,
+                    height = window.innerHeight - margin.top - margin.bottom;
+
+            /* http://bl.ocks.org/davegotz/bd54b56723c154d25eedde6504d30ad7 */
+            tool_tip = d3.tip()
+                    .attr("class", "d3-tip")
+                    .offset([-8, 0])
+                    .html(function (d) {
+                        if (d.id === 1) {
+                            return "<p>Function: " + d.data.name + "</p>";
+                        }
+                        if (d._perfdata.eval_direct === 0) { // 0 async
+                            return "<p>Primitive instance: " + d._perfdata.display_name + "</p>" +
+                                    "<p>Count: " + d._perfdata.count + "</p>" +
+                                    "<p>Exclusive time: " + prettyprintTime(d._perfdata.exclusiveTime) + " </p>" +
+                                    "<p>Inclusive time (async): " + prettyprintTime(d._perfdata.inclusiveTime) + " </p>";
+                        } else if (d._perfdata.eval_direct === 1) { // 1 direct
+                            return "<p>Primitive instance: " + d._perfdata.display_name + "</p>" +
+                                    "<p>Count: " + d._perfdata.count + "</p>" +
+                                    "<p>Exclusive time: " + prettyprintTime(d._perfdata.exclusiveTime) + " </p>" +
+                                    "<p>Inclusive time (direct): " + prettyprintTime(d._perfdata.inclusiveTime) + " </p>";
+                        } else if (d._perfdata.eval_direct === -1) { // -1 undecided
+                            return "<p>Primitive instance: " + d._perfdata.display_name + "</p>" +
+                                    "<p>Count: " + d._perfdata.count + "</p>" +
+                                    "<p>Exclusive time: " + prettyprintTime(d._perfdata.exclusiveTime) + " </p>" +
+                                    "<p>Inclusive time (undecided): " + prettyprintTime(d._perfdata.inclusiveTime) + " </p>" +
+                                    "<p>Evaluation style (direct or async) determined at runtime.</p>";
+                        } else {
+                            return "<p>Primitive instance: " + d._perfdata.display_name + "</p>" +
+                                    "<p>Total time: " + prettyprintTime(d._perfdata.time) + " </p>";
+                        }
+                    });
+
+            tool_tip_south = d3.tip()
+                    .attr('class', 'd3-tip-s')
+                    .offset([180, 0]) //maybe have a function here? -8
+                    .html(function (d) {
+                        if (d.id === 1) {
+                            return "<p>Function: " + d.data.name + "</p>";
+                        }
+                        if (d._perfdata.eval_direct === 0) { // 0 async
+                            return "<p>Primitive instance: " + d._perfdata.display_name + "</p>" +
+                                    "<p>Count: " + d._perfdata.count + "</p>" +
+                                    "<p>Exclusive time: " + prettyprintTime(d._perfdata.exclusiveTime) + " </p>" +
+                                    "<p>Inclusive time (async): " + prettyprintTime(d._perfdata.inclusiveTime) + " </p>";
+                        } else if (d._perfdata.eval_direct === 1) { // 1 direct
+                            return "<p>Primitive instance: " + d._perfdata.display_name + "</p>" +
+                                    "<p>Count: " + d._perfdata.count + "</p>" +
+                                    "<p>Exclusive time: " + prettyprintTime(d._perfdata.exclusiveTime) + " </p>" +
+                                    "<p>Inclusive time (direct): " + prettyprintTime(d._perfdata.inclusiveTime) + " </p>";
+                        } else if (d._perfdata.eval_direct === -1) { // -1 undecided
+                            return "<p>Primitive instance: " + d._perfdata.display_name + "</p>" +
+                                    "<p>Count: " + d._perfdata.count + "</p>" +
+                                    "<p>Exclusive time: " + prettyprintTime(d._perfdata.exclusiveTime) + " </p>" +
+                                    "<p>Inclusive time (undecided): " + prettyprintTime(d._perfdata.inclusiveTime) + " </p>" +
+                                    "<p>Evaluation style (direct or async) determined at runtime.</p>";
+                        } else {
+                            return "<p>Primitive instance: " + d._perfdata.display_name + "</p>" +
+                                    "<p>Total time: " + prettyprintTime(d._perfdata.time) + " </p>";
+                        }
+                    });
+
+            var svg = d3.select("#tree-vis").append("svg")
+                    .attr("id", "main-svg")
+                    .attr("width", (width + margin.right + margin.left) * 1.25)
+                    .attr("height", (height + margin.top + margin.bottom) * 2)
+                    .append("g")
+                    .attr("width", width)// - margin.left - codeviewDim.width)
+                    .attr("height", height)// - margin.top)
+                    .attr("transform", "translate("
+                            + margin.left + "," + margin.top + ")");
+            var duration = 750,
+                    root,
+                    fullRoot;
+
+            svg.call(tool_tip);
+            svg.call(tool_tip_south);
+
+
+            // declares a tree layout and assigns the size
+            var treemap = d3.tree().size([(height - margin.bottom), width]);
+
+            treeExists = false;
+            HTMLElement.prototype.empty = function () {
+                while (this.firstChild) {
+                    this.removeChild(this.firstChild);
+                }
+            }
+        </script>
+        <script src="static/generateTree.js"></script>
+        <script src="static/als-daily-tree.js"></script>
+        </body>          
+</html>

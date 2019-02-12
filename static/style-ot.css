@@ -1,11 +1,12 @@
 #tree-vis {
-    overflow-y: scroll;
-    overflow-x: scroll;
+/*    overflow-y: scroll;
+    overflow-x: scroll;*/
     visibility: hidden;
 }
 
-h1 {
-font: sans-serif;
+body {
+  overflow-y: scroll;
+    overflow-x: scroll;
 }
 
 p {
@@ -60,6 +61,7 @@ margin: -2px 0 0 0;
 top: 100%;
 left: 0;
 }
+
 /* Kate */
 .d3-tip-s {
   line-height: 1;
@@ -87,7 +89,6 @@ left: 0;
   top: -7px;
   left: 0;
 }
-
 
 .ticks {
 font: 10px sans-serif;
@@ -135,7 +136,6 @@ border: 0px;
 border-radius: 8px;
 display: inline-block;
 white-space: nowrap;
-visibility: hidden;
 }
 #navigate {
 display: inline-block;
@@ -159,7 +159,7 @@ border-radius: 8px
   text-align: left;
   outline: none;
   font-size: 15px;
-  visibility: hidden; /*for upload_textarea.html*/
+  visibility: hidden;
 }
 .collapsible:hover {
   background-color: #ccc;
@@ -168,7 +168,6 @@ border-radius: 8px
   background-color: #305289;
 }
 
-
 #code-view {
     /*Working before Skyping Kate*/
     position: fixed;
@@ -176,7 +175,7 @@ border-radius: 8px
     right: 5px;
 /*    left: 880px; 180px; when codeview was top & left*/
 
-/*    width: 1500px;*/
+/*    width: 500px;*/
 /*    height: 80px;*/
     padding: 10px;
     border-radius: 8px;
@@ -184,6 +183,7 @@ border-radius: 8px
     background: #eff3f8;
     overflow-y: scroll;
     max-width: 610px; /*540px; <-- doesn't interfere w/tree, 650 is ~80 cols'*/
+    min-width: 600px;
     font-family: monospace;
     font-size: 12px;
     whitespace: pre;
@@ -196,7 +196,6 @@ border-radius: 8px
 
 #legend {
 position: absolute;
-visibility: hidden;
 }
 
 .node-line-key {
