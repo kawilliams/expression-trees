@@ -20,8 +20,8 @@ def index(perfdata=None, treeformat=None, codedata=None):
             else:
                 perfdata2 = str(filename)
                 files.append(perfdata2)
-            firstCsv = False
-        if (".txt" in filename):
+                firstCsv = False
+        if ".txt" in filename:
             if firstTree:
                 treeformat1 = str(filename)
                 files.append(treeformat1)
@@ -43,8 +43,8 @@ def rt_tree(perfdata=None, treeformat=None):
     for filename in sys.argv[1:]:
         if (".csv" in filename):
             perfdata = str(filename)
-	if (".txt" in filename):
-	    treeformat = str(filename)
+        elif (".txt" in filename):
+            treeformat = str(filename)
     return render_template('reingold_tilford.html', perfdata=perfdata, treeformat=treeformat)
 
 @APP.route('/rt_tree2')
@@ -55,8 +55,8 @@ def rt_tree2(perfdata=None, treeformat=None, codedata=None):
             perfdata = str(filename)
         elif ".txt" in filename:
             treeformat = str(filename)
-	    
-	codedata = str(filename)
+        else:
+            codedata = str(filename)
     return render_template('reingoldCV.html', perfdata=perfdata, treeformat=treeformat, codedata=codedata)
 
 @APP.route('/codeview')
@@ -67,8 +67,8 @@ def codeview(perfdata=None, treeformat=None, physlfile=None):
             perfdata = str(filename)
         if (".txt" in filename):
             treeformat = str(filename)
-	if (".physl" in filename):
-	    physlfile = str(filename)
+        if (".physl" in filename):
+            physlfile = str(filename)
     return render_template('codeview.html', perfdata=perfdata, treeformat=treeformat, physlfile=physlfile)
 
 @APP.route('/compare')
@@ -83,14 +83,15 @@ def two_rt_trees(perfdata1=None, treeformat1=None, perfdata2=None, treeformat2=N
             else:
                 perfdata2 = str(filename)
             firstCsv = False
-        if (".txt" in filename):
+        elif (".txt" in filename):
             if firstTree:
                 treeformat1 = str(filename)
             else:
                 treeformat2 = str(filename)
             firstTree = False
-    if (".physl" or ".cpp" or ".txt" or ".c" in filename):
-        codefile = str(filename)
+        elif (".physl" or ".cpp" or ".txt" or ".c" in filename):
+            codefile = str(filename)
+
     return render_template('duo.html', perfdata1=perfdata1, treeformat1=treeformat1, \
         perfdata2=perfdata2, treeformat2=treeformat2, codefile=codefile)
 
