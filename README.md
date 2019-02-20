@@ -10,6 +10,11 @@ Reingold-Tilford comparison tree (colors denote time differences between two pro
 # To use
 You will need [Flask](http://flask.pocoo.org/) installed in order to host the web pages for the visualizations. 
 
+To install Flask to work with Python 3 and 2, do:
+```
+pip3 install flask
+```
+
 This Flask application follows the typical format with a Python file that establishes the browser and hosts the webpages, a `static` folder that holds the data about the trees (as well as `style.css`, `d3.v4.js`, and `d3-tip.js`), and the `templates` folder that holds the HTML files with the Javascript that display the data. 
 
 To use, first save the Newick-formatted tree into a text file and the performance data into a csv. 
