@@ -94,32 +94,52 @@ var tool_tip = d3.tip()
       .attr("class", "d3-tip")
       .offset([-8, 0])
       .html(function(d){ 
+          var tooltiptext = "";
+
           if (d.id === 1) {
-              return "<p>Function: " + d.data.name + "</p>";
+              tooltiptext += "<p>Function: " + d.data.name + "</p>";
           }
           if (d._perfdata.eval_direct === 0) { // 0 async
-              return "<p>Primitive instance: " + d._perfdata.display_name + "</p>"+
+              tooltiptext += "<p>Primitive instance: " + d._perfdata.display_name + "</p>"+
                     "<p>Count: " + d._perfdata.count + "</p>" +
                     "<p>Exclusive time: " + prettyprintTime(d._perfdata.exclusiveTime) + " </p>" +
                     "<p>Difference time: " + prettyprintTime(d._perfdata.diffTime) + " </p>" +
                     "<p>Inclusive time (async): " + prettyprintTime(d._perfdata.inclusiveTime) + " </p>";
           } else if (d._perfdata.eval_direct === 1) { // 1 direct
-              return "<p>Primitive instance: " + d._perfdata.display_name + "</p>" +
+              tooltiptext += "<p>Primitive instance: " + d._perfdata.display_name + "</p>" +
                     "<p>Count: " + d._perfdata.count + "</p>" +
                     "<p>Exclusive time: " + prettyprintTime(d._perfdata.exclusiveTime) + " </p>" +
                     "<p>Difference time: " + prettyprintTime(d._perfdata.diffTime) + " </p>" +
                     "<p>Inclusive time (direct): " + prettyprintTime(d._perfdata.inclusiveTime) + " </p>";
           } else if (d._perfdata.eval_direct === -1) { // -1 undecided
-              return "<p>Primitive instance: " + d._perfdata.display_name + "</p>" +
+              tooltiptext += "<p>Primitive instance: " + d._perfdata.display_name + "</p>" +
                     "<p>Count: " + d._perfdata.count + "</p>" +
                     "<p>Exclusive time: " + prettyprintTime(d._perfdata.exclusiveTime) + " </p>" +
                     "<p>Difference time: " + prettyprintTime(d._perfdata.diffTime) + " </p>" +
                     "<p>Inclusive time (undecided): " + prettyprintTime(d._perfdata.inclusiveTime) + " </p>" +
                     "<p>Evaluation style (direct or async) determined at runtime.</p>"; 
           } else {
-              return "<p>Primitive instance: " + d._perfdata.display_name + "</p>" +
+              tooltiptext += "<p>Primitive instance: " + d._perfdata.display_name + "</p>" +
                       "<p>Total time: " + prettyprintTime(d._perfdata.time) + " </p>";
           }
+
+          if (d.executedDifferently) {
+            var firstExecution = "";
+            var secondExecution = "";
+            if (d._perfdata.eval_direct === -1) firstExecution = "undecided";
+            if (d._perfdata.eval_direct === 0) firstExecution = "asynchronously";
+            if (d._perfdata.eval_direct === 1) firstExecution = "directly";
+            tooltiptext += "<p>Executed " + firstExecution;
+            if (d._perfdata2) {
+                if (d._perfdata2.eval_direct === -1) secondExecution = "undecided";
+                if (d._perfdata2.eval_direct === 0) secondExecution = "asynchronously";
+                if (d._perfdata2.eval_direct === 1) secondExecution = "directly";
+                tooltiptext += " then " + secondExecution;
+
+            }
+             
+          }
+          return tooltiptext;
         });
         
 tool_tip_south = d3.tip()
@@ -545,8 +565,18 @@ function update(source, fullSource, perfdata, perfdata2, timetype, differenceTim
      if (d._perfdata) {
          d._perfdata.exclusiveTime = d._perfdata.time - d.childrenTime;
          d._perfdata.inclusiveTime = +d._perfdata.time;
-         if (d._perfdata2 && d._perfdata.time && d._perfdata2.time) { d._perfdata.diffTime = d._perfdata.time - d._perfdata2.time;}
-         else { d._perfdata.diffTime = 22;} 
+         if (d._perfdata2 && d._perfdata.time && d._perfdata2.time) { 
+            d._perfdata.diffTime = d._perfdata.time - d._perfdata2.time;
+            if (d._perfdata.eval_direct !== d._perfdata2.eval_direct) {
+                console.log("executedDifferently");
+                d.executedDifferently = true;
+            } else {
+                d.executedDifferently = false;
+            }
+        }
+         else {
+            d._perfdata.diffTime = 22;
+        } 
          //Katy
          domainTimesDiff.push(d._perfdata.diffTime);
          domainTimesEx.push(d._perfdata.exclusiveTime);
@@ -696,7 +726,14 @@ colorInTimeScale = d3.scaleQuantize() //went with log scale
           }
           return "0";
         })
-        .style("stroke", "black")
+        .style("stroke", function(d) {
+                if (d.executedDifferently) return "red";
+                return "black";
+            })
+            .style("stroke-width", function(d){
+                if (d.executedDifferently) return "2px";
+                return "1px";    
+            })
         .style("fill", function(d) { //katy
             d.highlighted = false;
         if (d._perfdata) { //color circle by time-per-instance
