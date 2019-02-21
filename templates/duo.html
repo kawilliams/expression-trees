@@ -217,6 +217,9 @@ function analyze(error, treeformat, treeformat2, perfdata, perfdata2) {
     // Assigns parent, children, height, depth
     treeformat = treeformat.trim();
     treeformat2 = treeformat2.trim();
+
+    treeformat = treeformat.replace(/(\r\n|\n|\r)/gm,"");
+    treeformat2 = treeformat2.replace(/(\r\n|\n|\r)/gm,"");
     console.log("treeformats the same?", (treeformat === treeformat2));
     treeformat = parseNewick(treeformat);
     treeformat2 = parseNewick(treeformat2);

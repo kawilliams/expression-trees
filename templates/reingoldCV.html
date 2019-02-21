@@ -137,7 +137,8 @@ function generateVis(textfile, perffile, codeviewfile) {
 }
 function analyze(error, treeformat, perfdata) {
     if (error) throw error;
-
+    treeformat = treeformat.trim();
+    treeformat = treeformat.replace(/(\r\n|\n|\r)/gm,"");
     // Assigns parent, children, height, depth
     root = d3.hierarchy(parseNewick(treeformat), function(d) { return d.branchset; })//shortenBranches);
     root.x0 = height / 2;
