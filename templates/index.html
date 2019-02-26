@@ -6,7 +6,7 @@ and open the template in the editor.
 -->
 <html>
     <head>
-        <title>d3 original Tree of Life</title>
+        <title>Performance Trees</title>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link rel="shortcut icon" href="#"/>
@@ -57,17 +57,38 @@ and open the template in the editor.
 
         </style>
     </head>
+    <script type="text/javascript">
+      function selectAll() {
+        var files = document.getElementsByClassName("inputfiles");
+        var selAll = document.getElementById("selAll");
+        if (selAll.checked) {
+          for (var i=0; i<files.length; i++) {
+              files[i].checked = true;
+          }
+        } else {
+          for (var i=0; i<files.length; i++) {
+              files[i].checked = false;
+          }
+        }
+    }
+    </script>
     <body>
         <!-- https://bl.ocks.org/mbostock/c034d66572fd6bd6815a -->
         <div>
-            <p>Files in use:</p>
+          <!-- Start: Select which files to use -->
+            <!-- <p>Use the following files (from {{ path }}):</p>
+              <input type="checkbox" id="selAll" value="all" onclick="selectAll()">Select All<br>
+            {% for file in files %}
+              <input type="checkbox" value="{{ file }}" class="inputfiles">{{ file }}<br>
+            {% endfor %} -->
+            <!-- End: Select which files to use -->
               <ul>
                 {% for file in files %}
                 <li>{{ file }}</li>
                 {% endfor %}
               </ul>
-            <p><a href="{{ url_for('rt_tree2') }}">Reingold-Tilford tree (one performance run)</a></p>
-            <p><a href="{{ url_for('two_rt_trees') }}">Compare two Reingold-Tilford trees (two performance runs)</a></p>
+            <p><a href="{{ url_for('tree') }}">Reingold-Tilford tree (one performance run)</a></p>
+            <p><a href="{{ url_for('compare') }}">Compare two Reingold-Tilford trees (two performance runs)</a></p>
         </div>
         
     </body>

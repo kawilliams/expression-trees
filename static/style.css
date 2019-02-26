@@ -1,3 +1,14 @@
+#tree-vis {
+/*    overflow-y: scroll;
+    overflow-x: scroll;*/
+    visibility: hidden;
+}
+
+body {
+  overflow-y: scroll;
+    overflow-x: scroll;
+}
+
 p {
 font: 12px sans-serif;
 }
@@ -49,6 +60,34 @@ font: 12px sans-serif;
 margin: -2px 0 0 0;
 top: 100%;
 left: 0;
+}
+
+/* Kate */
+.d3-tip-s {
+  line-height: 1;
+  padding: 10px;
+  background: rgba(0, 0, 0, 0.8);
+  color: #fff;
+  border-radius: 2px;
+}
+/* Kate: Creates a small triangle extender for the tooltip */
+.d3-tip-s:before {
+  box-sizing: border-box;
+  display: inline-block;
+  font-size: 10px;
+  width: 100%;
+  line-height: 1;
+  color: rgba(0, 0, 0, 0.8);
+  content: "\25B2";
+  top: -245px;
+  position: absolute;
+  text-align: center;
+}
+/* Kate: Style southward tooltips differently */
+.d3-tip-s.n:before {
+  margin: -1px 0 0 0;
+  top: -7px;
+  left: 0;
 }
 
 .ticks {
@@ -104,6 +143,61 @@ background: lightsteelblue;
 padding: 2px;
 border-radius: 8px
 }
+
+/* Tooltip container */
+.help-tooltip {
+  position: relative;
+  display: inline-block;
+  border-bottom: 1px dotted black; /* If you want dots under the hoverable text */
+}
+
+/* Tooltip text */
+.help-tooltip .help-tooltip-text {
+  visibility: hidden;
+  width: 150px;
+  background-color: lightsteelblue;
+  color: #000;
+  text-align: center;
+  padding: 5px;
+  border-radius: 6px;
+  font-family: sans-serif;
+  font-size: 14px;
+  /* Position the tooltip text - see examples below! */
+  position: absolute;
+  z-index: 1;
+  top: 100%;
+  left: 40%;
+  margin-left: -75px;
+}
+
+/* Show the tooltip text when you mouse over the tooltip container */
+.help-tooltip:hover .help-tooltip-text {
+  visibility: visible;
+}
+.collapsible {
+  position: fixed;
+  top: 10px;
+  right: 5px;
+  z-index: 10;
+  background-color: #305289;
+  color: #ffffff;
+  cursor: pointer;
+  padding: 5px;
+  width: 628px;
+  border: 0px;
+  border-radius: 4px;
+  text-align: left;
+  outline: none;
+  font-size: 15px;
+  visibility: hidden;
+}
+.collapsible:hover {
+  background-color: #ccc;
+}
+.active {
+  background-color: #305289;
+}
+
 #code-view {
     /*Working before Skyping Kate*/
     position: fixed;
@@ -118,10 +212,13 @@ border-radius: 8px
     border: 0px;
     background: #eff3f8;
     overflow-y: scroll;
-    max-width: 610px; /*540px; <-- doesn't interfere w/tree, 650 is ~80 cols'*/
+/*    max-width: 610px; 540px; <-- doesn't interfere w/tree, 650 is ~80 cols'
+    min-width: 600px;*/
+    width: 600px;
     font-family: monospace;
     font-size: 12px;
     whitespace: pre;
+    visibility: hidden;
 }
 #code-view pre { 
     margin-bottom: -12px;
@@ -130,6 +227,7 @@ border-radius: 8px
 
 #legend {
 position: absolute;
+z-index: -1;
 }
 
 .node-line-key {
