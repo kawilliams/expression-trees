@@ -551,12 +551,12 @@ function update(source, fullRoot, perfdata, perfdata2, clicked) {
                 if (d._perfdata) {
                     if (dAttribute === "inclusiveTime") {
                         if (d._perfdata.inclusiveTime < 0)
-                            return "magenta";
+                            return "white"; //"magenta";
                         d.oldColor = currentColorTimeScale(d._perfdata.inclusiveTime);
                         return currentColorTimeScale(d._perfdata.inclusiveTime);
                     } else if (dAttribute === "exclusiveTime") {
                         if (d._perfdata.exclusiveTime < 0)
-                            return "magenta";
+                            return "white"; //"magenta";
                         d.oldColor = currentColorTimeScale(d._perfdata.exclusiveTime);
                         return currentColorTimeScale(d._perfdata.exclusiveTime);
                     } else if (dAttribute === "inclusiveDiffTime") {
@@ -616,12 +616,12 @@ function update(source, fullRoot, perfdata, perfdata2, clicked) {
                     if (d._perfdata) {
                         if (dAttribute === "inclusiveTime") {
                             if (d._perfdata.inclusiveTime < 0)
-                                return "magenta";
+                                return "white"; //"magenta";
                             d.oldColor = currentColorTimeScale(d._perfdata.inclusiveTime);
                             return currentColorTimeScale(d._perfdata.inclusiveTime);
                         } else if (dAttribute === "exclusiveTime") {
                             if (d._perfdata.exclusiveTime < 0) {
-                                return "magenta";
+                                return "white"; //"magenta";
                             }
                             d.oldColor = currentColorTimeScale(d._perfdata.exclusiveTime);
                             return currentColorTimeScale(d._perfdata.exclusiveTime);
@@ -722,12 +722,12 @@ function update(source, fullRoot, perfdata, perfdata2, clicked) {
                             if (d._perfdata) {
                                 if (dAttribute === "inclusiveTime") {
                                     if (d._perfdata.inclusiveTime < 0)
-                                        return "magenta";
+                                        return "white"; //"magenta";
                                     d.oldColor = currentColorTimeScale(d._perfdata.inclusiveTime);
                                     return currentColorTimeScale(d._perfdata.inclusiveTime);
                                 } else if (dAttribute === "exclusiveTime") {
                                     if (d._perfdata.exclusiveTime < 0)
-                                        return "magenta";
+                                        return "white"; //"magenta";
                                     d.oldColor = currentColorTimeScale(d._perfdata.exclusiveTime);
                                     return currentColorTimeScale(d._perfdata.exclusiveTime);
                                 } else if (dAttribute === "inclusiveDiffTime") {
@@ -798,12 +798,12 @@ function update(source, fullRoot, perfdata, perfdata2, clicked) {
             if (d._perfdata) {
                 if (dAttribute === "inclusiveTime") {
                     if (d._perfdata.inclusiveTime < 0)
-                        return "magenta";
+                        return "white"; //"magenta";
                     d.oldColor = currentColorTimeScale(d._perfdata.inclusiveTime);
                     return currentColorTimeScale(d._perfdata.inclusiveTime);
                 } else if ((dAttribute === "exclusiveTime")) {
                     if (d._perfdata.exclusiveTime < 0)
-                        return "magenta";
+                        return "white"; //"magenta";
                     d.oldColor = currentColorTimeScale(d._perfdata.exclusiveTime);
                     return currentColorTimeScale(d._perfdata.exclusiveTime);
                 } else if ((dAttribute === "inclusiveDiffTime")) {
@@ -984,12 +984,12 @@ function update(source, fullRoot, perfdata, perfdata2, clicked) {
                 if (d._perfdata) {
                     if (dAttribute === "inclusiveTime") {
                         if (d._perfdata.inclusiveTime < 0)
-                            return "magenta";
+                            return "white"; //"magenta";
                         d.oldColor = currentColorTimeScale(d._perfdata.inclusiveTime);
                         return currentColorTimeScale(d._perfdata.inclusiveTime);
                     } else if (dAttribute === "exclusiveTime") {
                         if (d._perfdata.exclusiveTime < 0)
-                            return "magenta";
+                            return "white"; //"magenta";
                         d.oldColor = currentColorTimeScale(d._perfdata.exclusiveTime);
                         return currentColorTimeScale(d._perfdata.exclusiveTime);
                     } else if (dAttribute === "inclusiveDiffTime") {
@@ -1293,12 +1293,12 @@ function toggleSwitchAction() {
                 if (d._perfdata) {
                     if (dAttribute === "inclusiveTime") {
                         if (d._perfdata.inclusiveTime < 0)
-                            return "magenta";
+                            return "white"; //"magenta";
                         d.oldColor = currentColorTimeScale(d._perfdata.inclusiveTime);
                         return currentColorTimeScale(d._perfdata.inclusiveTime);
                     } else if (dAttribute === "exclusiveTime") {
                         if (d._perfdata.exclusiveTime < 0)
-                            return "magenta";
+                            return "white"; //"magenta";
                         d.oldColor = currentColorTimeScale(d._perfdata.exclusiveTime);
                         return currentColorTimeScale(d._perfdata.exclusiveTime);
                     } else if (dAttribute === "inclusiveDiffTime") {
