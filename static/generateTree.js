@@ -100,8 +100,14 @@ function analyze(error, treeformat, perfdata, treeformat2, perfdata2) {
         //        if (avgTime > 0) {
         //            domainTimes.push(avgTime); //katy check times * 1.e-9);
         //        }
-        domainTimesIn.push(+d.time); //kttime
-        prim_inst.push(d.primitive_instance);
+
+        //Only add time and primitive if they exist in the tree 
+        // (perfdata gets all functions, not just lra)
+        console.log(d);
+        if (treeformatOrig.includes(d.primitive_instance)) { 
+            domainTimesIn.push(+d.time); //kttime
+            prim_inst.push(d.primitive_instance);
+        }
     });
 
 
