@@ -18,7 +18,8 @@ pip3 install flask
 This Flask application follows the typical format with a Python file that establishes the browser and hosts the webpages, a `static` folder that holds the data about the trees (as well as `style.css`, `d3.v4.js`, and `d3-tip.js`), and the `templates` folder that holds the HTML files with the Javascript that display the data. 
 
 To use, first save the Newick-formatted tree into a text file and the performance data into a csv. 
-Be sure that the column headers ("count", "time", etc.) are the first line of the csv. Put the text file and csv file into the `static` folder. Also copy the algorithm `.cpp` file into the `static` folder. To run the program, enter `python tree.py static/myperformancedata.csv static/mynewicktree.txt static/myalg_csv_instrumented.cpp` into the command line. 
+Be sure that the column headers ("count", "time", etc.) are the first line of the csv. **Put the text file and csv file into the `static` folder.** Also copy the algorithm `.cpp` file into the `static` folder. To run the program, enter `python tree.py static/myperformancedata.csv static/mynewicktree.txt static/myalg_csv_instrumented.cpp` into the command line. 
+**IMPORTANT: for the Flask application to host your data/tree properly, all tree, performance, and codeview files must be under the `static` folder.**
 
 Note: `tree.py` is compatible with both Python 2 and 3.
 
