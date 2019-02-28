@@ -45,6 +45,7 @@ function analyze(error, treeformat, perfdata, treeformat2, perfdata2) {
     treeformatOrig = treeformat.trim();
     treeformatOrig = treeformatOrig.replace(/(\r\n|\n|\r)/gm,"");
     treeformat = parseNewick(treeformatOrig);
+    console.log("Treeformat", treeformat);
 
     root = d3.hierarchy(treeformat, function (d) {
         return d.branchset;
@@ -103,7 +104,6 @@ function analyze(error, treeformat, perfdata, treeformat2, perfdata2) {
 
         //Only add time and primitive if they exist in the tree 
         // (perfdata gets all functions, not just lra)
-        console.log(d);
         if (treeformatOrig.includes(d.primitive_instance)) { 
             domainTimesIn.push(+d.time); //kttime
             prim_inst.push(d.primitive_instance);
@@ -379,7 +379,8 @@ function update(source, fullRoot, perfdata, perfdata2, clicked) {
         if (d.children) {
             for (child of d.children) {
                 //d.childrenTime += +(child._perfdata.time); //sum children
-                if (child._perfdata.time > d.childrenTime) {
+                //console.log(child); //katy
+                if ((child._perfdata) && (child._perfdata.time > d.childrenTime)) { //katy
                     d.childrenTime = child._perfdata.time;
                 }
                 if (child._perfdata2) {

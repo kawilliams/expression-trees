@@ -84,21 +84,21 @@
                         else if (d.exfade) {
                             tooltiptext += "<p>Primitive was not used in this tree.</p>";
                         }
-                        else if (d._perfdata.eval_direct === 0) { // 0 async
+                        else if ((d._perfdata) && (d._perfdata.eval_direct === 0)) { // 0 async
                             tooltiptext += "<p>Primitive instance: " + d._perfdata.display_name + "</p>" +
                                     "<p>Count: " + d._perfdata.count + "</p>" +
                                     "<p>Exclusive time: " + prettyprintTime(d._perfdata.exclusiveTime) + " </p>" +
                                     "<p>Difference in exclusive times: " + prettyprintTime(d._perfdata.exclusiveDiffTime) + "</p>" +
                                     "<p>Inclusive time (async): " + prettyprintTime(d._perfdata.inclusiveTime) + " </p>" +
                                     "<p>Difference in inclusive times: " + prettyprintTime(d._perfdata.inclusiveDiffTime) + "</p>";
-                        } else if (d._perfdata.eval_direct === 1) { // 1 direct
+                        } else if ((d._perfdata) && (d._perfdata.eval_direct === 1)) { // 1 direct
                             tooltiptext += "<p>Primitive instance: " + d._perfdata.display_name + "</p>" +
                                     "<p>Count: " + d._perfdata.count + "</p>" +
                                     "<p>Exclusive time: " + prettyprintTime(d._perfdata.exclusiveTime) + " </p>" +
                                     "<p>Difference in exclusive times: " + prettyprintTime(d._perfdata.exclusiveDiffTime) + "</p>" +
                                     "<p>Inclusive time (direct): " + prettyprintTime(d._perfdata.inclusiveTime) + " </p>" +
                                     "<p>Difference in inclusive times: " + prettyprintTime(d._perfdata.inclusiveDiffTime) + "</p>";
-                        } else if (d._perfdata.eval_direct === -1) { // -1 undecided
+                        } else if ((d._perfdata) && (d._perfdata.eval_direct === -1)) { // -1 undecided
                             tooltiptext += "<p>Primitive instance: " + d._perfdata.display_name + "</p>" +
                                     "<p>Count: " + d._perfdata.count + "</p>" +
                                     "<p>Exclusive time: " + prettyprintTime(d._perfdata.exclusiveTime) + " </p>" +
@@ -107,8 +107,12 @@
                                     "<p>Difference in inclusive times: " + prettyprintTime(d._perfdata.inclusiveDiffTime) + "</p>";
                             "<p>Evaluation style (direct or async) determined at runtime.</p>";
                         } else {
+                            if (d._perfdata) {
                             tooltiptext += "<p>Primitive instance: " + d._perfdata.display_name + "</p>" +
                                     "<p>Total time: " + prettyprintTime(d._perfdata.time) + " </p>";
+                            } else {
+                                tooltiptext += "<p>Primitive instance: " + d.name + "</p>";
+                            }
                         }
 
                         if (d.executedDifferently) {
