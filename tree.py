@@ -56,7 +56,7 @@ def index(perfdata=None, treeformat=None, codedata=None):
 
 
 @APP.route('/tree')
-def tree(perfdata=None, treeformat=None, codedata=None):
+def tree(perfdata=None, treeformat=None, codefile=None):
     script = sys.argv[0]
     for filename in sys.argv[1:]:
         if (".csv" in filename):
@@ -64,7 +64,7 @@ def tree(perfdata=None, treeformat=None, codedata=None):
         elif ".txt" in filename:
             treeformat = str(filename)
         elif (".physl" or ".cpp" or ".txt" or ".c" in filename):
-            codedata = str(filename)
+            codefile = str(filename)
     return render_template('tree_mod.html', perfdata=perfdata, treeformat=treeformat, codefile=codefile)
 
 

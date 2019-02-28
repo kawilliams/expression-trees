@@ -98,6 +98,7 @@ function retrieveData() {
     textfile1 = document.getElementById("treeformat").innerHTML;
 
     codefile= document.getElementById("codefile").innerHTML;
+    
     codeData = makeCodeArray(codefile);
 
 //    codeArray = document.getElementById('main').innerHTML.split("\n");

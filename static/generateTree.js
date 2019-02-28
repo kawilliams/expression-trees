@@ -1,16 +1,12 @@
 /* generateTree.js*/
 console.log("generateTree");
 
-/*
- * General tree builder. Interfaces with any -tree.js file. 
- */
-console.log("Generate tree for daily-tree.html");
 timetype = "INCLUSIVE";
 
 function callEverything(textfile1, csvfile1, textfile2, csvfile2) {
     console.log("callEverything");
     var currentTime = getCurrentTimeScheme();
-    var currentTime = ""
+    // var currentTime = ""
     console.log("currentTime", currentTime);
 
     if (textfile1 && csvfile1 && textfile2 && csvfile2) {

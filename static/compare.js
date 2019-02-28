@@ -1,9 +1,6 @@
 /*compare.js*/
 console.log("compare.js");
 
-/* tree.js */
-console.log("tree.js");
-
 /* 
  Interfaces with als-daily-tree.html and calls generateTree.js
  */
