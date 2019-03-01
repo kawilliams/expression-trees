@@ -29,7 +29,7 @@ function makeCodeArray(codefile) {
                 })
                 .text(function (d, i) {
                     if (!d) {
-                        return i + "| \n";
+                        return " " + i + "| \n";
                     }
                     if (i < 10)
                         i = " " + i;
