@@ -189,6 +189,22 @@ function showDiff() {
                 return currentColorTimeScale(d[0]);
                 //return (timetype === "EXCLUSIVE") ? colorExTimeScale(d[0]) : colorInTimeScale(d[0]);
             });
+    g.select(".legend-label")
+            .attr("class", "legend-label")
+            .transition()
+            .text(function () {
+                console.log("Legend timetype", dAttribute);
+                if (currentTime === "inclusiveTime") {
+                    return "Total inclusive time per instance type.";
+                } else if (currentTime === "exclusiveTime") {
+                    return "Total exclusive time per instance type.";
+                } else if (currentTime === "inclusiveDiffTime") {
+                    return "Inclusive time difference per instance type. Orange: 1st run was slower."
+                } else if (currentTime === "exclusiveDiffTime") {
+                    return "Exclusive time difference per instance type. Pink: 1st run was slower."
+                }
+
+            });
 
 }
 

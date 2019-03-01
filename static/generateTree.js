@@ -950,20 +950,22 @@ function update(source, fullRoot, perfdata, perfdata2, clicked) {
                 console.log("Color legend rectangles with ", dAttribute);
                 return currentColorTimeScale(d[0]);
             });
+    //Add legend-label
     g.append("text")
             .attr("fill", "#000")
             .attr("font-weight", "bold")
             .attr("text-anchor", "start")
             .attr("y", -6)
+            .attr("class", "legend-label")
             .text(function (dAttribute) {
                 if (currentTime === "inclusiveTime") {
-                    return "Average inclusive time per instance.";
+                    return "Total inclusive time per instance type.";
                 } else if (currentTime === "exclusiveTime") {
-                    return "Average exclusive time per instance.";
+                    return "Total exclusive time per instance type.";
                 } else if (currentTime === "inclusiveDiffTime") {
-                    return "Inclusive time difference per instance. Purple: 2nd date slower."
+                    return "Inclusive time difference per instance type. Orange: 1st run was slower."
                 } else if (currentTime === "exclusiveDiffTime") {
-                    return "Exclusive time difference per instance. Green: 2nd date slower."
+                    return "Exclusive time difference per instance type. Pink: 1st run was slower."
                 }
 
             });
@@ -1386,6 +1388,24 @@ function toggleSwitchAction() {
             .style("fill", function (d) {
                 return currentColorTimeScale(d[0]);
                 //return (timetype === "EXCLUSIVE") ? colorExTimeScale(d[0]) : colorInTimeScale(d[0]);
+            });
+    
+    g.select(".legend-label")
+            .attr("class", "legend-label")
+            .transition()
+            .text(function () {
+                console.log("Legend timetype", dAttribute);
+                if (currentTime === "inclusiveTime") {
+                    return "Total inclusive time per instance type.";
+                } else if (currentTime === "exclusiveTime") {
+                    console.log("should be ex time");
+                    return "Total exclusive time per instance type.";
+                } else if (currentTime === "inclusiveDiffTime") {
+                    return "Inclusive time difference per instance type. Orange: 1st run was slower."
+                } else if (currentTime === "exclusiveDiffTime") {
+                    return "Exclusive time difference per instance type. Pink: 1st run was slower."
+                }
+
             });
 
 
