@@ -963,9 +963,9 @@ function update(source, fullRoot, perfdata, perfdata2, clicked) {
                 } else if (currentTime === "exclusiveTime") {
                     return "Total exclusive time per instance type.";
                 } else if (currentTime === "inclusiveDiffTime") {
-                    return "Inclusive time difference per instance type. Orange: 1st run was slower."
+                    return "Inclusive time difference (run1 -run2) per instance type. Purple: 1st run was slower."
                 } else if (currentTime === "exclusiveDiffTime") {
-                    return "Exclusive time difference per instance type. Pink: 1st run was slower."
+                    return "Exclusive time difference (run1 - run2) per instance type. Green: 1st run was slower."
                 }
 
             });
