@@ -1,7 +1,7 @@
 /* tree.js */
 console.log("tree.js");
 
-/* 
+/*
  Interfaces with als-daily-tree.html and calls generateTree.js
  */
 
@@ -16,6 +16,10 @@ function makeCodeArray(codefile) {
     var codeArray = [];
     code = [];
     d3.text(codefile, function (data) {
+        if (!data) {
+          data = 'No / empty source code file provided';
+          closeCodeView();
+        }
         codeArray = data.split('\n');
         cv = d3.select("#code-view");
         cv.selectAll("pre")
@@ -72,12 +76,12 @@ function getYesterday() {
         mm = '0' + mm;
 
     var datestring = yyyy + "-" + mm + "-" + dd + "-als";
-   
+
     return datestring;
 }
 
 function getCurrentTimeScheme() {
-   
+
     var toggleswitch = document.getElementById("myCheck");
     if (!toggleswitch.checked) {
         console.log("Color inclusive");
@@ -98,7 +102,7 @@ function retrieveData() {
     textfile1 = document.getElementById("treeformat").innerHTML;
 
     codefile= document.getElementById("codefile").innerHTML;
-    
+
     codeData = makeCodeArray(codefile);
 
 //    codeArray = document.getElementById('main').innerHTML.split("\n");
@@ -107,19 +111,19 @@ function retrieveData() {
 
     // Determine if datadate1 is yesterday or a selected date
     datadate1 = document.querySelector("#selectedDate1").value + "-als";
-    
+
     //datadate1 = "2019-01-30-als";
-    
+
     if ((datadate1 === "-als") || (datadate1 === "")) {
         datadate1 = yesterday;
     }
     textfile1 = "data/" + datadate1 + "-tree.txt";
     csvfile1 = "data/" + datadate1 + "-performance.csv";
-    
+
     // Determine if datadate2 is used (comparing)
     datadate2 = document.querySelector("#selectedDate2").value + "-als";
-    
-    
+
+
     //datadate2 = "2019-01-07-als";
     if ((datadate2 === "-als") || (datadate2 === "")){
         textfile2 = "";
@@ -136,11 +140,5 @@ function retrieveData() {
     console.log("Files1:", textfile1, csvfile1);
     console.log("Files2:", textfile2, csvfile2);
     callEverything(textfile1, csvfile1, textfile2, csvfile2);
-    
+
 }
-
-
-
-
-
-

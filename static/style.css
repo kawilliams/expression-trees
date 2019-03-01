@@ -202,7 +202,7 @@ border-radius: 8px
 #code-view {
     /*Working before Skyping Kate*/
     position: fixed;
-    top: 10px;
+    top: 27px;
     right: 5px;
 /*    left: 880px; 180px; when codeview was top & left*/
 
@@ -221,7 +221,7 @@ border-radius: 8px
     whitespace: pre;
     visibility: hidden;
 }
-#code-view pre { 
+#code-view pre {
     margin-bottom: -12px;
     word-wrap: break-word;
 }
