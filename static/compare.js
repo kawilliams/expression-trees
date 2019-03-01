@@ -126,6 +126,23 @@ function showDiff() {
                     }
                 }
                 return "black";
+            })
+            .style("opacity", function(d){
+                 if (dAttribute === "inclusiveDiffTime") {
+                        if (d.infade) { console.log("fade"); return "0.5"; }
+//                        if (d._perfdata.inclusiveDiffTime === 22) {
+//                            console.log("reduce opacity, no diff time");
+//                            return "0.5";
+//                        }
+                        return "1.0";
+
+                    } else if (dAttribute === "exclusiveDiffTime") {
+                        if (d.exfade) { return "0.5";} 
+//                        if (d._perfdata.exclusiveDiffTime === 22)
+//                            return "0.5";
+                        return "1";
+                    }     
+                 return "1";
             });
 
     if (dAttribute === "inclusiveTime") {

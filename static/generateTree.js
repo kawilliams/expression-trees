@@ -581,7 +581,7 @@ function update(source, fullRoot, perfdata, perfdata2, clicked) {
             })
             .style("opacity", function(d){
                  if (dAttribute === "inclusiveDiffTime") {
-                        if (d.infade) return "0.5";
+                        if (d.infade) { console.log("fade"); return "0.5"; }
 //                        if (d._perfdata.inclusiveDiffTime === 22) {
 //                            console.log("reduce opacity, no diff time");
 //                            return "0.5";
@@ -589,7 +589,7 @@ function update(source, fullRoot, perfdata, perfdata2, clicked) {
                         return "1.0";
 
                     } else if (dAttribute === "exclusiveDiffTime") {
-                        if (d.exfade) return "0.5";
+                        if (d.exfade) { return "0.5";} 
 //                        if (d._perfdata.exclusiveDiffTime === 22)
 //                            return "0.5";
                         return "1";
@@ -1044,13 +1044,13 @@ function update(source, fullRoot, perfdata, perfdata2, clicked) {
             })
              .attr("opacity", function(d){
                 if (dAttribute === "inclusiveDiffTime") {
-//                        if (d.infade) return "0.5";
+                       // if (d.infade) return "0.5";
 //                        if (d._perfdata.inclusiveDiffTime === 22)
 //                            return "0.5";
                         return "1.0";
 
                     } else if (dAttribute === "exclusiveDiffTime") {
-//                        if (d.exfade) return "0.5";
+                       //if (d.exfade) return "0.5";
 //                        if (d._perfdata.exclusiveDiffTime === 22)
 //                            return "0.5";
                         return "1";

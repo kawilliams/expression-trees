@@ -82,10 +82,11 @@
                             tooltiptext += "<p>Function: " + d.data.name + "</p>";
                         }
                         if (d.infade) {
-                            tooltiptext += "<p>Primitive was not used in this tree.</p>";
+
+                            tooltiptext += "<p>Primitive "+ d._perfdata.display_name +" was not used in this tree.</p>";
                         }
                         else if (d.exfade) {
-                            tooltiptext += "<p>Primitive was not used in this tree.</p>";
+                            tooltiptext += "<p>Primitive "+ d._perfdata.display_name +"  was not used in this tree.</p>";
                         }
                         else if (d._perfdata.eval_direct === 0) { // 0 async
                             tooltiptext += "<p>Primitive instance: " + d._perfdata.display_name + "</p>" +

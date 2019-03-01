@@ -282,7 +282,7 @@ transition: .4s;
 }
 
 input+ .slider {
-background-color: #54278f; /* dark blue */
+background-color: #54278f; /* dark purple */
 }
 
 input:checked + .slider {
