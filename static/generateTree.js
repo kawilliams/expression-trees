@@ -557,11 +557,11 @@ function update(source, fullRoot, perfdata, perfdata2, clicked) {
                 return "0";
             })
             .style("stroke", function(d) {
-                if (d.executedDifferently) return "red";
+                if ((dAttribute.includes("Diff")) && (d.executedDifferently)) return "red";
                 return "black";
             })
             .style("stroke-width", function(d){
-                if (d.executedDifferently) return "2px";
+                if ((dAttribute.includes("Diff")) && (d.executedDifferently)) return "2px";
                 return "1px";
             })
             .style("fill", function (d) { //katy

@@ -99,6 +99,14 @@ function showDiff() {
     var dAttribute = setCurrentColors(currentTime);
 
     svg.selectAll(".node").selectAll("path").transition()
+            .style("stroke", function(d) {
+                if ((dAttribute.includes("Diff")) && (d.executedDifferently)) return "red";
+                return "black";
+            })
+            .style("stroke-width", function(d){
+                if ((dAttribute.includes("Diff")) && (d.executedDifferently)) return "2px";
+                return "1px";
+            })
             .style("fill", function (d) {
                 var dAttribute = setCurrentColors(currentTime);
                 //console.log("Recolor after toggle with ", dAttribute);
