@@ -959,13 +959,13 @@ function update(source, fullRoot, perfdata, perfdata2, clicked) {
             .attr("class", "legend-label")
             .text(function (dAttribute) {
                 if (currentTime === "inclusiveTime") {
-                    return "Total inclusive time per instance type.";
+                    return "Total inclusive time per primitive type.";
                 } else if (currentTime === "exclusiveTime") {
-                    return "Total exclusive time per instance type.";
+                    return "Total exclusive time per primitive type.";
                 } else if (currentTime === "inclusiveDiffTime") {
-                    return "Inclusive time difference (run1 -run2) per instance type. Purple: 1st run was slower."
+                    return "Inclusive time difference (run1 -run2). Purple: 1st run was slower."
                 } else if (currentTime === "exclusiveDiffTime") {
-                    return "Exclusive time difference (run1 - run2) per instance type. Green: 1st run was slower."
+                    return "Exclusive time difference (run1 - run2). Green: 1st run was slower."
                 }
 
             });
@@ -1396,14 +1396,14 @@ function toggleSwitchAction() {
             .text(function () {
                 console.log("Legend timetype", dAttribute);
                 if (currentTime === "inclusiveTime") {
-                    return "Total inclusive time per instance type.";
+                    return "Total inclusive time per primitive type.";
                 } else if (currentTime === "exclusiveTime") {
                     console.log("should be ex time");
-                    return "Total exclusive time per instance type.";
+                    return "Total exclusive time per primitive type.";
                 } else if (currentTime === "inclusiveDiffTime") {
-                    return "Inclusive time difference per instance type. Orange: 1st run was slower."
+                    return "Inclusive time difference (run1 - run2). Purple: 1st run was slower."
                 } else if (currentTime === "exclusiveDiffTime") {
-                    return "Exclusive time difference per instance type. Pink: 1st run was slower."
+                    return "Exclusive time difference (run1 - run2). Green: 1st run was slower."
                 }
 
             });
