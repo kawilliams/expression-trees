@@ -33,6 +33,23 @@ function callEverything(textfile1, csvfile1, textfile2, csvfile2) {
     document.getElementById("collapsible").style.visibility = "visible";
 }
 
+function purgeNamelessNodes (parent) {
+    if (!parent.branchset) {
+      return parent;
+    }
+    const newBranchset = [];
+    for (const child of parent.branchset) {
+        if (!child.name) {
+            // concatenating while iterating is deliberate here:
+            parent.branchset.push(...child.branchset);
+        } else {
+            newBranchset.push(purgeNamelessNodes(child));
+        }
+    }
+    parent.branchset = newBranchset;
+    return parent;
+}
+
 function analyze(error, treeformat, perfdata, treeformat2, perfdata2) {
     console.log("analyze");
 
@@ -44,7 +61,7 @@ function analyze(error, treeformat, perfdata, treeformat2, perfdata2) {
     // Assigns parent, children, height, depth
     treeformatOrig = treeformat.trim();
     treeformatOrig = treeformatOrig.replace(/(\r\n|\n|\r)/gm,"");
-    treeformat = parseNewick(treeformatOrig);
+    treeformat = purgeNamelessNodes(parseNewick(treeformatOrig));
     console.log("Treeformat", treeformat);
 
     root = d3.hierarchy(treeformat, function (d) {
@@ -86,7 +103,7 @@ function analyze(error, treeformat, perfdata, treeformat2, perfdata2) {
     }
 
 
-    //if (count > 30) root.children.forEach(flatten); 
+    //if (count > 30) root.children.forEach(flatten);
     root.x0 = height / 2;
     root.y0 = 0;
 
@@ -102,9 +119,9 @@ function analyze(error, treeformat, perfdata, treeformat2, perfdata2) {
         //            domainTimes.push(avgTime); //katy check times * 1.e-9);
         //        }
 
-        //Only add time and primitive if they exist in the tree 
+        //Only add time and primitive if they exist in the tree
         // (perfdata gets all functions, not just lra)
-        if (treeformatOrig.includes(d.primitive_instance)) { 
+        if (treeformatOrig.includes(d.primitive_instance)) {
             domainTimesIn.push(+d.time); //kttime
             prim_inst.push(d.primitive_instance);
         }
@@ -175,7 +192,7 @@ function closeThese(nodeList) {
 }
 
 function shortenBranches(d) {
-    // If children of parent are all on same line, 
+    // If children of parent are all on same line,
     // then only parent is displayed (children = null);
     if (d.branchset) {
         closeMe = 0;
@@ -213,8 +230,8 @@ function countNodes(node) {
 // function getCurrentTimeScheme(date1, date2, timetype) {
 //     date1 = "2019-01-05-als";
 //     date2 = "2019-01-30-als";
-    
-    
+
+
 //     if (date1 && date2) {
 //         // We have both so take the difference
 //         if (timetype === "INCLUSIVE") {
@@ -318,10 +335,10 @@ function update(source, fullRoot, perfdata, perfdata2, clicked) {
 
     var depthY = svg.attr("width") / maxDepth;
     var depthX = svg.attr("height") / widestLevel;
-    
+
     //Prevent tree from spreading too much or too little
     var spreadFactor = 2 + (2 / depthX);
-  
+
 
     nodes.forEach(function (d) {
         d.x = d.x * spreadFactor; //really y's, adjust to spread leaves
@@ -366,7 +383,7 @@ function update(source, fullRoot, perfdata, perfdata2, clicked) {
 
                         } else {
                             // node doesn't exist in the other data set
-                           
+
                         }
                     }
                 }
@@ -419,7 +436,7 @@ function update(source, fullRoot, perfdata, perfdata2, clicked) {
                 //d._perfdata.exclusiveDiffTime = 22;
                 d.exfade = true;
             }
-            
+
             if (d._perfdata.eval_direct !== d._perfdata2.eval_direct) {
                 d.executedDifferently = true;
             } else {
@@ -437,7 +454,7 @@ function update(source, fullRoot, perfdata, perfdata2, clicked) {
     greatestValIn = d3.extent(domainTimesIn)[1];
     greatestValInDiff = Math.max(Math.abs(d3.extent(domainTimesInDiff)[0]), Math.abs(d3.extent(domainTimesInDiff)[1]));
     greatestValExDiff = Math.max(Math.abs(d3.extent(domainTimesExDiff)[0]), Math.abs(d3.extent(domainTimesExDiff)[1]));
-    
+
     //console.log("in", greatestValIn, " ex", greatestValEx, " inDiff", greatestValInDiff, " exDiff", greatestValExDiff);
 
 
@@ -472,14 +489,14 @@ function update(source, fullRoot, perfdata, perfdata2, clicked) {
     }
 
     colorInDiffTimeScale = d3.scaleQuantize() //went with log scale
-            .domain([-greatestValInDiff, greatestValInDiff]) //domainTimes 
+            .domain([-greatestValInDiff, greatestValInDiff]) //domainTimes
             .range(colorsInDiff);
     //gotta get the domain values for each color
     domainValsInDiff = [-greatestValInDiff];
     for (var i = 0; i < colorsInDiff.length; i++) {
         domainValsInDiff.push(colorInDiffTimeScale.invertExtent(colorsInDiff[i])[1]);
     }
-    
+
 
     // Enter any new modes at the parent's previous position.
     var nodeEnter = node.enter().append('g')
@@ -545,7 +562,7 @@ function update(source, fullRoot, perfdata, perfdata2, clicked) {
             })
             .style("stroke-width", function(d){
                 if (d.executedDifferently) return "2px";
-                return "1px";    
+                return "1px";
             })
             .style("fill", function (d) { //katy
                 if (d._perfdata) {
@@ -563,7 +580,7 @@ function update(source, fullRoot, perfdata, perfdata2, clicked) {
                         if (d.infade) { return "black";}
 //                        if (d._perfdata.inclusiveDiffTime === 22)
 //                            return "magenta";
-                        
+
                         d.oldColor = currentColorTimeScale(d._perfdata.inclusiveDiffTime);
                         return currentColorTimeScale(d._perfdata.inclusiveDiffTime);
 
@@ -593,7 +610,7 @@ function update(source, fullRoot, perfdata, perfdata2, clicked) {
 //                        if (d._perfdata.exclusiveDiffTime === 22)
 //                            return "0.5";
                         return "1";
-                    }     
+                    }
                  return "1";
             })
             .on("mouseover", function (d) {
@@ -948,7 +965,7 @@ function update(source, fullRoot, perfdata, perfdata2, clicked) {
                 } else if (currentTime === "exclusiveDiffTime") {
                     return "Exclusive time difference per instance. Green: 2nd date slower."
                 }
-                
+
             });
 
     // UPDATE
@@ -1054,8 +1071,8 @@ function update(source, fullRoot, perfdata, perfdata2, clicked) {
 //                        if (d._perfdata.exclusiveDiffTime === 22)
 //                            return "0.5";
                         return "1";
-                    }     
-                 return "1";        
+                    }
+                 return "1";
             });
     // UPDATE
     var linkUpdate = linkEnter.merge(link);
@@ -1397,9 +1414,9 @@ function toggleSwitchAction() {
 //                })
 //                .style("font-family", "monospace")
 //                .style("margin", "2px 0px 0px 0px");
-//        
-//    });  
-//    
+//
+//    });
+//
 //}
 function getImportantTypeName(perfdata) {
     var importantName = "";
@@ -1409,7 +1426,7 @@ function getImportantTypeName(perfdata) {
             (perfdata.display_name.includes("access-variable")) ||
             //            (perfdata.display_name.includes("access-argument")) ||
                     (perfdata.display_name.includes("access-function"))
-                    //          (perfdata.display_name.includes("function"))  
+                    //          (perfdata.display_name.includes("function"))
                     ) {
         importantName = perfdata.display_name.split("/")[1].split("(")[0];
     }
@@ -1422,5 +1439,3 @@ function getLineNum(d) {
     var linenum = parseInt(locationArray[locationArray.length - 2]);
     return linenum;
 }
-
-
