@@ -1,7 +1,7 @@
 /*compare.js*/
 console.log("compare.js");
 
-/* 
+/*
  Interfaces with als-daily-tree.html and calls generateTree.js
  */
 
@@ -28,7 +28,9 @@ function makeCodeArray(codefile) {
                     return "line " + i;
                 })
                 .text(function (d, i) {
-                    if (!d) {
+                    if (!d && i<10) {
+                        return " " + i + "| \n";
+                    } else if (!d) {
                         return i + "| \n";
                     }
                     if (i < 10)
@@ -72,12 +74,12 @@ function getYesterday() {
         mm = '0' + mm;
 
     var datestring = yyyy + "-" + mm + "-" + dd + "-als";
-   
+
     return datestring;
 }
 
 function getCurrentTimeScheme() {
-   
+
     var toggleswitch = document.getElementById("myCheck");
     var checkbox = document.getElementById("diffCheck");
 
@@ -99,6 +101,15 @@ function showDiff() {
     var dAttribute = setCurrentColors(currentTime);
 
     svg.selectAll(".node").selectAll("path").transition()
+            .style("stroke", function(d) {
+                if (d._perfdata2 && !d.executedDifferently) {
+                    // If we're comparing runs, grey out lines that weren't executed differently
+                    return '#cccccc';
+                } else {
+                    return 'black';
+                }
+            })
+            .style("stroke-width", "2px")
             .style("fill", function (d) {
                 var dAttribute = setCurrentColors(currentTime);
                 //console.log("Recolor after toggle with ", dAttribute);
@@ -126,6 +137,23 @@ function showDiff() {
                     }
                 }
                 return "black";
+            })
+            .style("opacity", function(d){
+                 if (dAttribute === "inclusiveDiffTime") {
+                        if (d.infade) { console.log("fade"); return "0.5"; }
+//                        if (d._perfdata.inclusiveDiffTime === 22) {
+//                            console.log("reduce opacity, no diff time");
+//                            return "0.5";
+//                        }
+                        return "1.0";
+
+                    } else if (dAttribute === "exclusiveDiffTime") {
+                        if (d.exfade) { return "0.5";}
+//                        if (d._perfdata.exclusiveDiffTime === 22)
+//                            return "0.5";
+                        return "1";
+                    }
+                 return "1";
             });
 
     if (dAttribute === "inclusiveTime") {
@@ -172,6 +200,22 @@ function showDiff() {
                 return currentColorTimeScale(d[0]);
                 //return (timetype === "EXCLUSIVE") ? colorExTimeScale(d[0]) : colorInTimeScale(d[0]);
             });
+    g.select(".legend-label")
+            .attr("class", "legend-label")
+            .transition()
+            .text(function () {
+                console.log("Legend timetype", dAttribute);
+                if (currentTime === "inclusiveTime") {
+                    return "Total inclusive time per primitive type.";
+                } else if (currentTime === "exclusiveTime") {
+                    return "Total exclusive time per primitive type.";
+                } else if (currentTime === "inclusiveDiffTime") {
+                    return "Inclusive time difference (run1 - run2). Purple: 1st run was slower."
+                } else if (currentTime === "exclusiveDiffTime") {
+                    return "Exclusive time difference (run1 - run2). Green: 1st run was slower."
+                }
+
+            });
 
 }
 
@@ -192,19 +236,19 @@ function retrieveData() {
 
     // Determine if datadate1 is yesterday or a selected date
     datadate1 = document.querySelector("#selectedDate1").value + "-als";
-    
+
     //datadate1 = "2019-01-30-als";
-    
+
     if ((datadate1 === "-als") || (datadate1 === "")) {
         datadate1 = yesterday;
     }
     textfile1 = "data/" + datadate1 + "-tree.txt";
     csvfile1 = "data/" + datadate1 + "-performance.csv";
-    
+
     // Determine if datadate2 is used (comparing)
     datadate2 = document.querySelector("#selectedDate2").value + "-als";
-    
-    
+
+
     //datadate2 = "2019-01-07-als";
     if ((datadate2 === "-als") || (datadate2 === "")){
         textfile2 = "";
@@ -220,11 +264,5 @@ function retrieveData() {
     // console.log("Files1:", textfile1, csvfile1);
     // console.log("Files2:", textfile2, csvfile2);
     callEverything(textfile1, csvfile1, textfile2, csvfile2);
-    
+
 }
-
-
-
-
-
-

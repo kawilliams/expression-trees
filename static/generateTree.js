@@ -600,7 +600,7 @@ function update(source, fullRoot, perfdata, perfdata2, clicked) {
             })
             .style("opacity", function(d){
                  if (dAttribute === "inclusiveDiffTime") {
-                        if (d.infade) return "0.5";
+                        if (d.infade) { console.log("fade"); return "0.5"; }
 //                        if (d._perfdata.inclusiveDiffTime === 22) {
 //                            console.log("reduce opacity, no diff time");
 //                            return "0.5";
@@ -608,7 +608,7 @@ function update(source, fullRoot, perfdata, perfdata2, clicked) {
                         return "1.0";
 
                     } else if (dAttribute === "exclusiveDiffTime") {
-                        if (d.exfade) return "0.5";
+                        if (d.exfade) { return "0.5";}
 //                        if (d._perfdata.exclusiveDiffTime === 22)
 //                            return "0.5";
                         return "1";
@@ -953,20 +953,22 @@ function update(source, fullRoot, perfdata, perfdata2, clicked) {
                 console.log("Color legend rectangles with ", dAttribute);
                 return currentColorTimeScale(d[0]);
             });
+    //Add legend-label
     g.append("text")
             .attr("fill", "#000")
             .attr("font-weight", "bold")
             .attr("text-anchor", "start")
             .attr("y", -6)
+            .attr("class", "legend-label")
             .text(function (dAttribute) {
                 if (currentTime === "inclusiveTime") {
-                    return "Average inclusive time per instance.";
+                    return "Total inclusive time per primitive type.";
                 } else if (currentTime === "exclusiveTime") {
-                    return "Average exclusive time per instance.";
+                    return "Total exclusive time per primitive type.";
                 } else if (currentTime === "inclusiveDiffTime") {
-                    return "Inclusive time difference per instance. Purple: 2nd date slower."
+                    return "Inclusive time difference (run1 -run2). Purple: 1st run was slower."
                 } else if (currentTime === "exclusiveDiffTime") {
-                    return "Exclusive time difference per instance. Green: 2nd date slower."
+                    return "Exclusive time difference (run1 - run2). Green: 1st run was slower."
                 }
 
             });
@@ -1064,13 +1066,13 @@ function update(source, fullRoot, perfdata, perfdata2, clicked) {
             })
              .attr("opacity", function(d){
                 if (dAttribute === "inclusiveDiffTime") {
-//                        if (d.infade) return "0.5";
+                       // if (d.infade) return "0.5";
 //                        if (d._perfdata.inclusiveDiffTime === 22)
 //                            return "0.5";
                         return "1.0";
 
                     } else if (dAttribute === "exclusiveDiffTime") {
-//                        if (d.exfade) return "0.5";
+                       //if (d.exfade) return "0.5";
 //                        if (d._perfdata.exclusiveDiffTime === 22)
 //                            return "0.5";
                         return "1";
@@ -1397,6 +1399,24 @@ function toggleSwitchAction() {
             .style("fill", function (d) {
                 return currentColorTimeScale(d[0]);
                 //return (timetype === "EXCLUSIVE") ? colorExTimeScale(d[0]) : colorInTimeScale(d[0]);
+            });
+
+    g.select(".legend-label")
+            .attr("class", "legend-label")
+            .transition()
+            .text(function () {
+                console.log("Legend timetype", dAttribute);
+                if (currentTime === "inclusiveTime") {
+                    return "Total inclusive time per primitive type.";
+                } else if (currentTime === "exclusiveTime") {
+                    console.log("should be ex time");
+                    return "Total exclusive time per primitive type.";
+                } else if (currentTime === "inclusiveDiffTime") {
+                    return "Inclusive time difference (run1 - run2). Purple: 1st run was slower."
+                } else if (currentTime === "exclusiveDiffTime") {
+                    return "Exclusive time difference (run1 - run2). Green: 1st run was slower."
+                }
+
             });
 
 
