@@ -128,15 +128,33 @@ stroke-width: 10px;
 
 #shapekey {
   position: absolute;
+  top: 10px;
   text-align: left;
-  padding: 2px;
+  padding: 0 1em;
   font: 12px sans-serif;
-  background: lightsteelblue;
+  background: #cccccc;
   border: 0px;
   border-radius: 8px;
   display: inline-block;
   white-space: nowrap;
-
+}
+.keyContents.hidden {
+  display: none;
+}
+.keyCollapser {
+  display: block;
+  position: relative;
+  width: calc(30px + 100%);
+  margin: 0 0 0 -17px;
+  padding: 5px 0 5px 5px;
+  font-size: 15px;
+  border-radius: 4px;
+  background-color: #333333;
+  color: #ffffff;
+  cursor: pointer;
+}
+.keyCollapser:hover {
+  background-color: #ccc;
 }
 #navigate {
 display: inline-block;
@@ -180,7 +198,7 @@ border-radius: 8px
   top: 10px;
   right: 5px;
   z-index: 10;
-  background-color: #305289;
+  background-color: #333;
   color: #ffffff;
   cursor: pointer;
   padding: 5px;
@@ -211,7 +229,7 @@ border-radius: 8px
     padding: 10px;
     border-radius: 8px;
     border: 0px;
-    background: #eff3f8;
+    background: #dddddd;
     overflow-y: scroll;
 /*    max-width: 610px; 540px; <-- doesn't interfere w/tree, 650 is ~80 cols'
     min-width: 600px;*/

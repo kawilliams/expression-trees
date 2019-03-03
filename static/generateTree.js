@@ -531,7 +531,8 @@ function update(source, fullRoot, perfdata, perfdata2, clicked) {
     dAttribute = setCurrentColors(currentTime);
     console.log("Color the paths with ", dAttribute);
 
-    var symbol = d3.symbol().size([200]);
+    var symbol = d3.symbol()
+      .size(d => d._perfdata ? 300 : 100);
     prevNodeNum = -1;
     nodeEnter
             .append("path")
@@ -557,13 +558,14 @@ function update(source, fullRoot, perfdata, perfdata2, clicked) {
                 return "0";
             })
             .style("stroke", function(d) {
-                if (d.executedDifferently) return "red";
-                return "black";
+                if (d._perfdata2 && !d.executedDifferently) {
+                    // If we're comparing runs, grey out lines that weren't executed differently
+                    return '#cccccc';
+                } else {
+                    return 'black';
+                }
             })
-            .style("stroke-width", function(d){
-                if (d.executedDifferently) return "2px";
-                return "1px";
-            })
+            .style("stroke-width", "2px")
             .style("fill", function (d) { //katy
                 if (d._perfdata) {
                     if (dAttribute === "inclusiveTime") {
@@ -660,7 +662,7 @@ function update(source, fullRoot, perfdata, perfdata2, clicked) {
                 // Color the selected node yellow
                 prevNodeNum = d.id;
                 d.oldColor = d3.select(this).style("fill");
-                d3.select(this).style("fill", "yellow");
+                d3.select(this).style("fill", "#ffd92f");
 
                 // Color related nodes of variables & functions (arguments too?)
                 var currName = "";
@@ -689,7 +691,7 @@ function update(source, fullRoot, perfdata, perfdata2, clicked) {
                     });
                     hl_nodes.style("fill", function (d) {
                         d.oldColor = d3.select(this).style("fill");
-                        return "yellow";
+                        return "#ffd92f";
                     });
 
                     //console.log("Number of ", currName, hl_edge_data.length);
@@ -707,7 +709,8 @@ function update(source, fullRoot, perfdata, perfdata2, clicked) {
                     svg.append("path")
                             .data([hl_edge_data])
                             .attr("class", "hl_line")
-                            .style("stroke", "red")
+                            .style("stroke", "#ffd92f")
+                            .style("stroke-width", "2px")
                             .style("fill", "none")
                             .attr("d", hl_line);
                 }
@@ -735,7 +738,7 @@ function update(source, fullRoot, perfdata, perfdata2, clicked) {
 //                })
                         .style("fill", function (d) {
                             if (d.id === prevNodeNum)
-                                return "yellow";
+                                return "#ffd92f";
                             if (d._perfdata) {
                                 if (dAttribute === "inclusiveTime") {
                                     if (d._perfdata.inclusiveTime < 0)
@@ -773,7 +776,7 @@ function update(source, fullRoot, perfdata, perfdata2, clicked) {
     nodeEnter.append('text')
             .attr("dy", ".35em")
             .attr("x", function (d) {
-                return 13;
+                return 17;
             })
             .attr("y", function (d) {
                 return d.children || d._children ? -7 : 0;
@@ -796,7 +799,7 @@ function update(source, fullRoot, perfdata, perfdata2, clicked) {
     lines.on("mouseover", function (d) {
         //recolor previously-highlighted line
         if (lineSelected)
-            d3.select(lineSelected).style("background-color", "#eff3f8");
+            d3.select(lineSelected).style("background-color", null);
 
         // recolor any previously-highlighted nodes
         d3.selectAll(".node")
@@ -838,7 +841,7 @@ function update(source, fullRoot, perfdata, perfdata2, clicked) {
             return "black"; //d.oldColor;
         });
 
-        d3.select(this).style("background-color", "yellow");
+        d3.select(this).style("background-color", "#ffd92f");
         lineSelected = this;
         currLineNum = parseInt(d3.select(this).attr("class").split(" ")[1]) - offset + 1;
 
@@ -856,7 +859,7 @@ function update(source, fullRoot, perfdata, perfdata2, clicked) {
             nodeSelected = d3.select(this);
             nodeSelected.oldColor = nodeSelected.style("fill");
             prevNodeNum = d.id;
-            return "yellow";
+            return "#ffd92f";
         });
     })
             .on("click", function () {
@@ -1149,7 +1152,7 @@ function update(source, fullRoot, perfdata, perfdata2, clicked) {
             if (parseInt(d3.select(this).attr("class").split(" ")[1]) === linenum) {
                 return true;
             }
-        }).style("background", "yellow");
+        }).style("background", "#ffd92f");
 
         var elem = document.getElementById("code-view");
         elem.scrollTop = linenum * 13;
@@ -1243,7 +1246,7 @@ function update(source, fullRoot, perfdata, perfdata2, clicked) {
                 .style("stroke", "black")
                 .style("fill", function (d) {
                     if (d.id === prevNodeNum)
-                        return "yellow";
+                        return "#ffd92f";
                     return d.oldColor;
                 });
 
@@ -1291,6 +1294,14 @@ function closeCodeView() {
         collapsibleButton.style.width = '628px';
         collapsibleButton.innerHTML = "Hide Code View";
     }
+}
+
+function toggleKey () {
+    const shapekey = d3.select('#shapekey');
+    const contents = shapekey.select('.keyContents');
+    const show = contents.classed('hidden');
+    contents.classed('hidden', !show);
+    shapekey.select('.keyCollapser').text(show ? 'Hide Node Key' : 'Show Node Key');
 }
 
 function toggleSwitchAction() {
