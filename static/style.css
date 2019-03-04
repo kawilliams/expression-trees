@@ -144,9 +144,8 @@ stroke-width: 10px;
 .keyCollapser {
   display: block;
   position: relative;
-  width: calc(30px + 100%);
-  margin: 0 0 0 -17px;
-  padding: 5px 0 5px 5px;
+  margin: 0 -17px;
+  padding: 5px;
   font-size: 15px;
   border-radius: 4px;
   background-color: #333333;

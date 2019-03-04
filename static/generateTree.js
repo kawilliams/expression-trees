@@ -914,14 +914,14 @@ function update(source, fullRoot, perfdata, perfdata2, clicked) {
             }); // === 0.5 ? formatPercent(d) : formatNumber(100 * d); });
 
 
-    var legendDim = {width: 525, height: 43};
+    var legendDim = {width: 565, height: 43};
     var g = d3.select("#legend").append("svg")
             .attr("class", "legend")
             .attr("width", legendDim.width)
             .attr("height", legendDim.height)
             .append("g")
             .attr("class", "x axis")
-            .attr("transform", "translate(200,18)")
+            .attr("transform", "translate(240,18)")
             .call(xAxis);
 
     g.select(".domain")
