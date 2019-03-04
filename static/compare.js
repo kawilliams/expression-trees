@@ -104,12 +104,12 @@ function showDiff() {
             .style("stroke", function(d) {
                 if (d._perfdata2 && !d.executedDifferently) {
                     // If we're comparing runs, grey out lines that weren't executed differently
-                    return '#cccccc';
+                    return '#e7298a'; // pink
                 } else {
                     return 'black';
                 }
             })
-            .style("stroke-width", "2px")
+            .style("stroke-width", "4px")
             .style("fill", function (d) {
                 var dAttribute = setCurrentColors(currentTime);
                 //console.log("Recolor after toggle with ", dAttribute);

@@ -131,7 +131,7 @@ function analyze(error, treeformat, perfdata, treeformat2, perfdata2) {
     colorsIn = ["#f2f0f7", "#cbc9e2", "#9e9ac8", "#756bb1", "#54278f"];  //purple
     colorsEx = ["#edf8fb", "#b2e2e2", "#66c2a4", "#2ca25f", "#006d2c"]; //green
     colorsInDiff = ["#e66101", "#fdb863", "#f7f7f7", "#b2abd2", "#5e3c99"]; //diverging purple orange
-    colorsExDiff = ["#d01c8b", "#f1b6da", "#f7f7f7", "#b8e186", "#4dac26"]; //diverging green pink
+    colorsExDiff = ["#a6611a", "#dfc27d", "#f5f5f5", "#80cdc1", "#018571"]; //diverging brown teal
 
     currentColors = colorsIn;
     currentDomainTimes = domainTimesIn;
@@ -558,14 +558,13 @@ function update(source, fullRoot, perfdata, perfdata2, clicked) {
                 return "0";
             })
             .style("stroke", function(d) {
-                if (d._perfdata2 && !d.executedDifferently) {
-                    // If we're comparing runs, grey out lines that weren't executed differently
-                    return '#cccccc';
+                if (d._perfdata2 && d.executedDifferently) {
+                    return '#e7298a'; // pink
                 } else {
                     return 'black';
                 }
             })
-            .style("stroke-width", "2px")
+            .style("stroke-width", "4px")
             .style("fill", function (d) { //katy
                 if (d._perfdata) {
                     if (dAttribute === "inclusiveTime") {
