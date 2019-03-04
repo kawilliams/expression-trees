@@ -1,7 +1,7 @@
 /*compare.js*/
 console.log("compare.js");
 
-/* 
+/*
  Interfaces with als-daily-tree.html and calls generateTree.js
  */
 
@@ -74,12 +74,12 @@ function getYesterday() {
         mm = '0' + mm;
 
     var datestring = yyyy + "-" + mm + "-" + dd + "-als";
-   
+
     return datestring;
 }
 
 function getCurrentTimeScheme() {
-   
+
     var toggleswitch = document.getElementById("myCheck");
     var checkbox = document.getElementById("diffCheck");
 
@@ -102,13 +102,14 @@ function showDiff() {
 
     svg.selectAll(".node").selectAll("path").transition()
             .style("stroke", function(d) {
-                if ((dAttribute.includes("Diff")) && (d.executedDifferently)) return "red";
-                return "black";
+                if (d._perfdata2 && !d.executedDifferently) {
+                    // If we're comparing runs, grey out lines that weren't executed differently
+                    return '#e7298a'; // pink
+                } else {
+                    return 'black';
+                }
             })
-            .style("stroke-width", function(d){
-                if ((dAttribute.includes("Diff")) && (d.executedDifferently)) return "2px";
-                return "1px";
-            })
+            .style("stroke-width", "4px")
             .style("fill", function (d) {
                 var dAttribute = setCurrentColors(currentTime);
                 //console.log("Recolor after toggle with ", dAttribute);
@@ -147,11 +148,11 @@ function showDiff() {
                         return "1.0";
 
                     } else if (dAttribute === "exclusiveDiffTime") {
-                        if (d.exfade) { return "0.5";} 
+                        if (d.exfade) { return "0.5";}
 //                        if (d._perfdata.exclusiveDiffTime === 22)
 //                            return "0.5";
                         return "1";
-                    }     
+                    }
                  return "1";
             });
 
@@ -235,19 +236,19 @@ function retrieveData() {
 
     // Determine if datadate1 is yesterday or a selected date
     datadate1 = document.querySelector("#selectedDate1").value + "-als";
-    
+
     //datadate1 = "2019-01-30-als";
-    
+
     if ((datadate1 === "-als") || (datadate1 === "")) {
         datadate1 = yesterday;
     }
     textfile1 = "data/" + datadate1 + "-tree.txt";
     csvfile1 = "data/" + datadate1 + "-performance.csv";
-    
+
     // Determine if datadate2 is used (comparing)
     datadate2 = document.querySelector("#selectedDate2").value + "-als";
-    
-    
+
+
     //datadate2 = "2019-01-07-als";
     if ((datadate2 === "-als") || (datadate2 === "")){
         textfile2 = "";
@@ -263,11 +264,5 @@ function retrieveData() {
     // console.log("Files1:", textfile1, csvfile1);
     // console.log("Files2:", textfile2, csvfile2);
     callEverything(textfile1, csvfile1, textfile2, csvfile2);
-    
+
 }
-
-
-
-
-
-
