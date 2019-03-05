@@ -82,6 +82,7 @@ function analyze(error, treeformat, perfdata, treeformat2, perfdata2) {
         treeformat2Orig = treeformat2.trim();
         treeformat2Orig = treeformat2Orig.replace(/(\r\n|\n|\r)/gm,"");
         treeformat2 = parseNewick(treeformat2Orig);
+        purgeNamelessNodes(treeformat2);
         root2 = d3.hierarchy(treeformat2, function (d) {
             return d.branchset;
         });
