@@ -216,7 +216,7 @@ function showDiff() {
                 }
 
             });
-
+    drawList(svg.selectAll('.node').data());
 }
 
 function retrieveData() {

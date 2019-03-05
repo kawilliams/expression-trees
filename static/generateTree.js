@@ -1253,6 +1253,7 @@ function update(source, fullRoot, perfdata, perfdata2, clicked) {
 
         update(d, fullRoot, perfdata, perfdata2, clicked = true);
     }
+    drawList(nodes);
 }
 
 
@@ -1303,6 +1304,62 @@ function toggleKey () {
     const show = contents.classed('hidden');
     contents.classed('hidden', !show);
     shapekey.select('.keyCollapser').text(show ? 'Hide Node Key' : 'Show Node Key');
+}
+function toggleList () {
+    const listView = d3.select('#list-view');
+    const contents = listView.select('.listContents');
+    const show = contents.classed('hidden');
+    contents.classed('hidden', !show);
+    listView.select('.listCollapser').text(show ? 'Hide List' : 'Show List');
+}
+function drawList (nodes) {
+  const currentTime = getCurrentTimeScheme();
+  const alignMiddle = currentTime === 'inclusiveDiffTime' || currentTime === 'exclusiveDiffTime';
+  const container = d3.select('#list-view .listContents');
+  const width = 150;
+  const barScale = d3.scaleLinear()
+    .domain(currentColorTimeScale.domain())
+    .range([alignMiddle ? 0 : 50, width]); // leave 50px space on the left for the time label if we're left-aligned
+  const hasData = d => d._perfdata && !isNaN(d._perfdata[currentTime]);
+
+  let listItems = container.selectAll('.listItem')
+    .data(nodes, d => d.data.name);
+  listItems.exit().remove();
+  const listItemsEnter = listItems.enter().append('div')
+    .classed('listItem', true);
+  listItems = listItems.merge(listItemsEnter);
+
+  listItems.style('width', width + 'px');
+
+  listItemsEnter.append('div').classed('handle', true);
+
+  listItemsEnter.append('label').classed('name', true);
+  listItems.select('.name')
+    .text(d => d.data.name);
+
+  listItemsEnter.append('div').classed('bar', true);
+  listItems.select('.bar')
+    .style('background-color', d => hasData(d) ? currentColorTimeScale(d._perfdata[currentTime]) : null)
+    .style('left', d => hasData(d) ? barScale(d._perfdata[currentTime] < 0 ? d._perfdata[currentTime] : 0) + 'px' : null)
+    .style('right', d => hasData(d) ? (width - barScale(d._perfdata[currentTime] < 0 ? 0 : d._perfdata[currentTime]) + 20) + 'px' : null);
+
+  listItemsEnter.append('label').classed('time', true);
+  listItems.select('.time')
+    .text(d =>  hasData(d) ? prettyprintTime(d._perfdata[currentTime]) : (alignMiddle ? 'No comparison data' : 'No performance data'))
+    .style('text-align', d => hasData(d) && d._perfdata[currentTime] >= 0 ? 'right' : 'left')
+    .style('border-left', d => hasData(d) && d._perfdata[currentTime] < 0 ? '1px solid #999' : null)
+    .style('border-right', d => hasData(d) && d._perfdata[currentTime] >= 0 ? '1px solid #999' : null)
+    .style('left', d => (hasData(d) ? (d._perfdata[currentTime] < 0 ? barScale(0) : 0) : 10) + 'px') // 10px space for missing data label padding
+    .style('right', d => (hasData(d) && d._perfdata[currentTime] >= 0 ? width - barScale(0) + 20 : 0) + 'px'); // 20px for padding?
+
+  listItems.on('mouseenter', function (d) {
+    // TODO: link highlighting
+    d3.select(this).classed('highlighted', true);
+  });
+  listItems.on('mouseleave', function (d) {
+    // TODO: link highlighting
+    d3.select(this).classed('highlighted', false);
+  });
 }
 
 function toggleSwitchAction() {
@@ -1417,8 +1474,7 @@ function toggleSwitchAction() {
                 }
 
             });
-
-
+    drawList(svg.selectAll('.node').data());
 }
 
 //function makeCodeArray(codefile) {
