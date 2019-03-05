@@ -1322,12 +1322,12 @@ function drawList (nodes) {
   const barScale = d3.scaleLinear()
     .domain(extent)
     .range([0, width]);
-  // Add a minimum of 50px padding for labels on either side of the zero point
+  // Add a minimum of 70px padding for labels on either side of the zero point
   const zero = barScale(0);
-  if (zero <= 50) {
-    barScale.range([50, width]);
-  } else if (zero >= width - 50) {
-    barScale.range([0, width - 50]);
+  if (zero <= 70) {
+    barScale.range([70, width]);
+  } else if (zero >= width - 70) {
+    barScale.range([0, width - 70]);
   }
 
   let listItems = container.selectAll('.listItem')

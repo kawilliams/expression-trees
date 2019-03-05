@@ -196,14 +196,14 @@ stroke-width: 10px;
 .listItem .bar {
   position: absolute;
   bottom: 12px;
-  height: 5px;
+  height: 8px;
 }
 .listItem .time {
   position: absolute;
-  font-size: 0.75em;
   bottom: 10px;
   height: 1em;
   padding: 0 5px;
+  color: #999;
 }
 
 #navigate {
