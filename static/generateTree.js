@@ -158,7 +158,7 @@ function analyze(error, treeformat, perfdata, treeformat2, perfdata2) {
     console.log("currentTime", currentTime);
 
     function collapse(d) {
-      
+
       if (d.children){
         d._children = d.children;
         d._children.forEach(collapse);
@@ -1325,11 +1325,11 @@ function drawList (nodes) {
 
   listItems.on('mouseenter', function (d) {
     // TODO: link highlighting
-    d3.select(this).classed('highlighted', true);
+    // d3.select(this).classed('highlighted', true);
   });
   listItems.on('mouseleave', function (d) {
     // TODO: link highlighting
-    d3.select(this).classed('highlighted', false);
+    // d3.select(this).classed('highlighted', false);
   });
 }
 
