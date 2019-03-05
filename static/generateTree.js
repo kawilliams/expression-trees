@@ -103,9 +103,10 @@ function analyze(error, treeformat, perfdata, treeformat2, perfdata2) {
     }
 
 
-    //if (count > 30) root.children.forEach(flatten);
+
     root.x0 = height / 2;
     root.y0 = 0;
+
 
     // Collecting the performance times
     domainTimesIn = [],
@@ -154,62 +155,22 @@ function analyze(error, treeformat, perfdata, treeformat2, perfdata2) {
      */
     var currentTime = getCurrentTimeScheme();
     console.log("currentTime", currentTime);
+
+    function collapse(d) {
+      
+      if (d.children){
+        d._children = d.children;
+        d._children.forEach(collapse);
+        if (d.children.length === 1 && d.depth > 3) {
+            d.children = null;
+        }
+      }
+    }
+    root.children.forEach(collapse);
+
     update(root, fullRoot, perfdata, perfdata2, false);
 }
 
-
-nodes2 = [];
-function flatten(d) {
-
-    function recurse(d) {
-        if (d.children) {
-            closeMe = 0;
-            for (var i = 0; i < d.children.length; i++) {
-                if (getLineNum(d.data.name) === getLineNum(d.children[i].data.name)) {
-                    closeMe += 1;
-                }
-            }
-
-            if (closeMe === d.children.length) {
-                nodes2.push(d);
-                d.bigParent = true;
-                d.open = 1;
-            }
-            d.children.forEach(recurse);
-        }
-    }
-    recurse(d);
-    closeThese(nodes2);
-    return;
-}
-
-function closeThese(nodeList) {
-    for (var i = nodeList.length - 1; i > -1; i--) {
-        nodeList[i]._children = nodeList[i].children;
-        nodeList[i].children = null;
-    }
-    return;
-}
-
-function shortenBranches(d) {
-    // If children of parent are all on same line,
-    // then only parent is displayed (children = null);
-    if (d.branchset) {
-        closeMe = 0;
-        for (var i = 0; i < d.branchset.length; i++) {
-            if (getLineNum(d.name) === getLineNum(d.branchset[i].name)) {
-                closeMe += 1;
-            }
-        }
-        if (closeMe === d.branchset.length) {
-            d.wholebranchset = d.branchset;
-            d.branchset = null;
-            d.children = null;
-        }
-    }
-    return d.branchset;
-
-}
 
 // Count the number of nodes at each level
 function countNodes(node) {
