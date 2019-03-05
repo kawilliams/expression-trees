@@ -33,7 +33,7 @@
         <div id="tree-vis"></div>
         <div id="main"></div>
         <script>
-            var symbol = d3.symbol().size([100]);
+            var symbol = d3.symbol().size(100);
 
             d3.selectAll(".node-shape-triangle").insert("g")
                     .selectAll("path").data(["triangle"]).enter()

@@ -162,11 +162,12 @@ function analyze(error, treeformat, perfdata, treeformat2, perfdata2) {
         d._children = d.children;
         d._children.forEach(collapse);
         if (d.children.length === 1 && d.depth > 3) {
+            d.bigParent = true;
             d.children = null;
         }
       }
     }
-    root.children.forEach(collapse);
+    //root.children.forEach(collapse);
 
     update(root, fullRoot, perfdata, perfdata2, false);
 }
@@ -499,7 +500,7 @@ function update(source, fullRoot, perfdata, perfdata2, clicked) {
             .append("path")
             .attr("class", "node plain-circle")
             .attr("d", symbol.type(function (d) {
-                //            closeLineChildren(d); //katy line close
+                //closeLineChildren(d); //katy line close
                 if (d.bigParent) {
                     return d3.symbolTriangle;
                 }
