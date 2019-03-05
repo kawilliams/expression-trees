@@ -1314,13 +1314,21 @@ function toggleList () {
 }
 function drawList (nodes) {
   const currentTime = getCurrentTimeScheme();
-  const alignMiddle = currentTime === 'inclusiveDiffTime' || currentTime === 'exclusiveDiffTime';
+  const diffMode = currentTime === 'inclusiveDiffTime' || currentTime === 'exclusiveDiffTime';
   const container = d3.select('#list-view .listContents');
-  const width = 150;
-  const barScale = d3.scaleLinear()
-    .domain(currentColorTimeScale.domain())
-    .range([alignMiddle ? 0 : 50, width]); // leave 50px space on the left for the time label if we're left-aligned
+  const width = 163; // visually hard-coded this based on current CSS values
   const hasData = d => d._perfdata && !isNaN(d._perfdata[currentTime]);
+  const extent = d3.extent(nodes.map(d => hasData(d) ? d._perfdata[currentTime] : 0));
+  const barScale = d3.scaleLinear()
+    .domain(extent)
+    .range([0, width]);
+  // Add a minimum of 50px padding for labels on either side of the zero point
+  const zero = barScale(0);
+  if (zero <= 50) {
+    barScale.range([50, width]);
+  } else if (zero >= width - 50) {
+    barScale.range([0, width - 50]);
+  }
 
   let listItems = container.selectAll('.listItem')
     .data(nodes, d => d.data.name);
@@ -1341,16 +1349,16 @@ function drawList (nodes) {
   listItems.select('.bar')
     .style('background-color', d => hasData(d) ? currentColorTimeScale(d._perfdata[currentTime]) : null)
     .style('left', d => hasData(d) ? barScale(d._perfdata[currentTime] < 0 ? d._perfdata[currentTime] : 0) + 'px' : null)
-    .style('right', d => hasData(d) ? (width - barScale(d._perfdata[currentTime] < 0 ? 0 : d._perfdata[currentTime]) + 20) + 'px' : null);
+    .style('right', d => hasData(d) ? (width - barScale(d._perfdata[currentTime] < 0 ? 0 : d._perfdata[currentTime])) + 'px' : null);
 
   listItemsEnter.append('label').classed('time', true);
   listItems.select('.time')
-    .text(d =>  hasData(d) ? prettyprintTime(d._perfdata[currentTime]) : (alignMiddle ? 'No comparison data' : 'No performance data'))
+    .text(d =>  hasData(d) ? prettyprintTime(d._perfdata[currentTime]) : (diffMode ? 'No comparison data' : 'No performance data'))
     .style('text-align', d => hasData(d) && d._perfdata[currentTime] >= 0 ? 'right' : 'left')
     .style('border-left', d => hasData(d) && d._perfdata[currentTime] < 0 ? '1px solid #999' : null)
     .style('border-right', d => hasData(d) && d._perfdata[currentTime] >= 0 ? '1px solid #999' : null)
-    .style('left', d => (hasData(d) ? (d._perfdata[currentTime] < 0 ? barScale(0) : 0) : 10) + 'px') // 10px space for missing data label padding
-    .style('right', d => (hasData(d) && d._perfdata[currentTime] >= 0 ? width - barScale(0) + 20 : 0) + 'px'); // 20px for padding?
+    .style('left', d => (hasData(d) ? (d._perfdata[currentTime] < 0 ? barScale(0) : 0) : 10) + 'px') // 10px for No comparison/performance data label
+    .style('right', d => (hasData(d) && d._perfdata[currentTime] >= 0 ? width - barScale(0) : 0) + 'px');
 
   listItems.on('mouseenter', function (d) {
     // TODO: link highlighting
