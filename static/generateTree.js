@@ -104,7 +104,7 @@ function analyze(error, treeformat, perfdata, treeformat2, perfdata2) {
     }
 
 
-
+    
     root.x0 = height / 2;
     root.y0 = 0;
 
@@ -115,21 +115,20 @@ function analyze(error, treeformat, perfdata, treeformat2, perfdata2) {
             domainTimesInDiff = [],
             domainTimesExDiff = [];
     prim_inst = [];
-    perfdata.map(function (d) {
-        //        var avgTime = (+d.time)/(+d.count); //kttime
-        //        if (avgTime > 0) {
-        //            domainTimes.push(avgTime); //katy check times * 1.e-9);
-        //        }
-
-        //Only add time and primitive if they exist in the tree
-        // (perfdata gets all functions, not just lra)
+    // Only add time and primitive if they exist in the tree
+    // (perfdata gets all functions, not just lra) <-- indices are important later
+    perfdata_array = [];
+    perfdata.forEach(function(d){
         if (treeformatOrig.includes(d.primitive_instance)) {
             domainTimesIn.push(+d.time); //kttime
             prim_inst.push(d.primitive_instance);
-            console.log("  ", d.primitive_instance);
-        }
+            perfdata_array.push(d);
+        } 
     });
-
+    perfdata = perfdata_array;
+    console.log("perfdata_array", perfdata_array.length, " count:", count1);
+    
+    
 
     colorsIn = ["#f2f0f7", "#cbc9e2", "#9e9ac8", "#756bb1", "#54278f"];  //purple
     colorsEx = ["#edf8fb", "#b2e2e2", "#66c2a4", "#2ca25f", "#006d2c"]; //green
@@ -330,6 +329,7 @@ function update(source, fullRoot, perfdata, perfdata2, clicked) {
 
                     //Necessary for tree-vis
                     d._perfdata = perfdata[prim_inst.indexOf(nodename)];
+                    //console.log("KATY", d.data.name, prim_inst.indexOf(nodename), d._perfdata);
                     d._perfdata.save_display_name = d._perfdata.display_name;
 
                     if (perfdata2) {
@@ -1110,7 +1110,6 @@ function update(source, fullRoot, perfdata, perfdata2, clicked) {
 
     function showNodeCode(d) {
         //offset = 20;
-        //console.log("offset", offset, "show d", d);
         linenum = getLineNum(d.data.name) + offset; //was d.data.name <-- data doesn't match tool_tip names
         d3.selectAll(".line").filter(function () {
             if (parseInt(d3.select(this).attr("class").split(" ")[1]) === linenum) {
@@ -1125,7 +1124,6 @@ function update(source, fullRoot, perfdata, perfdata2, clicked) {
 
     function hideNodeCode(d) {
         //offset = 20;
-        //console.log("offset", offset, "hide d", d);
         linenum = getLineNum(d.data.name) + offset;
         d3.selectAll(".line").filter(function () {
             if (parseInt(d3.select(this).attr("class").split(" ")[1]) === linenum) {
@@ -1454,33 +1452,7 @@ function toggleSwitchAction() {
     drawList(svg.selectAll('.node').data());
 }
 
-//function makeCodeArray(codefile) {
-//    var codeArray = [];
-//    code = [];
-//    d3.text(codefile, function(data){
-//        codeArray = data.split('\n');
-//        cv = d3.select("#code-view");
-//        cv.selectAll("pre")
-//                .data(codeArray)
-//                .enter().append("pre")
-//                .attr("class", function (d, i) {
-//                    if (d.includes("char const* const als_explicit")) { //file sensitive
-//                        offset = i;
-//                    }
-//                    return "line " + i;
-//                })
-//                .text(function (d) {
-//                    if (!d) {
-//                        return "\n";
-//                    }
-//                    return d;
-//                })
-//                .style("font-family", "monospace")
-//                .style("margin", "2px 0px 0px 0px");
-//
-//    });
-//
-//}
+
 function getImportantTypeName(perfdata) {
     var importantName = "";
 

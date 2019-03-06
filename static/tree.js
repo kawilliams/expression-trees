@@ -26,14 +26,17 @@ function makeCodeArray(codefile) {
                 .data(codeArray)
                 .enter().append("pre")
                 .attr("class", function (d, i) {
-                    if (d.includes("define(als,")) { //file sensitive char const* const als_explicit
+                    if (d.includes("define(als") || d.includes("define(lra_explicit")) { //file sensitive char const* const als_explicit
                         offset = i;
+                        console.log("OFFSET", offset);
                     }
                     return "line " + i;
                 })
                 .text(function (d, i) {
-                    if (!d) {
+                    if (!d && i<10) {
                         return " " + i + "| \n";
+                    } else if (!d) {
+                        return i + "| \n";
                     }
                     if (i < 10)
                         i = " " + i;
@@ -83,11 +86,11 @@ function getYesterday() {
 function getCurrentTimeScheme() {
 
     var toggleswitch = document.getElementById("myCheck");
-    if (!toggleswitch.checked) {
-        console.log("Color inclusive");
-    } else {
-        console.log("Exclusive color");
-    }
+    // if (!toggleswitch.checked) {
+    //     console.log("Color inclusive");
+    // } else {
+    //     console.log("Exclusive color");
+    // }
     if (!toggleswitch.checked) {
         return "inclusiveTime";
     } else {
