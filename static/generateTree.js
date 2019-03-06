@@ -1292,6 +1292,14 @@ function drawList (nodes) {
   } else if (zero >= width - 70) {
     barScale.range([0, width - 70]);
   }
+  // Sort nodes by time (slowest to fastest)
+  var nodes = nodes.sort(function(c,d) {
+        console.log(c);
+        console.log(d);
+        if ( hasData(c) && hasData(d)){
+            return d._perfdata[currentTime] - c._perfdata[currentTime];
+        }
+  });
 
   let listItems = container.selectAll('.listItem')
     .data(nodes, d => d.data.name);
