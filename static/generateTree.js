@@ -168,7 +168,7 @@ function analyze(error, treeformat, perfdata, treeformat2, perfdata2) {
         }
       }
     }
-    //root.children.forEach(collapse);
+    root.children.forEach(collapse);
 
     update(root, fullRoot, perfdata, perfdata2, false);
 }
@@ -1139,10 +1139,10 @@ function update(source, fullRoot, perfdata, perfdata2, clicked) {
 
     // Toggle children on click.
     function click(d) { //so children aren't behaving
-        if (d.open === 1) {
-            d.open = 0;
+        if (d.open) {
+            d.open = false;
         } else {
-            d.open = 1;
+            d.open = true;
         }
         if (d.children) {
             d._children = d.children;
@@ -1157,16 +1157,19 @@ function update(source, fullRoot, perfdata, perfdata2, clicked) {
             function getWholeBranch(d) {
                 if (d.children) {
                     d.children.forEach(function (c) {
+
                         branch.push(c);
                         c.moveMe = true;
-                        c.oldColor = d3.select(this).style("fill");
+                        c.open = true;
+                        //c.oldColor = d3.select(this).style("fill"); //error here, shouldn't have d.children anyways
                         getWholeBranch(c);
                     });
                 }
                 if (d._children) {
                     d._children.forEach(function (c) {
                         branch.push(c);
-                        c.oldColor = d3.select(this).style("fill");
+                        c.open = false;
+                        //c.oldColor = d3.select(this).style("fill");
                         getWholeBranch(c);
                     });
                 }
@@ -1183,11 +1186,13 @@ function update(source, fullRoot, perfdata, perfdata2, clicked) {
                     branch[i].children = branch[i]._children;
                     branch[i]._children = null;
                 }
+
             }
+
         }
         d3.select(this).select("path")
                 .attr("d", symbol.type(function (d) {
-                    if (d.open === 0) {
+                    if (d.open) {
                         return d3.symbolCircle;
                     } else {
                         return d3.symbolTriangle;
