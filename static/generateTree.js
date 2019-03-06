@@ -581,7 +581,7 @@ function update(source, fullRoot, perfdata, perfdata2, clicked) {
             .on("mouseover", function (d) {
                 //recolor previously-highlighted line
                 if (lineSelected)
-                    d3.select(lineSelected).style("background-color", "#eff3f8");
+                    d3.select(lineSelected).style("background-color", null);//"#eff3f8");
                 // Determine what color scale to use
                 var currentTime = getCurrentTimeScheme();
                 var dAttribute = setCurrentColors(currentTime);
@@ -1111,10 +1111,12 @@ function update(source, fullRoot, perfdata, perfdata2, clicked) {
     }
 
     function showNodeCode(d) {
-        offset = 20;
+        //offset = 20;
+        console.log("offset", offset);
         linenum = getLineNum(d.data.name) + offset;
         d3.selectAll(".line").filter(function () {
             if (parseInt(d3.select(this).attr("class").split(" ")[1]) === linenum) {
+                console.log("kinenum", linenum);
                 return true;
             }
         }).style("background", "#ffd92f");
@@ -1125,7 +1127,7 @@ function update(source, fullRoot, perfdata, perfdata2, clicked) {
     }
 
     function hideNodeCode(d) {
-        offset = 20;
+        //offset = 20;
         linenum = getLineNum(d.data.name) + offset;
         d3.selectAll(".line").filter(function () {
             if (parseInt(d3.select(this).attr("class").split(" ")[1]) === linenum) {

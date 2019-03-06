@@ -22,7 +22,7 @@ function makeCodeArray(codefile) {
                 .data(codeArray)
                 .enter().append("pre")
                 .attr("class", function (d, i) {
-                    if (d.includes("define(als,")) { //file sensitive char const* const als_explicit
+                    if (d.includes("_explicit") && d.includes("define(")) { //file sensitive char const* const als_explicit
                         offset = i;
                     }
                     return "line " + i;
@@ -64,9 +64,9 @@ function getYesterday() {
         mm = mm - 1;
     }
 // Hardcoded dates for testing purposes
-    dd = 30;
-    mm = 1;
-    yyyy = 2019;
+//    dd = 30;
+//    mm = 1;
+//    yyyy = 2019;
 
     if (dd < 10)
         dd = '0' + dd;
@@ -102,7 +102,7 @@ function showDiff() {
 
     svg.selectAll(".node").selectAll("path").transition()
             .style("stroke", function(d) {
-                if (d._perfdata2 && !d.executedDifferently) {
+                if (d._perfdata2 && d.executedDifferently) {
                     // If we're comparing runs, grey out lines that weren't executed differently
                     return '#e7298a'; // pink
                 } else {
