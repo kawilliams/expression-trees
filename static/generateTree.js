@@ -4,10 +4,10 @@ console.log("generateTree");
 timetype = "INCLUSIVE";
 
 function callEverything(textfile1, csvfile1, textfile2, csvfile2) {
-    console.log("callEverything");
+    //console.log("callEverything");
     var currentTime = getCurrentTimeScheme();
     // var currentTime = ""
-    console.log("currentTime", currentTime);
+    //console.log("currentTime", currentTime);
 
     if (textfile1 && csvfile1 && textfile2 && csvfile2) {
         d3.queue()
@@ -51,7 +51,7 @@ function purgeNamelessNodes (parent) {
 }
 
 function analyze(error, treeformat, perfdata, treeformat2, perfdata2) {
-    console.log("analyze");
+    //console.log("analyze");
 
     //if (error) throw error;
 
@@ -126,6 +126,7 @@ function analyze(error, treeformat, perfdata, treeformat2, perfdata2) {
         if (treeformatOrig.includes(d.primitive_instance)) {
             domainTimesIn.push(+d.time); //kttime
             prim_inst.push(d.primitive_instance);
+            console.log("  ", d.primitive_instance);
         }
     });
 
@@ -155,7 +156,7 @@ function analyze(error, treeformat, perfdata, treeformat2, perfdata2) {
     /*
      */
     var currentTime = getCurrentTimeScheme();
-    console.log("currentTime", currentTime);
+    //console.log("currentTime", currentTime);
 
     function collapse(d) {
 
@@ -264,7 +265,7 @@ function setCurrentColors(currentTime) {
 
 offset = 0;
 function update(source, fullRoot, perfdata, perfdata2, clicked) {
-    console.log("update");
+    //console.log("update");
 
     // Assigns the x and y position for the nodes
     var tree = treemap(root);
@@ -401,8 +402,7 @@ function update(source, fullRoot, perfdata, perfdata2, clicked) {
             }
 
             if (d._perfdata.eval_direct !== d._perfdata2.eval_direct) {
-                console.log("diff ", d._perfdata, d._perfdata2);
-		d.executedDifferently = true;
+		        d.executedDifferently = true;
             } else {
                 d.executedDifferently = false;
             }
@@ -479,6 +479,7 @@ function update(source, fullRoot, perfdata, perfdata2, clicked) {
                 } else {
                     tool_tip.show(d);
                 }
+                //console.log("mousedover ", d._perfdata.display_name);
                 showNodeCode(d);
             })
             .on("mouseout", function (d) {
@@ -563,7 +564,7 @@ function update(source, fullRoot, perfdata, perfdata2, clicked) {
             })
             .style("opacity", function(d){
                  if (dAttribute === "inclusiveDiffTime") {
-                        if (d.infade) { console.log("fade"); return "0.5"; }
+                        if (d.infade) { return "0.5"; }
 //                        if (d._perfdata.inclusiveDiffTime === 22) {
 //                            console.log("reduce opacity, no diff time");
 //                            return "0.5";
@@ -582,6 +583,11 @@ function update(source, fullRoot, perfdata, perfdata2, clicked) {
                 //recolor previously-highlighted line
                 if (lineSelected)
                     d3.select(lineSelected).style("background-color", null);//"#eff3f8");
+
+                // Highlight code view
+                //console.log("Show node code within nodeEnter", d);
+                showNodeCode(d); //show code view
+
                 // Determine what color scale to use
                 var currentTime = getCurrentTimeScheme();
                 var dAttribute = setCurrentColors(currentTime);
@@ -678,8 +684,7 @@ function update(source, fullRoot, perfdata, perfdata2, clicked) {
                             .attr("d", hl_line);
                 }
 
-
-                showNodeCode(d); //show code view
+                
             })
             .on("mouseout", function (d) {
                 var currName = "";
@@ -766,13 +771,6 @@ function update(source, fullRoot, perfdata, perfdata2, clicked) {
 
         // recolor any previously-highlighted nodes
         d3.selectAll(".node")
-//            .filter(function (d) {
-//            if ((getLineNum(d.data.name) === prevLineNum) ||
-//                    (d.id === prevNodeNum)) {
-//                //console.log("I'm from the previous line", prevLineNum);
-//                return true;
-//            }
-//        })
                 .select("path").style("fill", function (d) {
             //console.log("Recolor any previously highlighted nodes", d.oldColor);
             var currentTime = getCurrentTimeScheme();
@@ -1112,14 +1110,13 @@ function update(source, fullRoot, perfdata, perfdata2, clicked) {
 
     function showNodeCode(d) {
         //offset = 20;
-        console.log("offset", offset);
-        linenum = getLineNum(d.data.name) + offset;
+        //console.log("offset", offset, "show d", d);
+        linenum = getLineNum(d.data.name) + offset; //was d.data.name <-- data doesn't match tool_tip names
         d3.selectAll(".line").filter(function () {
             if (parseInt(d3.select(this).attr("class").split(" ")[1]) === linenum) {
-                console.log("kinenum", linenum);
                 return true;
             }
-        }).style("background", "#ffd92f");
+        }).style("background", "#ffd92f"); //yellow
 
         var elem = document.getElementById("code-view");
         elem.scrollTop = linenum * 13;
@@ -1128,12 +1125,13 @@ function update(source, fullRoot, perfdata, perfdata2, clicked) {
 
     function hideNodeCode(d) {
         //offset = 20;
+        //console.log("offset", offset, "hide d", d);
         linenum = getLineNum(d.data.name) + offset;
         d3.selectAll(".line").filter(function () {
             if (parseInt(d3.select(this).attr("class").split(" ")[1]) === linenum) {
                 return true;
             }
-        }).style("background", d3.select(this).oldColor);
+        }).style("background", null); //f
 
         var elem = document.getElementById("code-view");
         elem.scrollTop = linenum * 13;
@@ -1445,7 +1443,6 @@ function toggleSwitchAction() {
                 if (currentTime === "inclusiveTime") {
                     return "Total inclusive time per primitive type.";
                 } else if (currentTime === "exclusiveTime") {
-                    console.log("should be ex time");
                     return "Total exclusive time per primitive type.";
                 } else if (currentTime === "inclusiveDiffTime") {
                     return "Inclusive time difference (run1 - run2). Purple: 1st run was slower."
@@ -1503,6 +1500,5 @@ function getImportantTypeName(perfdata) {
 function getLineNum(d) {
     var locationArray = d.split("$");//d.data.name.split("$");
     var linenum = parseInt(locationArray[locationArray.length - 2]);
-    console.log("getLineNum", d, linenum);
     return linenum;
 }
