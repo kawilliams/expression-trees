@@ -12,27 +12,31 @@
         <link rel="stylesheet" href="static/style.css">
     </head>
     <body onload="retrieveData()">
-       <span id="perfdata1" style="display: none;">{{ perfdata1 }}</span>
-       <span id="treeformat1" style="display: none;">{{ treeformat1 }}</span>
-       <span id="perfdata2" style="display: none;">{{ perfdata2 }}</span>
-       <span id="treeformat2" style="display: none;">{{ treeformat2 }}</span>
-       <span id="codefile" style="display: none;">{{ codefile }}</span>
-    <div id="shapekey">
+        <span id="perfdata1" style="display: none;">{{ perfdata1 }}</span>
+        <span id="treeformat1" style="display: none;">{{ treeformat1 }}</span>
+        <span id="perfdata2" style="display: none;">{{ perfdata2 }}</span>
+        <span id="treeformat2" style="display: none;">{{ treeformat2 }}</span>
+        <span id="codefile" style="display: none;">{{ codefile }}</span>
+        <div id="shapekey">
             <div class="keyCollapser" onclick="toggleKey()">Hide Node Key</div>
             <div class="keyContents">
-              <p><svg class="node-shape-triangle"></svg> subtree hidden </p>
-              <p><svg class="node-shape-circle"></svg>  no hidden subtree </p>
-              <p><svg class="node-line-key"><path d="M 2 5 L 18 5" stroke-width="4px" stroke-dasharray = "3,3" stroke="black"/></svg> synchronous (direct)</p>
-              <p><svg class="node-line-key"><path d="M 2 5 L 18 5" stroke-width="4px" stroke="black"/></svg> asynchronous (normal)</p>
-              <p><svg class="node-line-key"><path d="M 2 5 L 18 5" stroke-width="4px" stroke-dasharray="3,1" stroke="black"/></svg> undecided</p>
-              <p><svg class="node-line-key"><path d="M 2 5 L 18 5" stroke-width="2px" stroke="#ffd92f"/></svg> additional sources</p>
-              <p><svg class="node-line-key"><path d="M 2 5 L 18 5" stroke-width="2px" stroke="#e7298a"/></svg> execution policy changed</p>
-              <p>Inclusive <label class="toggleswitch"><input type="checkbox" id="myCheck" onclick="toggleSwitchAction()"><span class="slider"></span></label> Exclusive </p>
-              <p>Difference in times: <input type="checkbox" id="diffCheck" onclick="showDiff()"></p>
+                <p><svg class="node-shape-triangle"></svg> subtree hidden </p>
+                <p><svg class="node-shape-circle"></svg>  no hidden subtree </p>
+                <p><svg class="node-line-key"><path d="M 2 5 L 18 5" stroke-width="2px" stroke-dasharray = "3,3" stroke="black"/></svg> synchronous (direct)</p>
+                <p><svg class="node-line-key"><path d="M 2 5 L 18 5" stroke-width="2px" stroke="black"/></svg> asynchronous (normal)</p>
+                <p><svg class="node-line-key"><path d="M 2 5 L 18 5" stroke-width="2px" stroke-dasharray="3,1" stroke="black"/></svg> undecided</p>
+                <p><svg class="node-line-key"><path d="M 2 5 L 18 5" stroke-width="2px" stroke="#ffd92f"/></svg> additional sources</p>
+                <p><svg class="node-line-key"><path d="M 2 5 L 18 5" stroke-width="2px" stroke="#e7298a"/></svg> execution policy changed</p>
+                <p>Inclusive <label class="toggleswitch"><input type="checkbox" id="myCheck" onclick="toggleSwitchAction()"><span class="slider"></span></label> Exclusive </p>
+                <p>Difference in times: <input type="checkbox" id="diffCheck" onclick="showDiff()"></p>
             </div>
         </div>
         <button class="collapsible" id="collapsible" onclick="closeCodeView()">Hide Code View</button>
         <div id="code-view" style="height: 500px; overflow:scroll;"><span></span></div>
+        <div id="list-view">
+            <div class="listCollapser" onclick="toggleList()">Hide List</div>
+            <div class="listContents"></div>
+        </div>
         <div id="legend"></div>
         <div id="tree-vis"></div>
         <div id="main"></div>

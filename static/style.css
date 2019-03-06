@@ -132,19 +132,38 @@ stroke-width: 10px;
   text-align: left;
   padding: 0 1em;
   font: 12px sans-serif;
-  background: #cccccc;
+  background: #dddddd;
   border: 0px;
   border-radius: 8px;
   display: inline-block;
   white-space: nowrap;
 }
-.keyContents.hidden {
+#list-view {
+  position: fixed;
+  top: 10px;
+  right: 10px;
+  width: 185px;
+  font: 12px sans-serif;
+}
+.listContents {
+  position: absolute;
+  top: 27px;
+  width: 100%;
+  max-height: calc(100vh - 54px);
+  overflow-x: hidden;
+  overflow-y: auto;
+  background: #dddddd;
+  border: 0px;
+  border-radius: 0 0 8px 8px;
+}
+.keyContents.hidden,
+.listContents.hidden {
   display: none;
 }
-.keyCollapser {
+.keyCollapser,
+.listCollapser {
   display: block;
   position: relative;
-  margin: 0 -17px;
   padding: 5px;
   font-size: 15px;
   border-radius: 4px;
@@ -152,9 +171,41 @@ stroke-width: 10px;
   color: #ffffff;
   cursor: pointer;
 }
-.keyCollapser:hover {
+.keyCollapser {
+  margin: 0 -17px;
+}
+.listCollapser {
+  margin: 0 -5px;
+}
+.keyCollapser:hover,
+.listCollapser:hover {
   background-color: #ccc;
 }
+.listItem {
+  position: relative;
+  height: 2em;
+  padding: 10px 0;
+}
+.listItem.highlighted {
+  background-color: #ffd92f;
+}
+.listItem .name {
+  padding-left: 10px;
+  white-space: nowrap;
+}
+.listItem .bar {
+  position: absolute;
+  bottom: 12px;
+  height: 8px;
+}
+.listItem .time {
+  position: absolute;
+  bottom: 10px;
+  height: 1em;
+  padding: 0 5px;
+  color: #999;
+}
+
 #navigate {
 display: inline-block;
 background: lightsteelblue;
@@ -195,7 +246,7 @@ border-radius: 8px
 .collapsible {
   position: fixed;
   top: 10px;
-  right: 5px;
+  right: 205px;
   z-index: 10;
   background-color: #333;
   color: #ffffff;
@@ -220,7 +271,7 @@ border-radius: 8px
     /*Working before Skyping Kate*/
     position: fixed;
     top: 27px;
-    right: 5px;
+    right: 205px;
 /*    left: 880px; 180px; when codeview was top & left*/
 
 /*    width: 500px;*/

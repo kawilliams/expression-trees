@@ -82,6 +82,7 @@ function analyze(error, treeformat, perfdata, treeformat2, perfdata2) {
         treeformat2Orig = treeformat2.trim();
         treeformat2Orig = treeformat2Orig.replace(/(\r\n|\n|\r)/gm,"");
         treeformat2 = parseNewick(treeformat2Orig);
+        purgeNamelessNodes(treeformat2);
         root2 = d3.hierarchy(treeformat2, function (d) {
             return d.branchset;
         });
@@ -157,7 +158,7 @@ function analyze(error, treeformat, perfdata, treeformat2, perfdata2) {
     console.log("currentTime", currentTime);
 
     function collapse(d) {
-      
+
       if (d.children){
         d._children = d.children;
         d._children.forEach(collapse);
@@ -1215,6 +1216,7 @@ function update(source, fullRoot, perfdata, perfdata2, clicked) {
 
         update(d, fullRoot, perfdata, perfdata2, clicked = true);
     }
+    drawList(nodes);
 }
 
 
@@ -1265,6 +1267,70 @@ function toggleKey () {
     const show = contents.classed('hidden');
     contents.classed('hidden', !show);
     shapekey.select('.keyCollapser').text(show ? 'Hide Node Key' : 'Show Node Key');
+}
+function toggleList () {
+    const listView = d3.select('#list-view');
+    const contents = listView.select('.listContents');
+    const show = contents.classed('hidden');
+    contents.classed('hidden', !show);
+    listView.select('.listCollapser').text(show ? 'Hide List' : 'Show List');
+}
+function drawList (nodes) {
+  const currentTime = getCurrentTimeScheme();
+  const diffMode = currentTime === 'inclusiveDiffTime' || currentTime === 'exclusiveDiffTime';
+  const container = d3.select('#list-view .listContents');
+  const width = 163; // visually hard-coded this based on current CSS values
+  const hasData = d => d._perfdata && !isNaN(d._perfdata[currentTime]);
+  const extent = d3.extent(nodes.map(d => hasData(d) ? d._perfdata[currentTime] : 0));
+  const barScale = d3.scaleLinear()
+    .domain(extent)
+    .range([0, width]);
+  // Add a minimum of 70px padding for labels on either side of the zero point
+  const zero = barScale(0);
+  if (zero <= 70) {
+    barScale.range([70, width]);
+  } else if (zero >= width - 70) {
+    barScale.range([0, width - 70]);
+  }
+
+  let listItems = container.selectAll('.listItem')
+    .data(nodes, d => d.data.name);
+  listItems.exit().remove();
+  const listItemsEnter = listItems.enter().append('div')
+    .classed('listItem', true);
+  listItems = listItems.merge(listItemsEnter);
+
+  listItems.style('width', width + 'px');
+
+  listItemsEnter.append('div').classed('handle', true);
+
+  listItemsEnter.append('label').classed('name', true);
+  listItems.select('.name')
+    .text(d => d.data.name);
+
+  listItemsEnter.append('div').classed('bar', true);
+  listItems.select('.bar')
+    .style('background-color', d => hasData(d) ? currentColorTimeScale(d._perfdata[currentTime]) : null)
+    .style('left', d => hasData(d) ? barScale(d._perfdata[currentTime] < 0 ? d._perfdata[currentTime] : 0) + 'px' : null)
+    .style('right', d => hasData(d) ? (width - barScale(d._perfdata[currentTime] < 0 ? 0 : d._perfdata[currentTime])) + 'px' : null);
+
+  listItemsEnter.append('label').classed('time', true);
+  listItems.select('.time')
+    .text(d =>  hasData(d) ? prettyprintTime(d._perfdata[currentTime]) : (diffMode ? 'No comparison data' : 'No performance data'))
+    .style('text-align', d => hasData(d) && d._perfdata[currentTime] >= 0 ? 'right' : 'left')
+    .style('border-left', d => hasData(d) && d._perfdata[currentTime] < 0 ? '1px solid #999' : null)
+    .style('border-right', d => hasData(d) && d._perfdata[currentTime] >= 0 ? '1px solid #999' : null)
+    .style('left', d => (hasData(d) ? (d._perfdata[currentTime] < 0 ? barScale(0) : 0) : 10) + 'px') // 10px for No comparison/performance data label
+    .style('right', d => (hasData(d) && d._perfdata[currentTime] >= 0 ? width - barScale(0) : 0) + 'px');
+
+  listItems.on('mouseenter', function (d) {
+    // TODO: link highlighting
+    // d3.select(this).classed('highlighted', true);
+  });
+  listItems.on('mouseleave', function (d) {
+    // TODO: link highlighting
+    // d3.select(this).classed('highlighted', false);
+  });
 }
 
 function toggleSwitchAction() {
@@ -1379,8 +1445,7 @@ function toggleSwitchAction() {
                 }
 
             });
-
-
+    drawList(svg.selectAll('.node').data());
 }
 
 //function makeCodeArray(codefile) {
