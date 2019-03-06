@@ -1503,5 +1503,6 @@ function getImportantTypeName(perfdata) {
 function getLineNum(d) {
     var locationArray = d.split("$");//d.data.name.split("$");
     var linenum = parseInt(locationArray[locationArray.length - 2]);
+    console.log("getLineNum", d, linenum);
     return linenum;
 }
