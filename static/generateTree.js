@@ -401,7 +401,8 @@ function update(source, fullRoot, perfdata, perfdata2, clicked) {
             }
 
             if (d._perfdata.eval_direct !== d._perfdata2.eval_direct) {
-                d.executedDifferently = true;
+                console.log("diff ", d._perfdata, d._perfdata2);
+		d.executedDifferently = true;
             } else {
                 d.executedDifferently = false;
             }
@@ -747,7 +748,7 @@ function update(source, fullRoot, perfdata, perfdata2, clicked) {
                 return "start";
             })
             .text(function (d) {
-                if (!d.children) {
+                if (!d.children && d._perfdata) {
                     return d._perfdata.display_name;
                 } else {
                     return "";
@@ -1294,8 +1295,6 @@ function drawList (nodes) {
   }
   // Sort nodes by time (slowest to fastest)
   var nodes = nodes.sort(function(c,d) {
-        console.log(c);
-        console.log(d);
         if ( hasData(c) && hasData(d)){
             return d._perfdata[currentTime] - c._perfdata[currentTime];
         }

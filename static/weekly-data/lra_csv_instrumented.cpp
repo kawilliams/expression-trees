@@ -1,16 +1,12 @@
-//   Copyright (c) 2018 Shahrzad Shirzad
+//   Copyright (c) 2017-2018 Hartmut Kaiser
+//   Copyright (c) 2018 Parsa Amini
 //
-//   Distributed under the Boost Software License, Version 1.0.0. (See accompanying
-//   file LICENSE_1_0.0.txt or copy at http://www.boost.org/LICENSE_1_0.0.txt)
+//   Distributed under the Boost Software License, Version 1.0. (See accompanying
+//   file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 
 #include <phylanx/phylanx.hpp>
+
 #include <hpx/hpx_init.hpp>
-
-#include <iostream>
-
-#include <blaze/Math.h>
-#include <boost/program_options.hpp>
-
 #include <hpx/include/agas.hpp>
 #include <hpx/runtime_fwd.hpp>
 
@@ -22,108 +18,91 @@
 #include <string>
 #include <utility>
 
-///////////////////////////////////////////////////////////////////////////////
-char const* const read_x_code = R"(
+#include <boost/program_options.hpp>
+#include <blaze/Math.h>
+
+//////////////////////////////////////////////////////////////////////////////////
+// This example uses part of the breast cancer dataset from UCI Machine Learning
+// Repository:
+//     https://archive.ics.uci.edu/ml/datasets/Breast+Cancer+Wisconsin+(Diagnostic)
+//
+// A copy of the full dataset in CSV format (breast_cancer.csv), obtained from
+// scikit-learn datasets, is provided in the same folder as this example.
+//
+// The layout of the data in the provided CSV file used by the example
+// is as follows:
+// 30 features per line followed by the classification
+// 569 lines of data
+//
+// This example also demonstrates how the generated primitives can be introspected
+// and linked back to the source code.
+//
+/////////////////////////////////////////////////////////////////////////////////
+
+std::string const read_x_code = R"(block(
     //
-    // Read input-data from given CSV file
+    // Read X-data from given CSV file
     //
     define(read_x, filepath, row_start, row_stop, col_start, col_stop,
-        slice(file_read_csv(filepath), make_list(row_start , row_stop),
-              make_list(col_start , col_stop))
-    )
+        slice(file_read_csv(filepath),
+              make_list(row_start, row_stop),
+              make_list(col_start, col_stop))
+    ),
     read_x
-)";
+))";
 
+std::string const read_y_code = R"(block(
+    //
+    // Read Y-data from given CSV file
+    //
+    define(read_y, filepath, row_start, row_stop, col_stop,
+        slice(file_read_csv(filepath), make_list(row_start, row_stop), col_stop)
+    ),
+    read_y
+))";
 
-char const* const als_explicit = R"(
+///////////////////////////////////////////////////////////////////////////////
+std::string const lra_code = R"(block(
     //
-    // Alternating Least squares algorithm (ALS)
+    // Logistic regression analysis algorithm
     //
-    define(als_explicit, ratings, regularization, num_factors, iterations, alpha,
-        enable_output,
+    //   x: [N, M]
+    //   y: [N]
+    //
+    define(lra_explicit, x, y, alpha, iterations, enable_output,
         block(
-            define(num_users, shape(ratings, 0)),
-            define(num_items, shape(ratings, 1)),
-            define(conf, alpha * ratings),
-
-            define(conf_u, constant(0.0, make_list(num_items))),
-            define(conf_i, constant(0.0, make_list(num_users))),
-
-            define(c_u, constant(0.0, make_list(num_items, num_items))),
-            define(c_i, constant(0.0, make_list(num_users, num_users))),
-            define(p_u, constant(0.0, make_list(num_items))),
-            define(p_i, constant(0.0, make_list(num_users))),
-
-            set_seed(0),
-            define(X, random(make_list(num_users, num_factors))),
-            define(Y, random(make_list(num_items, num_factors))),
-            define(I_f, identity(num_factors)),
-            define(I_i, identity(num_items)),
-            define(I_u, identity(num_users)),
-            define(k, 0),
-            define(i, 0),
-            define(u, 0),
-
-            define(XtX, constant(0.0, make_list(num_factors, num_factors))),
-            define(YtY, constant(0.0, make_list(num_factors, num_factors))),
-            define(A, constant(0.0, make_list(num_factors, num_factors))),
-            define(b, constant(0.0, make_list(num_factors))),
-
-            while(k < iterations,
+            define(weights, constant(0.0, shape(x, 1))),            // weights: [M]
+            define(transx, transpose(x)),                           // transx:  [M, N]
+            define(pred, constant(0.0, shape(x, 0))),
+            define(step, 0),
+            while(
+                step < iterations,
                 block(
-                    if(enable_output,
-                            block(
-                                    cout("iteration ", k, u),
-                                    cout("X: ",X),
-                                    cout("Y: ",Y)
-                            )
-                    ),
-                    store(YtY, dot(transpose(Y), Y) + regularization * I_f),
-                    store(XtX, dot(transpose(X), X) + regularization * I_f),
-
-                    while(u < num_users,
-                        block(
-                            store(conf_u, slice_row(conf, u)),
-                            store(c_u, diag(conf_u)),
-                            store(p_u, __ne(conf_u, 0.0, true)),
-                            store(A, dot(dot(transpose(Y), c_u), Y)+ YtY),
-                            store(b, dot(dot(transpose(Y),(c_u + I_i)), transpose(p_u))),
-                            store(slice(X, list(u, u + 1, 1),nil), dot(inverse(A), b)),
-                            store(u, u + 1)
-                        )
-                    ),
-                    store(u, 0),
-                    while(i < num_items,
-                        block(
-                            store(conf_i, slice_column(conf, i)),
-                            store(c_i, diag(conf_i)),
-                            store(p_i, __ne(conf_i, 0.0, true)),
-                            store(A, dot(dot(transpose(X),c_i), X) + XtX),
-                            store(b, dot(dot(transpose(X),(c_i + I_u)), transpose(p_i))),
-                            store(slice(Y, list(i, i + 1, 1),nil), dot(inverse(A), b)),
-                            store(i, i + 1)
-                        )
-                    ),
-                    store(i, 0),
-                    store(k, k + 1)
+                    if(enable_output, cout("step: ", step, ", ", weights)),
+                    // exp(-dot(x, weights)): [N], pred: [N]
+                    store(pred, 1.0 / (1.0 + exp(-dot(x, weights)))),
+                    store(weights, weights - (alpha * dot(transx, pred - y))),
+                    store(step, step + 1)
                 )
             ),
-            list(X, Y)
+            weights
         )
-    )
-    als_explicit
-)";
+    ),
+    lra_explicit
+))";
 
-std::string const als_direct = R"(
+std::string const lra_code_direct = R"(block(
     //
-    // Alternating Least squares algorithm (ALS) (direct implementation)
+    // Logistic regression analysis algorithm (direct implementation)
     //
-    define(als_direct, ratings, regularization, num_factors, iterations, alpha,
-        enable_output, als(ratings, regularization, num_factors, iterations, alpha,
-        enable_output)
-    )
-    als_direct
-)";
+    //   x: [N, M]
+    //   y: [N]
+    //
+    define(lra_direct, x, y, alpha, iterations, enable_output,
+        lra(x, y, alpha, iterations, enable_output)
+    ),
+    lra_direct
+))";
 
 ///////////////////////////////////////////////////////////////////////////////
 // Find the line/column position in the source code from a given iterator
@@ -239,8 +218,8 @@ std::tuple<std::size_t, std::size_t, std::size_t> extract_tags(
 //      <tag2>:        (optional) if <tag2> != -1 or not given: the column
 //                      offset in the given line (default: -1)
 //
-void print_instrumentation(char const* const name, int compile_id,
-    std::string const& code,
+void print_instrumentation(
+    char const* const name, int compile_id, std::string const& code,
     phylanx::execution_tree::compiler::function const& func,
     std::map<std::string, hpx::id_type> const& entries)
 {
@@ -268,7 +247,8 @@ void print_instrumentation(char const* const name, int compile_id,
                 if (*end == '\n' || *end == '\r')
                     break;
             }
-            std::cout << std::string(code.begin() + offset, end) << " ...\n";
+            std::cout << std::string(code.begin() + offset, end)
+                      << " ...\n";
         }
         else
         {
@@ -314,6 +294,7 @@ void print_performance_counter_data_csv(
     std::cout << std::endl;
 }
 
+///////////////////////////////////////////////////////////////////////////////
 int hpx_main(boost::program_options::variables_map& vm)
 {
     if (vm.count("data_csv") == 0)
@@ -322,53 +303,59 @@ int hpx_main(boost::program_options::variables_map& vm)
         return hpx::finalize();
     }
 
-    // compile the given code
+    // Compile the given code
     phylanx::execution_tree::compiler::function_list snippets;
-    auto const& code_read_x =
-        phylanx::execution_tree::compile("read_x", read_x_code, snippets);
+    auto const& code_read_x = phylanx::execution_tree::compile(
+        "read_x", phylanx::ast::generate_ast(read_x_code), snippets);
 
-    auto const& code_als = phylanx::execution_tree::compile(
-        vm.count("direct") != 0 ? "als_direct" : "als_explicit",
-        vm.count("direct") != 0 ? als_direct : als_explicit, snippets);
+    auto const& code_read_y = phylanx::execution_tree::compile(
+        "read_y", phylanx::ast::generate_ast(read_y_code), snippets);
+
+    auto const& code_lra = phylanx::execution_tree::compile(
+        vm.count("direct") != 0 ? "lra_direct" : "lra",
+        vm.count("direct") != 0 ? lra_code_direct : lra_code, snippets);
 
     // Enable collection of performance data for all existing primitives
     auto primitives = phylanx::util::enable_measurements();
 
     auto read_x = code_read_x.run();
-    auto als = code_als.run();
+    auto read_y = code_read_y.run();
+    auto lra = code_lra.run();
 
     // Print instrumentation information, if enabled
     if (vm.count("instrument") != 0)
     {
-        auto entries = hpx::agas::find_symbols(hpx::launch::sync, "/phylanx/*");
+        auto entries =
+            hpx::agas::find_symbols(hpx::launch::sync, "/phylanx/*");
 
-        print_instrumentation("als", 0,
-            vm.count("direct") != 0 ? als_direct : als_explicit, als, entries);
+        print_instrumentation("read_x", 0, read_x_code, read_x, entries);
+        print_instrumentation("read_y", 1, read_y_code, read_y, entries);
+        print_instrumentation("lra", 2, lra_code, lra, entries);
     }
 
-    // evaluate generated execution tree
-    auto row_start = static_cast<int64_t>(0);
-    auto col_start = static_cast<int64_t>(0);
+    auto row_start = vm["row_start"].as<std::int64_t>();
+    auto col_start = vm["col_start"].as<std::int64_t>();
     auto row_stop = vm["row_stop"].as<std::int64_t>();
     auto col_stop = vm["col_stop"].as<std::int64_t>();
 
-    auto regularization = vm["regularization"].as<double>();
-    auto iterations = vm["iterations"].as<int64_t>();
-    auto num_factors = vm["factors"].as<int64_t>();
-    auto alpha = vm["alpha"].as<double>();
-    auto filepath = vm["data_csv"].as<std::string>();
-
-    bool enable_output = vm.count("enable_output") != 0;
-
     // Read the data from the files
-    auto ratings = read_x(filepath, row_start, row_stop, col_start, col_stop);
+    auto x = read_x(vm["data_csv"].as<std::string>(), row_start, row_stop,
+        col_start, col_stop);
+    auto y =
+        read_y(vm["data_csv"].as<std::string>(), row_start, row_stop, col_stop);
+
+    // Remaining command line options
+    auto alpha = vm["alpha"].as<double>();
+    auto iterations = vm["num_iterations"].as<std::int64_t>();
+    bool enable_output = vm.count("enable_output") != 0;
 
     // Measure execution time
     hpx::util::high_resolution_timer t;
 
-    // Evaluate ALS using the read data
+    // Evaluate LRA using the read data
     auto result =
-        als(ratings, regularization, num_factors, iterations, alpha, enable_output);
+        lra(std::move(x), std::move(y), alpha, iterations, enable_output);
+
     auto elapsed = t.elapsed();
 
     // Print performance counter data in CSV
@@ -381,39 +368,43 @@ int hpx_main(boost::program_options::variables_map& vm)
     // counter values
     hpx::reinit_active_counters(false);
 
-    auto result_r = phylanx::execution_tree::extract_list_value(result);
-    auto it = result_r.begin();
-    std::cout << "X: \n"
-              << phylanx::execution_tree::extract_numeric_value(*it++)
-              << "\nY: \n"
-              << phylanx::execution_tree::extract_numeric_value(*it)
-              << std::endl;
-    std::cout << "time: " << t.elapsed() << std::endl;
+    std::cout << "Result: \n"
+              << phylanx::execution_tree::extract_numeric_value(result) << "\n"
+              << "Calculated in: " << elapsed << " seconds\n";
 
     return hpx::finalize();
 }
 
 int main(int argc, char* argv[])
 {
-    // command line handling
-    boost::program_options::options_description desc("usage: als [options]");
-    desc.add_options()("enable_output,e",
-        "enable progress output (default: false)")("instrument,i",
-        "print instrumentation information (default: false)")("direct,d",
-        "use direct implementation of ALS (default: false)")("iterations,n",
-        boost::program_options::value<std::int64_t>()->default_value(3),
-        "number of iterations (default: 10.0)")("factors,f",
-        boost::program_options::value<std::int64_t>()->default_value(10),
-        "number of factors (default: 10)")("alpha,a",
-        boost::program_options::value<double>()->default_value(40),
-        "alpha (default: 40)")("regularization,r",
-        boost::program_options::value<double>()->default_value(0.1),
-        "regularization (default: 0.1)")("data_csv",
-        boost::program_options::value<std::string>(),
-        "file name for reading data")("row_stop",
-        boost::program_options::value<std::int64_t>()->default_value(10),
-        "row_stop (default: 10)")("col_stop",
-        boost::program_options::value<std::int64_t>()->default_value(100),
-        "col_stop (default: 100)");
+    // Command line handling
+    boost::program_options::options_description desc("usage: lra [options]");
+    desc.add_options()
+        ("enable_output,e", "enable progress output (default: false)")
+        ("instrument,i", "print instrumentation information (default: false)")
+        ("direct,d", "use direct implementation of LRA (default: false)")
+        ("num_iterations,n",
+            boost::program_options::value<std::int64_t>()->default_value(750),
+            "number of iterations (default: 750)")
+        ("alpha,a",
+            boost::program_options::value<double>()->default_value(1e-5),
+            "alpha (default: 1e-5)")
+        ("data_csv",
+            boost::program_options::value<std::string>(),
+            "file name for reading data")
+        ("row_start",
+            boost::program_options::value<std::int64_t>()->default_value(0),
+            "row_start (default: 0)")
+        ("col_start",
+            boost::program_options::value<std::int64_t>()->default_value(0),
+            "col_start (default: 0)")
+        ("row_stop",
+            boost::program_options::value<std::int64_t>()->default_value(569),
+            "row_stop (default: 569)")
+        ("col_stop",
+            boost::program_options::value<std::int64_t>()->default_value(30),
+            "col_stop (default: 30)")
+        ;
+
     return hpx::init(desc, argc, argv);
 }

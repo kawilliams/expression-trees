@@ -261,8 +261,8 @@ function retrieveData() {
     legend.empty();
     */
 
-    // console.log("Files1:", textfile1, csvfile1);
-    // console.log("Files2:", textfile2, csvfile2);
+    console.log("Files1:", textfile1, csvfile1);
+    console.log("Files2:", textfile2, csvfile2);
     callEverything(textfile1, csvfile1, textfile2, csvfile2);
 
 }
