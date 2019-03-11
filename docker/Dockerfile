@@ -8,5 +8,6 @@ EXPOSE 8789
 
 WORKDIR /expression-trees/notebook
 COPY Dockerfile /Dockerfile
+COPY start.sh start.sh
 
-CMD jupyter-notebook --ip 0.0.0.0 --port 8789 --no-browser --allow-root
+CMD bash ./start.sh
