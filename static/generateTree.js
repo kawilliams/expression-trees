@@ -162,6 +162,7 @@ function analyze(error, treeformat, perfdata, treeformat2, perfdata2) {
       if (d.children){
         d._children = d.children;
         d._children.forEach(collapse);
+        d.open = true;
         if (d.children.length === 1 && d.depth > 3) {
             d.bigParent = true;
             d.children = null;
@@ -474,17 +475,18 @@ function update(source, fullRoot, perfdata, perfdata2, clicked) {
             })
             .on('click', click)
             .on("mouseenter", function (d) {
-                if (d.x < 120) { //magic number re tooltip size
-                    tool_tip_south.show(d);
-                } else {
-                    tool_tip.show(d);
-                }
+                // if (d.x < 120) { //magic number re tooltip size
+                //     tool_tip_south.show(d);
+                // } else {
+                //     tool_tip.show(d);
+                // }
+                tool_tip.show(d);
                 //console.log("mousedover ", d._perfdata.display_name);
                 showNodeCode(d);
             })
             .on("mouseout", function (d) {
                 tool_tip.hide(d);
-                tool_tip_south.hide(d);
+                //tool_tip_south.hide(d);
 
                 hideNodeCode(d);
             });
@@ -505,8 +507,10 @@ function update(source, fullRoot, perfdata, perfdata2, clicked) {
             .attr("d", symbol.type(function (d) {
                 //closeLineChildren(d); //katy line close
                 if (d.bigParent) {
+                    d.open = false;
                     return d3.symbolTriangle;
                 }
+                d.open = true;
                 return d3.symbolCircle;
             }))
             .attr('transform', "rotate(-90)")
@@ -1139,7 +1143,7 @@ function update(source, fullRoot, perfdata, perfdata2, clicked) {
 
     // Toggle children on click.
     function click(d) { //so children aren't behaving
-        if (d.open) {
+        if (d.open && d.children) {
             d.open = false;
         } else {
             d.open = true;
@@ -1157,7 +1161,6 @@ function update(source, fullRoot, perfdata, perfdata2, clicked) {
             function getWholeBranch(d) {
                 if (d.children) {
                     d.children.forEach(function (c) {
-
                         branch.push(c);
                         c.moveMe = true;
                         c.open = true;
@@ -1168,7 +1171,7 @@ function update(source, fullRoot, perfdata, perfdata2, clicked) {
                 if (d._children) {
                     d._children.forEach(function (c) {
                         branch.push(c);
-                        c.open = false;
+                        c.open = true;
                         //c.oldColor = d3.select(this).style("fill");
                         getWholeBranch(c);
                     });
@@ -1178,6 +1181,7 @@ function update(source, fullRoot, perfdata, perfdata2, clicked) {
 
             for (i = 0; i < branch.length; i++) {
                 branch[i].moveMe = true;
+                branch[i].open = true;
                 if (branch[i].children) {
                     branch[i]._children = branch[i].children;
                     branch[i].children = null;
@@ -1190,8 +1194,10 @@ function update(source, fullRoot, perfdata, perfdata2, clicked) {
             }
 
         }
+
         d3.select(this).select("path")
                 .attr("d", symbol.type(function (d) {
+                    console.log("AM I OPEN?", d.open);
                     if (d.open) {
                         return d3.symbolCircle;
                     } else {
@@ -1218,9 +1224,12 @@ function update(source, fullRoot, perfdata, perfdata2, clicked) {
                     return d.oldColor;
                 });
 
-        update(d, fullRoot, perfdata, perfdata2, clicked = true);
+
+        update(d, fullRoot, perfdata, perfdata2, clicked = true); 
+
     }
-    drawList(nodes);
+
+    drawList(nodes); // Alex's list
 }
 
 
