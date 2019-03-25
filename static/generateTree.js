@@ -1157,49 +1157,49 @@ function update(source, fullRoot, perfdata, perfdata2, clicked) {
             d.children = d._children;
             d._children = null;
         }
-        if (d.bigParent) {
-            //console.log("closing a big parent");
-            branch = [];
-            function getWholeBranch(d) {
-                if (d.children) {
-                    d.children.forEach(function (c) {
-                        branch.push(c);
-                        c.moveMe = true;
-                        c.open = true;
-                        //c.oldColor = d3.select(this).style("fill"); //error here, shouldn't have d.children anyways
-                        getWholeBranch(c);
-                    });
-                }
-                if (d._children) {
-                    d._children.forEach(function (c) {
-                        branch.push(c);
-                        c.open = true;
-                        //c.oldColor = d3.select(this).style("fill");
-                        getWholeBranch(c);
-                    });
-                }
-            }
-            getWholeBranch(d);
+        // if (d.bigParent && !d.open) {
+        //     console.log("opening a big parent");
+        //     branch = [];
+        //     function getWholeBranch(d) {
+        //         if (d.children) {
+        //             d.children.forEach(function (c) {
+        //                 branch.push(c);
+        //                 c.moveMe = true;
+        //                 c.open = true;
+        //                 //c.oldColor = d3.select(this).style("fill"); //error here, shouldn't have d.children anyways
+        //                 getWholeBranch(c);
+        //             });
+        //         }
+        //         if (d._children) {
+        //             d._children.forEach(function (c) {
+        //                 branch.push(c);
+        //                 c.open = true;
+        //                 //c.oldColor = d3.select(this).style("fill");
+        //                 getWholeBranch(c);
+        //             });
+        //         }
+        //     }
+        //     getWholeBranch(d);
 
-            for (i = 0; i < branch.length; i++) {
-                branch[i].moveMe = true;
-                branch[i].open = true;
-                if (branch[i].children) {
-                    branch[i]._children = branch[i].children;
-                    branch[i].children = null;
+        //     for (i = 0; i < branch.length; i++) {
+        //         branch[i].moveMe = true;
+        //         branch[i].open = true;
+        //         if (branch[i].children) {
+        //             branch[i]._children = branch[i].children;
+        //             branch[i].children = null;
 
-                } else {
-                    branch[i].children = branch[i]._children;
-                    branch[i]._children = null;
-                }
+        //         } else {
+        //             branch[i].children = branch[i]._children;
+        //             branch[i]._children = null;
+        //         }
 
-            }
+        //     }
 
-        }
+        // }
 
         d3.select(this).select("path")
                 .attr("d", symbol.type(function (d) {
-                    console.log("AM I OPEN?", d.open);
+                    //console.log("AM I OPEN?", d.open);
                     if (d.open) {
                         return d3.symbolCircle;
                     } else {
