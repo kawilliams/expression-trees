@@ -183,9 +183,9 @@ var svg = d3.select("#tree-vis").append("svg")
     .attr("height", height - margin.top)
     .attr("transform", "translate("
           + margin.left + "," + margin.top + ")");
-var duration = 1, //750, //quick hack to eliminate movement during click
-    root,
-    fullRoot;
+var root,
+    fullRoot;//750, //quick hack to eliminate movement during click
+    
     
 svg.call(tool_tip);
 svg.call(tool_tip_south);

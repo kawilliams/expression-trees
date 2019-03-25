@@ -1,6 +1,6 @@
 /* generateTree.js*/
 console.log("generateTree");
-
+duration = 0; 
 timetype = "INCLUSIVE";
 
 function callEverything(textfile1, csvfile1, textfile2, csvfile2) {
@@ -509,9 +509,12 @@ function update(source, fullRoot, perfdata, perfdata2, clicked) {
             .attr("d", symbol.type(function (d) {
                 //closeLineChildren(d); //katy line close
                 if (d.bigParent) {
-                    d.open = false;
                     return d3.symbolTriangle;
                 }
+                if (d.open === false) {
+                    //d.open = false;
+                    return d3.symbolTriangle;
+                } 
                 d.open = true;
                 return d3.symbolCircle;
             }))
@@ -1145,6 +1148,7 @@ function update(source, fullRoot, perfdata, perfdata2, clicked) {
 
     // Toggle children on click.
     function click(d) { //so children aren't behaving
+        console.log("open?", d.open, d.children);
         if (d.open && d.children) {
             d.open = false;
         } else {
@@ -1196,10 +1200,9 @@ function update(source, fullRoot, perfdata, perfdata2, clicked) {
         //     }
 
         // }
-
+        //console.log("now d.open is ", d.open, d.children);
         d3.select(this).select("path")
                 .attr("d", symbol.type(function (d) {
-                    //console.log("AM I OPEN?", d.open);
                     if (d.open) {
                         return d3.symbolCircle;
                     } else {
