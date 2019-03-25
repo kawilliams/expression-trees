@@ -163,7 +163,9 @@ function analyze(error, treeformat, perfdata, treeformat2, perfdata2) {
         d._children = d.children;
         d._children.forEach(collapse);
         d.open = true;
-        if (d.children.length === 1 && d.depth > 3) {
+        linenum = getLineNum(d.data.name);
+        if (d.data.name.includes("define-variable")) {
+            console.log("BIG PARENT");
             d.bigParent = true;
             d.children = null;
         }
