@@ -165,7 +165,6 @@ function analyze(error, treeformat, perfdata, treeformat2, perfdata2) {
         d.open = true;
         linenum = getLineNum(d.data.name);
         if (d.data.name.includes("define-variable")) {
-            console.log("BIG PARENT");
             d.bigParent = true;
             d.children = null;
         }
@@ -309,7 +308,7 @@ function update(source, fullRoot, perfdata, perfdata2, clicked) {
     nodes.forEach(function (d) {
         d.x = d.x * spreadFactor; //really y's, adjust to spread leaves
         //d.y = d.depth * depthY;
-        d.y = d.y * 1; // depth, adjust to widen tree
+        d.y = d.y * 1; // depth, adjust to lengthen tree (makes it wider b/c it's rotated)
     });
 
     // ****************** Nodes section ***************************
@@ -532,7 +531,8 @@ function update(source, fullRoot, perfdata, perfdata2, clicked) {
                 return "0";
             })
             .style("stroke", function(d) {
-                if (d._perfdata2 && d.executedDifferently) {
+                var checkbox = document.getElementById("diffCheck");
+                if (d._perfdata2 && d.executedDifferently && checkbox.checked) { //KATY CHECKBOX
                     return '#e7298a'; // pink
                 } else {
                     return 'black';
@@ -932,9 +932,9 @@ function update(source, fullRoot, perfdata, perfdata2, clicked) {
             .attr("class", "legend-label")
             .text(function (dAttribute) {
                 if (currentTime === "inclusiveTime") {
-                    return "Total inclusive time per primitive type.";
+                    return "Total inclusive time per primitive type (Run 1 shown)";
                 } else if (currentTime === "exclusiveTime") {
-                    return "Total exclusive time per primitive type.";
+                    return "Total exclusive time per primitive type (Run 1 shown)";
                 } else if (currentTime === "inclusiveDiffTime") {
                     return "Inclusive time difference (run1 -run2). Purple: 1st run was slower."
                 } else if (currentTime === "exclusiveDiffTime") {

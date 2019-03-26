@@ -131,17 +131,18 @@
                             var firstExecution = "";
                             var secondExecution = "";
 
+                            
+                            if (d._perfdata.eval_direct === -1) firstExecution = "undecided";
+                            if (d._perfdata.eval_direct === 0) firstExecution = "asynchronously";
+                            if (d._perfdata.eval_direct === 1) firstExecution = "directly";
+                            tooltiptext += "<p>Executed " + firstExecution;
+
                             if (d._perfdata2) {
                                 if (d._perfdata2.eval_direct === -1) secondExecution = "undecided";
                                 if (d._perfdata2.eval_direct === 0) secondExecution = "asynchronously";
                                 if (d._perfdata2.eval_direct === 1) secondExecution = "directly";
-                                tooltiptext += "<p>Executed " + secondExecution;
+                                tooltiptext += " in run 1, then " + secondExecution + " for run 2";
                             }
-
-                            if (d._perfdata.eval_direct === -1) firstExecution = "undecided";
-                            if (d._perfdata.eval_direct === 0) firstExecution = "asynchronously";
-                            if (d._perfdata.eval_direct === 1) firstExecution = "directly";
-                            tooltiptext += " then " + firstExecution;
                             
                         }
                        return tooltiptext;

@@ -115,13 +115,13 @@ function showDiff() {
                 //console.log("Recolor after toggle with ", dAttribute);
                 if (d._perfdata) {
                     if (dAttribute === "inclusiveTime") {
-                        if (d._perfdata.inclusiveTime < 0)
-                            return "magenta";
+                        // if (d._perfdata.inclusiveTime < 0)
+                        //     return "magenta";
                         d.oldColor = currentColorTimeScale(d._perfdata.inclusiveTime);
                         return currentColorTimeScale(d._perfdata.inclusiveTime);
                     } else if (dAttribute === "exclusiveTime") {
-                        if (d._perfdata.exclusiveTime < 0)
-                            return "magenta";
+                        // if (d._perfdata.exclusiveTime < 0)
+                        //     return "magenta";
                         d.oldColor = currentColorTimeScale(d._perfdata.exclusiveTime);
                         return currentColorTimeScale(d._perfdata.exclusiveTime);
                     } else if (dAttribute === "inclusiveDiffTime") {
@@ -206,9 +206,9 @@ function showDiff() {
             .text(function () {
                 console.log("Legend timetype", dAttribute);
                 if (currentTime === "inclusiveTime") {
-                    return "Total inclusive time per primitive type.";
+                    return "Total inclusive time per primitive type (Run 1 shown)";
                 } else if (currentTime === "exclusiveTime") {
-                    return "Total exclusive time per primitive type.";
+                    return "Total exclusive time per primitive type (Run 1 shown)";
                 } else if (currentTime === "inclusiveDiffTime") {
                     return "Inclusive time difference (run1 - run2). Purple: 1st run was slower."
                 } else if (currentTime === "exclusiveDiffTime") {
