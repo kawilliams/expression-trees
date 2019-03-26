@@ -86,6 +86,7 @@
                     .offset([-8, 0])
                     .html(function (d) {
                         var tooltiptext = "";
+                        var checkbox = document.getElementById("diffCheck");
                         if (d.id === 1) {
                             tooltiptext += "<p>Function: " + d.data.name + "</p>";
                         }
@@ -126,8 +127,8 @@
                                     "<p>Total time: " + prettyprintTime(d._perfdata.time) + " </p>";
                         }
 
-                        if (d.executedDifferently) {
-                            console.log("Executed differently");
+                        if (d.executedDifferently && checkbox.checked) {
+                            //console.log("Executed differently");
                             var firstExecution = "";
                             var secondExecution = "";
 
