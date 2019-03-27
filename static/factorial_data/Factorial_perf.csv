@@ -1,0 +1,17 @@
+primitive_instance,display_name,count,time,eval_direct
+"/phylanx/__le$0/1$14$9","le(14, 9)",5,272411,1
+"/phylanx/__mul$0/1$16$9","mul(16, 9)",4,3721218,1
+"/phylanx/__sub$0/1$16$21","sub(16, 21)",4,533329,1
+"/phylanx/access-argument$0$arg0/1$14$9","access-argument/arg0(14, 9)",5,13605,1
+"/phylanx/access-argument$1$arg0/1$16$9","access-argument/arg0(16, 9)",4,3578,1
+"/phylanx/access-argument$2$arg0/1$16$21","access-argument/arg0(16, 21)",4,5234,1
+"/phylanx/access-function$0$fact/1$16$16","access-function/fact(16, 16)",1,710,1
+"/phylanx/access-function$0$fact/2$20$7","access-function/fact(20, 7)",1,710,1
+"/phylanx/access-variable$0$sys_argv/2$20$13","access-variable/sys_argv(20, 13)",1,4108,1
+"/phylanx/apply$0/2$20$1","apply(20, 1)",1,2244915,-1
+"/phylanx/call-function$0$fact/1$16$16","call-function/fact(16, 16)",4,3332454,1
+"/phylanx/define-variable$1$fact/1$13$8","define-variable/fact(13, 8)",1,11327,-1
+"/phylanx/function$0$fact/1$13$8","function/fact(13, 8)",5,4667665,1
+"/phylanx/if$0/1$14$5","if(14, 5)",5,4278694,1
+"/phylanx/lambda$0/1$13$8","lambda(13, 8)",5,4545639,1
+"/phylanx/variable$0$sys_argv/0$0$0","variable/sys_argv(0, 0)",1,1412,1

@@ -1118,7 +1118,7 @@ function update(source, fullRoot, perfdata, perfdata2, clicked) {
     }
 
     function showNodeCode(d) {
-        //offset = 20;
+        //offset = 
         linenum = getLineNum(d.data.name) + offset; //was d.data.name <-- data doesn't match tool_tip names
         d3.selectAll(".line").filter(function () {
             if (parseInt(d3.select(this).attr("class").split(" ")[1]) === linenum) {
