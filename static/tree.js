@@ -26,13 +26,14 @@ function makeCodeArray(codefile) {
                 .data(codeArray)
                 .enter().append("pre")
                 .attr("class", function (d, i) {
-                    if (d.includes("define(als") || d.includes("define(lra_explicit")) { //file sensitive char const* const als_explicit
-                        offset = i;
-                        console.log("OFFSET", offset);
-                    }
+                    // if (d.includes("define(als") || d.includes("define(lra_explicit")) { //file sensitive char const* const als_explicit
+                    //     offset = i;
+                    //     console.log("OFFSET", offset);
+                    // }
                     return "line " + i;
                 })
                 .text(function (d, i) {
+                    i = i + 1;
                     if (!d && i<10) {
                         return " " + i + "| \n";
                     } else if (!d) {
