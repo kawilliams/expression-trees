@@ -262,7 +262,7 @@ function setCurrentColors(currentTime) {
 }
 
 
-offset = 0;
+offset = -1;
 function update(source, fullRoot, perfdata, perfdata2, clicked) {
     //console.log("update");
 
@@ -817,7 +817,7 @@ function update(source, fullRoot, perfdata, perfdata2, clicked) {
 
         d3.select(this).style("background-color", "#ffd92f");
         lineSelected = this;
-        currLineNum = parseInt(d3.select(this).attr("class").split(" ")[1]) - offset //+ 1;
+        currLineNum = parseInt(d3.select(this).attr("class").split(" ")[1]) ;//- offset //+ 1;
 
 
         //Find corresponding node
@@ -1122,7 +1122,7 @@ function update(source, fullRoot, perfdata, perfdata2, clicked) {
     }
 
     function showNodeCode(d) {
-        offset = -1;
+        //offset = -1;
         linenum = getLineNum(d.data.name) + offset; //was d.data.name <-- data doesn't match tool_tip names
         d3.selectAll(".line").filter(function () {
             if (parseInt(d3.select(this).attr("class").split(" ")[1]) === linenum) {
@@ -1136,7 +1136,7 @@ function update(source, fullRoot, perfdata, perfdata2, clicked) {
     }
 
     function hideNodeCode(d) {
-        offset = -1;
+        //offset = -1;
         linenum = getLineNum(d.data.name) + offset;
         d3.selectAll(".line").filter(function () {
             if (parseInt(d3.select(this).attr("class").split(" ")[1]) === linenum) {

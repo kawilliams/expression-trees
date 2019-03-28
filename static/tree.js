@@ -26,8 +26,8 @@ function makeCodeArray(codefile) {
                 .data(codeArray)
                 .enter().append("pre")
                 .attr("class", function (d, i) {
-                    // if (d.includes("define(als") || d.includes("define(lra_explicit")) { //file sensitive char const* const als_explicit
-                    //     offset = i;
+                    // if (d.includes("define(als") || d.includes("define(lra")) { //file sensitive char const* const als_explicit
+                    //     offset = i + 1;
                     //     console.log("OFFSET", offset);
                     // }
                     return "line " + i;
