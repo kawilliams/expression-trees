@@ -103,10 +103,8 @@ function analyze(error, treeformat, perfdata, treeformat2, perfdata2) {
         }
     }
 
-
-    
     root.x0 = height / 2;
-    root.y0 = 0;
+    root.y0 = 1000;
 
 
     // Collecting the performance times
@@ -288,6 +286,7 @@ function update(source, fullRoot, perfdata, perfdata2, clicked) {
 
     });
 
+
     // Compute the new tree layout.
     var nodes = tree.descendants(),
             links = tree.descendants().slice(1);
@@ -298,17 +297,22 @@ function update(source, fullRoot, perfdata, perfdata2, clicked) {
         }
     });
 
-    var depthY = svg.attr("width") / maxDepth;
+    var depthY = (svg.attr("width") - 163) / maxDepth; //163 based on visual eyeballing List of Primitives
     var depthX = svg.attr("height") / widestLevel;
 
     //Prevent tree from spreading too much or too little
-    var spreadFactor = 2 + (2 / depthX);
+    var spreadFactor = 3 + (3 / depthX);
+    if (widestLevel < 10) {
+        spreadFactor = 1; 
+    }
+
+    console.log("Spreadfactor", spreadFactor);
 
 
     nodes.forEach(function (d) {
         d.x = d.x * spreadFactor; //really y's, adjust to spread leaves
-        //d.y = d.depth * depthY;
-        d.y = d.y * 1; // depth, adjust to lengthen tree (makes it wider b/c it's rotated)
+        d.y = d.depth * depthY;
+        //d.y = d.y * 1; // depth, adjust to lengthen tree (makes it wider b/c it's rotated)
     });
 
     // ****************** Nodes section ***************************
@@ -1311,9 +1315,16 @@ function drawList (nodes) {
     barScale.range([0, width - 70]);
   }
   // Sort nodes by time (slowest to fastest)
-  var nodes = nodes.sort(function(c,d) {
-        if ( hasData(c) && hasData(d)){
-            return d._perfdata[currentTime] - c._perfdata[currentTime];
+  nodes = nodes.sort(function(c,d) {
+        console.log("sorting list", currentTime);
+        if ( hasData(c) && hasData(d) ){
+            return +d._perfdata[currentTime] - +c._perfdata[currentTime];
+        // } else if ( hasData(c) && !hasData(d) ) {
+        //     return +c._perfdata[currentTime];
+        // } else if ( !hasData(c) && hasData(d) ) {
+        //     return +d._perfdata[currentTime];
+        // } else {
+        //     return Number.NEGATIVE_INFINITY; 
         }
   });
 
