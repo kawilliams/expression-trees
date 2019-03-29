@@ -21,7 +21,7 @@ function woo(){console.log("HEYHO");}
                 legend.empty();
                 //treevis.empty();
             }
-            //if (textfile && csvfile) {  
+            //if (textfile && csvfile) {	
             //console.log('csv:',typeof csvfile);
             analyze(false,textfile,csvfile);
             /*
@@ -245,8 +245,7 @@ function woo(){console.log("HEYHO");}
                 maxDepth = d.depth;
               } 
           });
-            var generalLabelWidth = 25;
-          var depthY = svg.attr("width") / maxDepth - generalLabelWidth;//katy
+          var depthY = svg.attr("width") / maxDepth;//katy
           var depthX = svg.attr("height") / widestLevel;
           //Prevent tree from spreading too much or too little
           var spreadFactor = 1;
@@ -424,7 +423,7 @@ function woo(){console.log("HEYHO");}
             //"/phylanx/call-function$2$lra/2$33$5","call-function/lra(33, 5)",1,377929,-1
             // new
             //"/phylanx/call-function$2$lra/2$33$5","call-function/lra(33, 5)",1,377929000,-1
-            var symbol = d3.symbol().size(d => d._perfdata ? 300 : 100);
+            var symbol = d3.symbol().size([150]);
             aNodeIsHighlighted = false;
             oldNode = "";
             prevNodeNum = -1;
@@ -436,10 +435,6 @@ function woo(){console.log("HEYHO");}
                     if (d.bigParent) { 
                       return d3.symbolTriangle; 
                     }
-                    if (d.open === false) {
-                        return d3.symbolTriangle;
-                    }
-                    d.open = true;
                     return d3.symbolCircle;
             }))
                 .attr('transform', "rotate(-90)")
@@ -454,7 +449,6 @@ function woo(){console.log("HEYHO");}
                   return "0";
                 })
                 .style("stroke", "black")
-                .style("stroke-width", "4px")
                 .style("fill", function(d) { //katy
                   d.highlighted = false;
                 if (d._perfdata) { //color circle by time-per-instance
@@ -495,7 +489,7 @@ function woo(){console.log("HEYHO");}
                     // Color the selected node yellow
                     prevNodeNum = d.id;
                     d.oldColor = d3.select(this).style("fill"); 
-                    d3.select(this).style("fill", "#ffd92f");
+                    d3.select(this).style("fill", "yellow");
                    
                     // Color related nodes of variables & functions (arguments too?)
                     var currName = "";
@@ -521,7 +515,7 @@ function woo(){console.log("HEYHO");}
                                 return true;
                             } }
                         });
-                        hl_nodes.style("fill", "#ffd92f"); //yellow
+                        hl_nodes.style("fill", "yellow");
                         console.log("Number of ", currName, hl_edge_data.length);
               
                         // define the line
@@ -532,7 +526,7 @@ function woo(){console.log("HEYHO");}
                         svg.append("path")
                             .data([hl_edge_data])
                             .attr("class", "hl_line")
-                            .style("stroke", "#ffd92f") //yellow
+                            .style("stroke", "red")
                             .style("fill", "none")
                             .attr("d", hl_line); 
                     }   
@@ -567,11 +561,6 @@ function woo(){console.log("HEYHO");}
               })
               .text(function(d) { 
                   if (!d.children) {
-//                       if (d._perfdata.display_name.length > 15) {
-//                            var newlineVersion = d._perfdata.display_name.replace("/","\n");//.split("&");
-//                            console.log(newlineVersion);
-//                            return newlineVersion; //[0].concat("", newlineVersion[1]);                                                
-//                       }
                     return d._perfdata.display_name;              
                   } else {
                       return "";
@@ -597,7 +586,7 @@ function woo(){console.log("HEYHO");}
                    return d.oldColor;
                 });
                
-               d3.select(this).style("background-color", "#ffd92f"); //yellow
+               d3.select(this).style("background-color", "yellow");
                lineSelected = this;
                currLineNum = parseInt(d3.select(this).attr("class").split(" ")[1]) - offset + 1;
                
@@ -619,7 +608,7 @@ function woo(){console.log("HEYHO");}
                    nodeSelected = d3.select(this);
                    nodeSelected.oldColor = nodeSelected.style("fill");
                    prevNodeNum = d.id;
-                   return "#ffd92f";
+                   return "yellow";
                });
             })
                 .on("click", function(){
@@ -1068,7 +1057,7 @@ function downloadTree() {
         // Set the dimensions and margins of the diagram
         //width = window.innerWidth - margin.left - margin.right
         //height = window.innerHeight - margin.top - margin.bottom
-        var margin = {top: 50, right: 100, bottom: 30, left: 30},
+        var margin = {top: 50, right: 90, bottom: 30, left: 30},
             codeviewDim = {width: 500, height: 500},
             width = element.offsetWidth - margin.left - margin.right,
             height = element.offsetWidth - margin.top - margin.bottom;
@@ -1076,14 +1065,14 @@ function downloadTree() {
         var svg = d3.select("#tree-vis").append("svg")
             .attr("id", "main-svg")
             .attr("class", "main-svg")
-            .attr("width", (width + margin.right + margin.left) * 1.5)
+            .attr("width", (width + margin.right + margin.left) * 1.25 )
             .attr("height", (height + margin.top + margin.bottom) * 2)
           .append("g")
             .attr("width", width)// - margin.left - codeviewDim.width)
             .attr("height", height)// - margin.top)
             .attr("transform", "translate("
                   + margin.left + "," + margin.top + ")");
-        var duration = 0, //750
+        var duration = 750,
             root,
             fullRoot;
 
