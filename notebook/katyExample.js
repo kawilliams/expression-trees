@@ -1,4 +1,4 @@
-function woo(){console.log("katyExample.js");}
+function woo(){console.log("HEYHO");}
 
 (function(element) {
     
@@ -245,7 +245,8 @@ function woo(){console.log("katyExample.js");}
                 maxDepth = d.depth;
               } 
           });
-          var depthY = svg.attr("width") / maxDepth;//katy
+            var generalLabelWidth = 25;
+          var depthY = svg.attr("width") / maxDepth - generalLabelWidth;//katy
           var depthX = svg.attr("height") / widestLevel;
           //Prevent tree from spreading too much or too little
           var spreadFactor = 1;
@@ -423,7 +424,7 @@ function woo(){console.log("katyExample.js");}
             //"/phylanx/call-function$2$lra/2$33$5","call-function/lra(33, 5)",1,377929,-1
             // new
             //"/phylanx/call-function$2$lra/2$33$5","call-function/lra(33, 5)",1,377929000,-1
-            var symbol = d3.symbol().size([150]);
+            var symbol = d3.symbol().size(d => d._perfdata ? 300 : 100);
             aNodeIsHighlighted = false;
             oldNode = "";
             prevNodeNum = -1;
@@ -435,6 +436,10 @@ function woo(){console.log("katyExample.js");}
                     if (d.bigParent) { 
                       return d3.symbolTriangle; 
                     }
+                    if (d.open === false) {
+                        return d3.symbolTriangle;
+                    }
+                    d.open = true;
                     return d3.symbolCircle;
             }))
                 .attr('transform', "rotate(-90)")
@@ -449,6 +454,7 @@ function woo(){console.log("katyExample.js");}
                   return "0";
                 })
                 .style("stroke", "black")
+                .style("stroke-width", "4px")
                 .style("fill", function(d) { //katy
                   d.highlighted = false;
                 if (d._perfdata) { //color circle by time-per-instance
@@ -489,7 +495,7 @@ function woo(){console.log("katyExample.js");}
                     // Color the selected node yellow
                     prevNodeNum = d.id;
                     d.oldColor = d3.select(this).style("fill"); 
-                    d3.select(this).style("fill", "yellow");
+                    d3.select(this).style("fill", "#ffd92f");
                    
                     // Color related nodes of variables & functions (arguments too?)
                     var currName = "";
@@ -515,7 +521,7 @@ function woo(){console.log("katyExample.js");}
                                 return true;
                             } }
                         });
-                        hl_nodes.style("fill", "yellow");
+                        hl_nodes.style("fill", "#ffd92f"); //yellow
                         console.log("Number of ", currName, hl_edge_data.length);
               
                         // define the line
@@ -526,7 +532,7 @@ function woo(){console.log("katyExample.js");}
                         svg.append("path")
                             .data([hl_edge_data])
                             .attr("class", "hl_line")
-                            .style("stroke", "red")
+                            .style("stroke", "#ffd92f") //yellow
                             .style("fill", "none")
                             .attr("d", hl_line); 
                     }   
@@ -561,6 +567,11 @@ function woo(){console.log("katyExample.js");}
               })
               .text(function(d) { 
                   if (!d.children) {
+//                       if (d._perfdata.display_name.length > 15) {
+//                            var newlineVersion = d._perfdata.display_name.replace("/","\n");//.split("&");
+//                            console.log(newlineVersion);
+//                            return newlineVersion; //[0].concat("", newlineVersion[1]);                                                
+//                       }
                     return d._perfdata.display_name;              
                   } else {
                       return "";
@@ -586,7 +597,7 @@ function woo(){console.log("katyExample.js");}
                    return d.oldColor;
                 });
                
-               d3.select(this).style("background-color", "yellow");
+               d3.select(this).style("background-color", "#ffd92f"); //yellow
                lineSelected = this;
                currLineNum = parseInt(d3.select(this).attr("class").split(" ")[1]) - offset + 1;
                
@@ -608,7 +619,7 @@ function woo(){console.log("katyExample.js");}
                    nodeSelected = d3.select(this);
                    nodeSelected.oldColor = nodeSelected.style("fill");
                    prevNodeNum = d.id;
-                   return "yellow";
+                   return "#ffd92f";
                });
             })
                 .on("click", function(){
@@ -1023,7 +1034,7 @@ function downloadTree() {
         
         
         // START OF CODE
-        console.log("HERE -- start of code");
+        console.log("HERE -- START");
         var symbol = d3.symbol().size([100]);
         d3.selectAll(".node-shape-triangle").insert("g")
                 .selectAll("path").data(["triangle"]).enter()
@@ -1057,7 +1068,7 @@ function downloadTree() {
         // Set the dimensions and margins of the diagram
         //width = window.innerWidth - margin.left - margin.right
         //height = window.innerHeight - margin.top - margin.bottom
-        var margin = {top: 50, right: 90, bottom: 30, left: 30},
+        var margin = {top: 50, right: 100, bottom: 30, left: 30},
             codeviewDim = {width: 500, height: 500},
             width = element.offsetWidth - margin.left - margin.right,
             height = element.offsetWidth - margin.top - margin.bottom;
@@ -1065,14 +1076,14 @@ function downloadTree() {
         var svg = d3.select("#tree-vis").append("svg")
             .attr("id", "main-svg")
             .attr("class", "main-svg")
-            .attr("width", (width + margin.right + margin.left) * 1.25 )
+            .attr("width", (width + margin.right + margin.left) * 1.5)
             .attr("height", (height + margin.top + margin.bottom) * 2)
           .append("g")
             .attr("width", width)// - margin.left - codeviewDim.width)
             .attr("height", height)// - margin.top)
             .attr("transform", "translate("
                   + margin.left + "," + margin.top + ")");
-        var duration = 750,
+        var duration = 0, //750
             root,
             fullRoot;
 
@@ -1097,3 +1108,5 @@ function downloadTree() {
 
     })
 })(element);
+
+
