@@ -1023,7 +1023,7 @@ function downloadTree() {
         
         
         // START OF CODE
-        console.log("HERE");
+        console.log("HERE -- start of code");
         var symbol = d3.symbol().size([100]);
         d3.selectAll(".node-shape-triangle").insert("g")
                 .selectAll("path").data(["triangle"]).enter()
