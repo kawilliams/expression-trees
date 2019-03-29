@@ -1,4 +1,4 @@
-function woo(){console.log("HEYHO");}
+function woo(){console.log("katyExample.js");}
 
 (function(element) {
     
