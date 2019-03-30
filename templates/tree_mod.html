@@ -77,32 +77,38 @@
                     height = window.innerHeight - margin.top - margin.bottom;
 
             /* http://bl.ocks.org/davegotz/bd54b56723c154d25eedde6504d30ad7 */
+            function noNum(name) {
+                //var noParen = name.substring(0, name.indexOf("("));
+                var n = name.indexOf('(');
+                var noParen = name.substring(0, n != -1 ? n : name.length);
+                console.log(noParen);
+                return noParen;
+            }
 
             tool_tip = d3.tip()
                     .attr("class", "d3-tip")
                     .offset([-8, 0])
                     .html(function (d) {
                         var tooltiptext = "";
-                        console.log("d", d);
                         if (!d._perfdata) {
-                            tooltiptext += "<p>Function: " + d.data.name + "</p>";
+                            tooltiptext += "<p>Function: " + noNum(d.data.name) + "</p>";
                         }
                         else if ((d._perfdata) && (d._perfdata.eval_direct === 0)) { // 0 async
-                            tooltiptext += "<p>Primitive instance: " + d._perfdata.display_name + "</p>" +
+                            tooltiptext += "<p>Primitive instance: " + noNum(d._perfdata.display_name) + "</p>" +
                                     "<p>Count: " + d._perfdata.count + "</p>" +
                                     "<p>Exclusive time: " + prettyprintTime(d._perfdata.exclusiveTime) + " </p>" +
                                     // "<p>Difference in exclusive times: " + prettyprintTime(d._perfdata.exclusiveDiffTime) + "</p>" +
                                     "<p>Inclusive time (async): " + prettyprintTime(d._perfdata.inclusiveTime) + " </p>"; // +
                                     // "<p>Difference in inclusive times: " + prettyprintTime(d._perfdata.inclusiveDiffTime) + "</p>";
                         } else if ((d._perfdata) && (d._perfdata.eval_direct === 1)) { // 1 direct
-                            tooltiptext += "<p>Primitive instance: " + d._perfdata.display_name + "</p>" +
+                            tooltiptext += "<p>Primitive instance: " + noNum(d._perfdata.display_name) + "</p>" +
                                     "<p>Count: " + d._perfdata.count + "</p>" +
                                     "<p>Exclusive time: " + prettyprintTime(d._perfdata.exclusiveTime) + " </p>" +
                                     // "<p>Difference in exclusive times: " + prettyprintTime(d._perfdata.exclusiveDiffTime) + "</p>" +
                                     "<p>Inclusive time (direct): " + prettyprintTime(d._perfdata.inclusiveTime) + " </p>"; // +
                                     // "<p>Difference in inclusive times: " + prettyprintTime(d._perfdata.inclusiveDiffTime) + "</p>";
                         } else if ((d._perfdata) && (d._perfdata.eval_direct === -1)) { // -1 undecided
-                            tooltiptext += "<p>Primitive instance: " + d._perfdata.display_name + "</p>" +
+                            tooltiptext += "<p>Primitive instance: " + noNum(d._perfdata.display_name) + "</p>" +
                                     "<p>Count: " + d._perfdata.count + "</p>" +
                                     "<p>Exclusive time: " + prettyprintTime(d._perfdata.exclusiveTime) + " </p>" +
                                     // "<p>Difference in exclusive times: " + prettyprintTime(d._perfdata.exclusiveDiffTime) + "</p>" +
@@ -111,7 +117,7 @@
                             "<p>Evaluation style (direct or async) determined at runtime.</p>";
                         } else {
                             if (d._perfdata) {
-                            tooltiptext += "<p>Primitive instance: " + d._perfdata.display_name + "</p>" +
+                            tooltiptext += "<p>Primitive instance: " + noNum(d._perfdata.display_name) + "</p>" +
                                     "<p>Total time: " + prettyprintTime(d._perfdata.time) + " </p>";
                             } else {
                                 tooltiptext += "<p>Primitive instance: " + d.name + "</p>";
