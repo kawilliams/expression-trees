@@ -125,10 +125,25 @@ function analyze(error, treeformat, perfdata, treeformat2, perfdata2) {
     });
     perfdata = perfdata_array;
     console.log("perfdata_array", perfdata_array.length, " count:", count1);
+
+    prim_inst2 = [];
+    if (perfdata2 && treeformat2Orig) {
+        perfdata2_array = [];
+        perfdata2.forEach(function(d){
+            if (treeformat2Orig.includes(d.primitive_instance)) {
+                //domainTimesIn.push(+d.time); //kttime
+                prim_inst2.push(d.primitive_instance);
+                perfdata2_array.push(d);
+            } 
+        });
+        perfdata2 = perfdata2_array;
+        console.log("perfdata2_array", perfdata2_array.length, " count:", count1);
+    }
+    
     
     
 
-    colorsIn = ["#f2f0f7", "#cbc9e2", "#9e9ac8", "#756bb1", "#54278f"];  //purple
+    colorsIn = ["#f2f0f7", "#cbc9e2", "#9e9ac8", "#756bb1", "#54278f"];  //purple #54278f
     colorsEx = ["#edf8fb", "#b2e2e2", "#66c2a4", "#2ca25f", "#006d2c"]; //green
     colorsInDiff = ["#e66101", "#fdb863", "#f7f7f7", "#b2abd2", "#5e3c99"]; //diverging purple orange
     colorsExDiff = ["#a6611a", "#dfc27d", "#f5f5f5", "#80cdc1", "#018571"]; //diverging brown teal
@@ -326,6 +341,7 @@ function update(source, fullRoot, perfdata, perfdata2, clicked) {
                 if (prim_inst.indexOf(nodename) >= 0) {
                     //Necessary for tooltip
                     node_perfdata = perfdata[prim_inst.indexOf(nodename)];
+                    console.log("name: ", nodename, " data: ", node_perfdata);
                     node_perfdata.eval_direct = +node_perfdata.eval_direct; //how the node was run (async/sync/unk)
                     node_perfdata.avg_time = +(node_perfdata.time / node_perfdata.count); // * 1.e-9; //katy nanos are SMALL
                     if (+node_perfdata.count === 0)
@@ -340,6 +356,7 @@ function update(source, fullRoot, perfdata, perfdata2, clicked) {
 
                     if (perfdata2) {
                         node_perfdata2 = perfdata2[prim_inst.indexOf(nodename)];
+                        console.log("name: ", nodename, " data2: ", node_perfdata2);
                         if (node_perfdata2) {
                             node_perfdata2.eval_direct = +node_perfdata2.eval_direct;
                             node_perfdata2.avg_time = +(node_perfdata2.time / node_perfdata2.count);
@@ -353,7 +370,6 @@ function update(source, fullRoot, perfdata, perfdata2, clicked) {
 
                         } else {
                             // node doesn't exist in the other data set
-
                         }
                     }
                 }
@@ -397,6 +413,7 @@ function update(source, fullRoot, perfdata, perfdata2, clicked) {
             } else {
                 //d._perfdata.inclusiveDiffTime = 22; //Katy no diff time
                 d.infade = true;
+                console.log("faded",d);
             }
 
             if (d._perfdata.exclusiveTime && d._perfdata2.exclusiveTime) {
@@ -758,18 +775,20 @@ function update(source, fullRoot, perfdata, perfdata2, clicked) {
             .attr("dy", ".35em")
             .attr("x", function (d) {
                 return 17;
+                //return d.children || d._children ? 0 : 17;
             })
             .attr("y", function (d) {
-                return d.children || d._children ? -7 : 0;
+                return d.children || d._children ? 17 : 0;
             })
             .attr("text-anchor", function (d) {
                 return "start";
             })
             .text(function (d) {
                 if (!d.children && d._perfdata) {
-                    return d._perfdata.display_name;
+                    var noParen = d._perfdata.display_name.substring(0, d._perfdata.display_name.indexOf("("))
+                    return noParen; //d._perfdata.display_name.;
                 } else {
-                    return "";
+                  return "";
                 }
             });
     lines = d3.selectAll(".line");
