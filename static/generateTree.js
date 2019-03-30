@@ -341,7 +341,6 @@ function update(source, fullRoot, perfdata, perfdata2, clicked) {
                 if (prim_inst.indexOf(nodename) >= 0) {
                     //Necessary for tooltip
                     node_perfdata = perfdata[prim_inst.indexOf(nodename)];
-                    console.log("name: ", nodename, " data: ", node_perfdata);
                     node_perfdata.eval_direct = +node_perfdata.eval_direct; //how the node was run (async/sync/unk)
                     node_perfdata.avg_time = +(node_perfdata.time / node_perfdata.count); // * 1.e-9; //katy nanos are SMALL
                     if (+node_perfdata.count === 0)
@@ -356,7 +355,6 @@ function update(source, fullRoot, perfdata, perfdata2, clicked) {
 
                     if (perfdata2) {
                         node_perfdata2 = perfdata2[prim_inst.indexOf(nodename)];
-                        console.log("name: ", nodename, " data2: ", node_perfdata2);
                         if (node_perfdata2) {
                             node_perfdata2.eval_direct = +node_perfdata2.eval_direct;
                             node_perfdata2.avg_time = +(node_perfdata2.time / node_perfdata2.count);
@@ -407,22 +405,11 @@ function update(source, fullRoot, perfdata, perfdata2, clicked) {
 
         if (d._perfdata && d._perfdata2) {
 
-            if (d._perfdata.inclusiveTime && d._perfdata2.inclusiveTime) {
-                d._perfdata.inclusiveDiffTime = d._perfdata.inclusiveTime - d._perfdata2.inclusiveTime;
-                d.infade = false;
-            } else {
-                //d._perfdata.inclusiveDiffTime = 22; //Katy no diff time
-                d.infade = true;
-                console.log("faded",d);
-            }
+            d._perfdata.inclusiveDiffTime = d._perfdata.inclusiveTime - d._perfdata2.inclusiveTime;
+            d.infade = false;
+            d._perfdata.exclusiveDiffTime = d._perfdata.exclusiveTime - d._perfdata2.exclusiveTime;
+            d.exfade = false;
 
-            if (d._perfdata.exclusiveTime && d._perfdata2.exclusiveTime) {
-                d._perfdata.exclusiveDiffTime = d._perfdata.exclusiveTime - d._perfdata2.exclusiveTime;
-                d.exfade = false;
-            } else {
-                //d._perfdata.exclusiveDiffTime = 22;
-                d.exfade = true;
-            }
 
             if (d._perfdata.eval_direct !== d._perfdata2.eval_direct) {
 		        d.executedDifferently = true;
@@ -434,6 +421,8 @@ function update(source, fullRoot, perfdata, perfdata2, clicked) {
         }
         else {
             // The node doesn't exist in both trees
+            d.infade = true;
+            d.exfade = true;
         }
     });
 
