@@ -87,18 +87,14 @@
                     .html(function (d) {
                         var tooltiptext = "";
                         var checkbox = document.getElementById("diffCheck");
-                        if (d.id === 1) {
-                            tooltiptext += "<p>Function: " + d.data.name + "</p>";
+                        if (!d._perfdata) {
+                          tooltiptext += "<p>Function: " + d.data.name + "</p>";
                         }
-                        if (d.infade) {
-
+                        else if (d.infade) {
                             tooltiptext += "<p>Primitive "+ d._perfdata.display_name +" was not used in this tree.</p>";
                         }
                         else if (d.exfade) {
                             tooltiptext += "<p>Primitive "+ d._perfdata.display_name +"  was not used in this tree.</p>";
-                        }
-                        else if (!d._perfdata) {
-                          tooltiptext += "<p>No information available</p>";
                         }
                         else if (d._perfdata.eval_direct === 0) { // 0 async
                             tooltiptext += "<p>Primitive instance: " + d._perfdata.display_name + "</p>" +
@@ -193,9 +189,10 @@
             svg.call(tool_tip);
             svg.call(tool_tip_south);
 
-
+            var treeheight = ((height - margin.bottom) < 1000) ? 1000 : height - margin.bottom;
+            var treewidth = (width - 163 < 1000) ? 1000 : width - 163; 
             // declares a tree layout and assigns the size
-            var treemap = d3.tree().size([(height - margin.bottom), (width-163)]); //var treemap
+            var treemap = d3.tree().size([treeheight, treewidth]);
 
             treeExists = false;
             HTMLElement.prototype.empty = function () {
