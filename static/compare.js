@@ -104,7 +104,7 @@ function showDiff() {
 
     svg.selectAll(".node").selectAll("path").transition()
             .style("stroke", function(d) {
-                if (d._perfdata2 && d.executedDifferently) {
+                if (checkbox.checked && d._perfdata2 && d.executedDifferently) {
                     // If we're comparing runs, grey out lines that weren't executed differently
                     return '#e7298a'; // pink
                 } else {

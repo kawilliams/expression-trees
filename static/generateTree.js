@@ -1234,7 +1234,13 @@ function update(source, fullRoot, perfdata, perfdata2, clicked) {
                     }
                     return "0";
                 })
-                .style("stroke", "black")
+                .style("stroke", function(d){
+                    var currentTime = getCurrentTimeScheme();
+                    if ((currentTime.includes("Diff")) && d.executedDifferently) {
+                        return "#e7298a";//pink;
+                    } 
+                    return "black";
+                })
                 .style("fill", function (d) {
                     if (d.id === prevNodeNum)
                         return "#ffd92f";
