@@ -830,8 +830,8 @@ function update(source, fullRoot, perfdata, perfdata2, clicked) {
 
         //Find corresponding node
         d3.selectAll(".node").filter(function (d) {
-            if (getLineNum(d.data.name) === currLineNum) {
-                prevLineNum = currLineNum;
+            if (getLineNum(d.data.name) === (currLineNum + 1)) {
+                prevLineNum = currLineNum + 1;
                 return true;
             }
         }).select("path").style("fill", function (d) {
