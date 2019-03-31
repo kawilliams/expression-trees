@@ -48,7 +48,7 @@ In `static` are the test files that I used. The performance data is stored in `2
 127.0.0.1 - - [29/Jun/2018 16:16:45] "GET /codeview HTTP/1.1" 200 -
 127.0.0.1 - - [29/Jun/2018 16:16:45] "GET /codeview HTTP/1.1" 200 -
 ```
-and see the tree by clicking `Reingold-Tilford tree (one performance run)` at the top of the page at http://0.0.0.0:8001/ (or navigating to http://0.0.0.0:8001/rt_tree2).
+and see the tree by clicking `Reingold-Tilford tree (one performance run)` at the top of the page at http://0.0.0.0:8001/ (or navigating to http://0.0.0.0:8001/tree).
 
 # Comparison (two tree) Example
 In `static` are the test files that I used. The performance data is stored in `20180713_als_perfdata.csv`. The tree structure is stored in `20180713_als_tree.txt`. The algorithm file is `als_csv_instrumented.cpp`. 
@@ -63,7 +63,6 @@ If things run properly, you should see
 127.0.0.1 - - [29/Jun/2018 16:16:45] "GET /codeview HTTP/1.1" 200 -
 ```
 and see the tree by clicking `Compare two Reingold-Tilford trees (two performance runs)` at the top of the page at http://0.0.0.0:8001/ (or navigating to http://0.0.0.0:8001/compare).
-
 
 
 
