@@ -74,7 +74,7 @@ stroke-width: 1.25px !important;
 text-align: left !important;
 padding: 2px !important;
 font: 12px sans-serif !important;
-background: lightsteelblue !important;
+background: #dddddd !important;
 border: 0px !important;
 border-radius: 8px !important;
 display: inline-block !important;
@@ -82,7 +82,7 @@ white-space: nowrap !important;
 }
 #navigate {
 display: inline-block !important;
-background: lightsteelblue !important;
+background: #dddddd !important;
 padding: 2px !important;
 border-radius: 8px
 }
@@ -123,7 +123,7 @@ border-radius: 8px
     padding: 10px !important;
     border-radius: 8px !important;
     border: 0px !important;
-    background: #eff3f8 !important;
+    background: #dddddd !important;
     overflow-y: scroll !important;
     max-width: 610px !important; /*540px !important; <-- doesn't interfere w/tree, 650 is ~80 cols'*/
     font-family: monospace !important;

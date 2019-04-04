@@ -21,7 +21,7 @@ function woo(){console.log("HEYHO");}
                 legend.empty();
                 //treevis.empty();
             }
-            //if (textfile && csvfile) {	
+            //if (textfile && csvfile) {  
             //console.log('csv:',typeof csvfile);
             analyze(false,textfile,csvfile);
             /*
@@ -1034,7 +1034,7 @@ function downloadTree() {
         
         
         // START OF CODE
-        console.log("HERE -- START");
+        console.log("HERE");
         var symbol = d3.symbol().size([100]);
         d3.selectAll(".node-shape-triangle").insert("g")
                 .selectAll("path").data(["triangle"]).enter()
@@ -1088,7 +1088,7 @@ function downloadTree() {
             fullRoot;
 
         // declares a tree layout and assigns the size
-        var treemap = d3.tree().size([(height-margin.bottom), width]);
+        var treemap = d3.tree().size([500,500]);//[(height-margin.bottom-margin.top), width]);
 
         codeArray = makePhyslCodeArray();
         console.log("CODE ARRAY", codeArray);
