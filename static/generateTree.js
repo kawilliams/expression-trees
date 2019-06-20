@@ -1518,3 +1518,85 @@ function getLineNum(d) {
     var linenum = parseInt(locationArray[locationArray.length - 2]);
     return linenum;
 }
+
+//Export the tree as an svg
+function downloadTree() {
+    
+    var svgEl = document.getElementById("main-svg");
+    console.log("clicked download tree", svgEl);
+    var name = "Atria.svg";
+    var ContainerElements = ["svg", "g", "path"];
+    var RelevantStyles = {"node":["cursor"],
+        "circle":["fill", "stroke", "stroke-width"],
+        "node":["fill", "stroke", "stroke-width"],
+        "text":["font"],
+        "link":["fill", "stroke", "stroke-width"]
+    };
+    
+    if (svgEl.children.length > 0) {
+        console.log("got kids", svgEl);
+            read_Element(svgEl, svgEl);
+            export_StyledSVG(svgEl);
+    }
+    function read_Element(ParentNode, OrigData){
+        var Children = ParentNode.childNodes;
+        var OrigChildDat = OrigData.childNodes;     
+
+        for (var cd = 0; cd < Children.length; cd++){
+            var Child = Children[cd];
+
+            var TagName = Child.tagName;
+            var ClassNames = Child.classList;
+
+            if (ClassNames.contains("link")) {
+                var StyleDef = window.getComputedStyle(OrigChildDat[cd]);
+
+                var StyleString = "";
+                for (var st = 0; st < RelevantStyles["link"].length; st++){
+                    StyleString += RelevantStyles["link"][st] + ":" + StyleDef.getPropertyValue(RelevantStyles["link"][st]) + "; ";
+                }
+
+                Child.setAttribute("style",StyleString);
+            }
+
+
+            if (ContainerElements.indexOf(TagName) !== -1){
+                read_Element(Child, OrigChildDat[cd])
+            } 
+            else if (TagName in RelevantStyles) {
+                var StyleDef = window.getComputedStyle(OrigChildDat[cd]);
+
+                var StyleString = "";
+                for (var st = 0; st < RelevantStyles[TagName].length; st++){
+                    StyleString += RelevantStyles[TagName][st] + ":" + StyleDef.getPropertyValue(RelevantStyles[TagName][st]) + "; ";
+                }
+
+                Child.setAttribute("style",StyleString);
+            }
+
+        }
+    }
+
+    function export_StyledSVG(SVGElem){
+
+
+        var oDOM = SVGElem.cloneNode(true)
+        read_Element(oDOM, SVGElem)
+
+        var data = new XMLSerializer().serializeToString(oDOM);
+        var svg = new Blob([data], { type: "image/svg+xml;charset=utf-8" });
+        var url = URL.createObjectURL(svg);
+
+        var downloadlink = document.createElement("a");
+        downloadlink.setAttribute("target","_blank");
+        var Text = document.createTextNode("Export");
+        downloadlink.appendChild(Text);
+        downloadlink.href=url;
+        downloadlink.download = "export_tree.svg";
+
+        document.body.appendChild(downloadlink);
+        downloadlink.click();
+        document.body.removeChild(downloadlink);
+    }
+
+}
