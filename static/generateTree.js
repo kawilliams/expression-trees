@@ -773,7 +773,7 @@ function update(source, fullRoot, perfdata, perfdata2, clicked) {
             .attr("text-anchor", function (d) {
                 return "start";
             })
-            ..text(d => d._perfdata ? d._perfdata.display_name : "")
+            .text(d => d._perfdata ? d._perfdata.display_name : "")
             .attr("opacity", d => !d.children ? 1 : 0);
 
     lines = d3.selectAll(".line");
