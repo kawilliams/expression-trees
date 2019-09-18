@@ -30,7 +30,8 @@
                 <p>Inclusive <label class="toggleswitch"><input type="checkbox" id="myCheck" onclick="toggleSwitchAction()"><span class="slider"></span></label> Exclusive </p>
                 <p>Difference in times: <input type="checkbox" id="diffCheck" onclick="showDiff()"></p>
                 <button type="button" id="downloadTree" onclick="downloadTree()">Download tree (svg)</button>
-            
+                <p class="keyContents">Use CTRL+F to display and <br />
+                search among all labels for <br/> open nodes. Click anywhere to <br />return to normal display.</p>
             </div>
         </div>
         <button class="collapsible" id="collapsible" onclick="closeCodeView()">Hide Code View</button>
@@ -212,4 +213,22 @@
         </body>
         <script src="static/generateTree.js"></script>
         <script src="static/compare.js"></script>
+        <script>
+            keyDownEvent = false;
+            addEventListener("keydown", function(event){
+                //17, 91 are cmd+ctrl, 13 is enter, 70 is F
+               if (event.keyCode === 17 || event.keyCode === 91 || event.keyCode === 92) { //ctrl & cmd
+                   //select all the nodetext labels and make them visible
+                   d3.selectAll(".nodetext").attr("opacity", 1);
+                   keyDownEvent = true;
+               } 
+            });
+            
+            addEventListener("click", function(event){
+                if (keyDownEvent) {
+                    d3.selectAll(".nodetext").attr("opacity", d => !d.children ? 1 : 0);
+                    keyDownEvent = false;
+                }
+            });
+        </script>
 </html>
