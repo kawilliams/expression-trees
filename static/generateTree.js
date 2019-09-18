@@ -761,6 +761,7 @@ function update(source, fullRoot, perfdata, perfdata2, clicked) {
 
     // Add labels for the nodes
     nodeEnter.append('text')
+            .attr("class", "nodetext")
             .attr("dy", ".35em")
             .attr("x", function (d) {
                 return 17;
@@ -772,14 +773,9 @@ function update(source, fullRoot, perfdata, perfdata2, clicked) {
             .attr("text-anchor", function (d) {
                 return "start";
             })
-            .text(function (d) {
-                if (!d.children && d._perfdata) {
-                    var noParen = d._perfdata.display_name.substring(0, d._perfdata.display_name.indexOf("("))
-                    return noParen; //d._perfdata.display_name.;
-                } else {
-                  return "";
-                }
-            });
+            ..text(d => d._perfdata ? d._perfdata.display_name : "")
+            .attr("opacity", d => !d.children ? 1 : 0);
+
     lines = d3.selectAll(".line");
     lineSelected = "";
     prevLineNum = -1;
